@@ -68,13 +68,8 @@ func ValidateJWTToken(token string, secret string) bool {
 		secretAsBytes := []byte(secret)
 		return secretAsBytes, nil
 	})
-	fmt.Println("GOT HERE!")
 	claims := parsedToken.Claims
-	if err == nil {
-		fmt.Println("No Error")
-	}
 	fmt.Println(claims.GetExpirationTime())
-	fmt.Println("GOT THERE!")
 
 	return err == nil
 }

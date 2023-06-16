@@ -13,8 +13,10 @@ func main() {
 	r := gin.Default()
 
 	router := r.Group("/auth")
+
 	router.POST("/register")
 	router.POST("/login")
+
 	godotenv.Load()
 	fmt.Println("hello")
 	configuration.ConnectDb(&gorm.Config{})
