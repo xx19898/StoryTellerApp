@@ -20,7 +20,3 @@ func Register(c *gin.Context) {
 	databaselayer.CreateNewUser(newUser.Name, newUser.Password, newUser.Email, []models.Role{userRole})
 	c.JSON(http.StatusCreated, "User created!")
 }
-
-//TODO: first  create test for binding users data to go struct,
-//TODO: then test that saving class to the database functions as it should,
-//TODO:  then test it all as an integration
