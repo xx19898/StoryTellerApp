@@ -17,20 +17,20 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type RegisterTestSuite struct {
+type AuthTestSuite struct {
 	suite.Suite
 }
 
-func (suite *RegisterTestSuite) SetupSuite() {
+func (suite *AuthTestSuite) SetupSuite() {
 	configuration.ConfigureDatabaseForTest()
 }
 
-func (suite *RegisterTestSuite) SetupTest() {
+func (suite *AuthTestSuite) SetupTest() {
 	fmt.Println("Before each test")
 	configuration.ResetEverythingElseExceptRoles()
 }
 
-func (suite *RegisterTestSuite) TestingBasicCreationOfUserEntityInnD() {
+func (suite *AuthTestSuite) TestingBasicCreationOfUserEntityInDB() {
 	newRole := models.Role{Name: "USER"}
 	_ = databaselayer.CreateNewUser("NewUser", "password", "xx", []models.Role{newRole})
 	//newUser2 := models.User{Name: "NewUser", Password: "password", Email: "xx", Roles: []models.Role{newRole}, ID: 0}
@@ -40,7 +40,7 @@ func (suite *RegisterTestSuite) TestingBasicCreationOfUserEntityInnD() {
 	fmt.Println("Username: " + userFromDataBase.Name + " id: " + strconv.FormatUint(uint64(userFromDataBase.ID), 10))
 }
 
-func (suite *RegisterTestSuite) TestingThatEndPointWorks() {
+func (suite *AuthTestSuite) TestingThatEndPointWorks() {
 	router := gin.Default()
 	router.POST("/register", Register)
 	user := models.User{Name: "NewUser", Password: "PasswordZ", Email: "Email"}
@@ -54,6 +54,25 @@ func (suite *RegisterTestSuite) TestingThatEndPointWorks() {
 	fmt.Println("freshlyCreatedUserId: " + strconv.FormatUint(uint64(freshlyCreatedUser.ID), 10))
 }
 
-func TestRegisterTestSuite(t *testing.T) {
-	suite.Run(t, new(RegisterTestSuite))
+func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
+	router := gin.Default()
+	router.POST("/register", Register)
+	user := models.User{Name: "testUser", Password: "testPassword", Email: "Email"}
+	jsonValue, _ := json.Marshal(user)
+	registerReq, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(jsonValue))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, registerReq)
+
+	router.POST("/login", Login)
+	userForm := models.User{Name: "testUser", Password: "testPassword"}
+	userFormAsJson, _ := json.Marshal(userForm)
+	loginReq, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(userFormAsJson))
+	v := httptest.NewRecorder()
+	router.ServeHTTP(v, loginReq)
+	assert.Equal(suite.T(), http.StatusAccepted, v.Code)
+	fmt.Println("code: " + strconv.Itoa(v.Code))
+}
+
+func TestAuthTestSuite(t *testing.T) {
+	suite.Run(t, new(AuthTestSuite))
 }

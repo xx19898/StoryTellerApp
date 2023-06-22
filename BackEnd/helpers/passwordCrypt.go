@@ -12,8 +12,5 @@ func PasswordMatchesTheHash(password string, hash string) bool {
 	passwordInBytes := []byte(password)
 	hashInBytes := []byte(hash)
 	result := bcrypt.CompareHashAndPassword(hashInBytes, passwordInBytes)
-	if result == nil {
-		return true
-	}
-	return false
+	return result == nil
 }
