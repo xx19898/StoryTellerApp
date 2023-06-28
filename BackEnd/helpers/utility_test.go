@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -27,6 +28,29 @@ func TestThatPasswordGetsEncryptedAndCanThenBeComparedWithAString(t *testing.T) 
 	if !passwordsMatch {
 		t.Fatal("Given password and hash of the encrypted password do not match")
 	}
+}
+
+func TestThatJWTTokenGetsCreated(t *testing.T) {
+	godotenv.Load("../.env")
+	token, err := CreateToken("testUser", 1, []string{"User"}, time.Now().Add(time.Hour*time.Duration(2)).Unix(), time.Now().Unix())
+
+	if err != nil {
+		t.Fatal("Occured error in the process of password creation " + err.Error())
+	}
+
+	claims, errr := ParseJWTToken(token)
+
+	if errr != nil {
+		t.Fatal(errr.Error())
+	}
+
+	username := claims.Issuer
+	if username != "testUser" {
+		t.Fatal("Incorrect username parsed")
+	}
+	date := time.Unix(claims.ExpiresAt, 0)
+	fmt.Println("expiration date: ", date)
+
 }
 
 func TestThatPasswordReturnsNegativeWhenPasswordsDontMatch(t *testing.T) {

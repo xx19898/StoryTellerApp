@@ -16,8 +16,8 @@ func main() {
 
 	router.POST("/register")
 	router.POST("/login")
-
-	godotenv.Load()
 	fmt.Println("hello")
+	godotenv.Load()
 	configuration.ConnectDb(&gorm.Config{})
+	r.Run()
 }

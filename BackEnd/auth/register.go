@@ -2,6 +2,7 @@ package auth
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"StoryTellerAppBackend/helpers"
 	"StoryTellerAppBackend/models"
 	"net/http"
 
@@ -17,6 +18,12 @@ func Register(c *gin.Context) {
 		return
 	}
 	userRole := databaselayer.FindRoleByName("User")
-	databaselayer.CreateNewUser(newUser.Name, newUser.Password, newUser.Email, []models.Role{userRole})
+	encryptedPassword, err := helpers.EncryptPassword(newUser.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error when trying to encrypt the password",
+		})
+	}
+	databaselayer.CreateNewUser(newUser.Name, string(encryptedPassword), newUser.Email, []models.Role{userRole})
 	c.JSON(http.StatusCreated, "User created!")
 }

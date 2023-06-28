@@ -20,6 +20,15 @@ func ConnectDb(config *gorm.Config) {
 	}
 	fmt.Println("Connected Successfully to the Database")
 	DB.AutoMigrate(&models.User{}, &models.Role{})
+
+	var count int64
+	DB.Find(&models.Role{}).Count(&count)
+	if count == 0 {
+		userRole := models.Role{Name: "User"}
+		adminRole := models.Role{Name: "Admin"}
+		DB.Model(&models.Role{}).Create(&userRole)
+		DB.Model(&models.Role{}).Create(&adminRole)
+	}
 }
 
 func ConnectTestDb(config *gorm.Config) {
@@ -31,4 +40,5 @@ func ConnectTestDb(config *gorm.Config) {
 	}
 	fmt.Println("Connected Successfully to the Database")
 	DB.AutoMigrate(&models.User{}, &models.Role{})
+	fmt.Println("Connected Successfully to the Database")
 }

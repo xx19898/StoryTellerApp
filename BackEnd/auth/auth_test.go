@@ -3,6 +3,7 @@ package auth
 import (
 	"StoryTellerAppBackend/configuration"
 	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"StoryTellerAppBackend/helpers"
 	"StoryTellerAppBackend/models"
 	"bytes"
 	"encoding/json"
@@ -50,7 +51,7 @@ func (suite *AuthTestSuite) TestingThatEndPointWorks() {
 	router.ServeHTTP(w, req)
 	assert.Equal(suite.T(), http.StatusCreated, w.Code)
 	freshlyCreatedUser := databaselayer.FindUserByName("NewUser")
-	assert.Equal(suite.T(), freshlyCreatedUser.Password, "PasswordZ")
+	assert.True(suite.T(), helpers.PasswordMatchesTheHash("PasswordZ", freshlyCreatedUser.Password))
 	fmt.Println("freshlyCreatedUserId: " + strconv.FormatUint(uint64(freshlyCreatedUser.ID), 10))
 }
 
