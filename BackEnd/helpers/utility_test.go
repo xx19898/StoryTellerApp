@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"StoryTellerAppBackend/models"
 	"fmt"
 	"strconv"
 	"testing"
@@ -62,5 +63,27 @@ func TestThatPasswordReturnsNegativeWhenPasswordsDontMatch(t *testing.T) {
 	passwordsMatch := PasswordMatchesTheHash("wrongPassword", string(encryptedTestPassword))
 	if passwordsMatch {
 		t.Fatal("Password should not match the hash")
+	}
+}
+
+func TestThatNamesGetExtractedFromRoleObjects(t *testing.T) {
+	userRole := models.Role{Name: "USER", ID: 0}
+	adminRole := models.Role{Name: "ADMIN", ID: 1}
+
+	roles := []models.Role{userRole, adminRole}
+	roleNames := RolesToString(roles)
+
+	roleNameMap := make(map[string]bool)
+
+	if len(roleNames) != 2 {
+		t.Fatal("Incorrect number of role names, should be 3 and returned ", len(roleNames))
+	}
+
+	for i := 0; i < len(roleNames); i++ {
+		roleNameMap[roleNames[i]] = true
+	}
+
+	if roleNameMap["USER"] != true || roleNameMap["ADMIN"] != true {
+		t.Fatal("Incorrect role names returned")
 	}
 }

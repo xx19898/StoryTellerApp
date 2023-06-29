@@ -5,6 +5,7 @@ import (
 	"StoryTellerAppBackend/helpers"
 	"StoryTellerAppBackend/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +26,23 @@ func Login(c *gin.Context) {
 	if error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Received error while verifying the password",
+		})
+	}
+	if !passwordsMatch {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "Either password or username are not correct. Please check entered credentials",
+		})
+	}
+
+	user := databaselayer.FindUserByName(loginInfo.Name)
+	jwtToken, err := helpers.CreateToken(user.Name, int64(user.ID), helpers.RolesToString(user.Roles), time.Now().Add(time.Hour*time.Duration(2)).Unix(), time.Now().Unix())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusAccepted, gin.H{
+			"token": jwtToken,
 		})
 	}
 }

@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -23,6 +24,7 @@ type AuthTestSuite struct {
 }
 
 func (suite *AuthTestSuite) SetupSuite() {
+	godotenv.Load("../.env")
 	configuration.ConfigureDatabaseForTest()
 }
 
@@ -41,7 +43,7 @@ func (suite *AuthTestSuite) TestingBasicCreationOfUserEntityInDB() {
 	fmt.Println("Username: " + userFromDataBase.Name + " id: " + strconv.FormatUint(uint64(userFromDataBase.ID), 10))
 }
 
-func (suite *AuthTestSuite) TestingThatEndPointWorks() {
+func (suite *AuthTestSuite) TestingThatRegisterEndPointWorks() {
 	router := gin.Default()
 	router.POST("/register", Register)
 	user := models.User{Name: "NewUser", Password: "PasswordZ", Email: "Email"}
@@ -70,8 +72,9 @@ func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
 	loginReq, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(userFormAsJson))
 	v := httptest.NewRecorder()
 	router.ServeHTTP(v, loginReq)
+	fmt.Println(v.Body.String())
 	assert.Equal(suite.T(), http.StatusAccepted, v.Code)
-	fmt.Println("code: " + strconv.Itoa(v.Code))
+
 }
 
 func TestAuthTestSuite(t *testing.T) {
