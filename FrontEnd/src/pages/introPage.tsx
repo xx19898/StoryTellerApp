@@ -7,8 +7,7 @@ import {
 } from 'react-transition-group';
 import {FaRegArrowAltCircleUp,FaUserPlus} from "react-icons/fa"
 import { IconContext } from "react-icons";
-import { Elastic } from "gsap/gsap-core";
-import { useNavigate, useRoutes } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 
 const Welcome = () => {
@@ -34,7 +33,7 @@ const Welcome = () => {
     return(
         <>
         <Transition timeout={400} in={pageVisible} nodeRef={mainRef} unmountOnExit mountOnEnter 
-        onEnter={() => gsap.from(mainRef.current,{autoAlpha:0,x:"-100vw",stagger:0.3})}
+        onEnter={() => gsap.from(mainRef.current,{autoAlpha:0,x:"-100vw"})}
         onExit={() => handleExit()}>
                 <div  className="w-full min-h-screen bg-base flex flex-col justify-center items-center font-belanosima">
                     <div ref={mainRef} className="h-auto bg-secondary flex flex-col justify-center items-center rounded-md mx-10 py-[10%] shadow-3xl">
