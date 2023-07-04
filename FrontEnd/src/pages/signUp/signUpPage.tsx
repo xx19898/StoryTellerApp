@@ -105,11 +105,11 @@ const SignUpPage = (
             {
                 signUpSuccess ? 
                 <Transition timeout={400} in={signUpSuccess} onEnter={onEnterSignUpSuccess}>
-                <div className="flex flex-col justify-center items-center">
-                    <IconContext.Provider value={{size:'1em',color:'red'}}>
-                        <BsFillPersonCheckFill/>
-                    </IconContext.Provider>
-                    <p>Sign Up Succeeded! You can follow through to the Login page by clicking on the button below</p>
+                <div className="flex flex-col justify-center items-center bg-secSpecial rounded-md w-full p-3 col-span-2 col-start-2" ref={loginRedirectButton}>
+                        <IconContext.Provider value={{size:'3em',color:'#D81E5B'}} >
+                            <BsFillPersonCheckFill />
+                        </IconContext.Provider>
+                    <p className="indent-3 textarea-xl leading-5">Sign Up Succeeded! You can follow through to the Login page by clicking on the button below</p>
                 </div>
                 </Transition>
                 :
@@ -132,8 +132,19 @@ const SignUpPage = (
         }).play() 
     }
 
+    function onEnterSignUpSuccess(){
+        const timeline = gsap.timeline()
+        timeline.
+        from(
+            loginRedirectButton.current
+        ,{
+            autoAlpha:0
+        })
+    }
+
     function onSubmit(){
-        signUp(getValues('username'),getValues('password'))
+        const response = signUp(getValues('username'),getValues('password'))
+        if(response.status === 201) setSignUpSuccess(true)
     }
 }
 
