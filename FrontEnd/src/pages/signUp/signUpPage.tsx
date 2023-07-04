@@ -4,22 +4,27 @@ import { gsap } from "../../gsap"
 import { useForm, } from "react-hook-form"
 import ErrorComponent from "../../common/forms/ErrorComponent"
 import { useDebouncedCallback } from "use-debounce"
+import {BsFillPersonCheckFill} from 'react-icons/bs'
+import { IconContext } from "react-icons"
 
 interface ISignUpForm{
     username: string,
     password: string,
 }
 
-const SignUpPage = ({checkIfUsernameIsTaken}:{checkIfUsernameIsTaken: (username:string) => Promise<boolean>}) => {
+const SignUpPage = (
+    {checkIfUsernameIsTaken,signUp}:{
+        checkIfUsernameIsTaken: (username:string) => Promise<boolean>,
+        signUp: (username:string,password:string) => {status:number,message:string}
+    }) => {
 
     useEffect(() => {
         setPageIsActive(true)
     },[])
 
     const [pageIsActive,setPageIsActive] = useState(false)
-    const [temp,setTemp] = useState(false)
-
-    const {register,handleSubmit,formState:{errors,isValid},setError} = useForm<ISignUpForm>({reValidateMode:'onChange',mode:'onChange'})
+    const [signUpSuccess,setSignUpSuccess] = useState(false)
+    const {register,handleSubmit,formState:{errors,isValid},setError,clearErrors,getValues} = useForm<ISignUpForm>({reValidateMode:'onChange',mode:'onChange'})
 
     const headerRef = useRef(null)
     const usernameLabel = useRef(null)
@@ -29,12 +34,23 @@ const SignUpPage = ({checkIfUsernameIsTaken}:{checkIfUsernameIsTaken: (username:
     const button = useRef(null)
     const mainRef = useRef(null)
     const formComp = useRef(null)
+    const loginRedirectButton = useRef(null)
 
     const usernameTaken = useDebouncedCallback(
         async (username:string) => {
-            return await checkIfUsernameIsTaken(username)
+            if(username.length === 0) {
+                clearErrors("username")
+                setError('username',{type:'required',message:'This field cannot be empty'})
+            } 
+            const result = await checkIfUsernameIsTaken(username)
+            console.log({checkResult:result})
+            if(result) clearErrors('username')
+            else{
+                setError('username',{type:'usernameTaken'})
+            }
+            return result
         },
-        500
+        10
     )
 
     const {
@@ -84,9 +100,21 @@ const SignUpPage = ({checkIfUsernameIsTaken}:{checkIfUsernameIsTaken: (username:
             {
                 errors.password ? <div className="col-span-2 col-start-2 w-full"><ErrorComponent errorMessage={errors.password.message as string} /></div> : null
             }
-            
-            <button ref={button} className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up</button>
-            
+                
+
+            {
+                signUpSuccess ? 
+                <Transition timeout={400} in={signUpSuccess} onEnter={onEnterSignUpSuccess}>
+                <div className="flex flex-col justify-center items-center">
+                    <IconContext.Provider value={{size:'1em',color:'red'}}>
+                        <BsFillPersonCheckFill/>
+                    </IconContext.Provider>
+                    <p>Sign Up Succeeded! You can follow through to the Login page by clicking on the button below</p>
+                </div>
+                </Transition>
+                :
+                <button ref={button} className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up</button>
+            }
             </form>
             </Transition>
         </div>
@@ -105,7 +133,7 @@ const SignUpPage = ({checkIfUsernameIsTaken}:{checkIfUsernameIsTaken: (username:
     }
 
     function onSubmit(){
-        console.log('SUBMITTIN THE FORM')
+        signUp(getValues('username'),getValues('password'))
     }
 }
 
