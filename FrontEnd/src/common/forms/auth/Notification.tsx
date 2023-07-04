@@ -10,7 +10,7 @@ interface ISuccessNotification{
 const Notification = ({text,icon,iconProperties,background}:ISuccessNotification) => {
     
     return(
-    <div className="w-full h-auto bg-" style={{backgroundColor:background}}>
+    <div className="w-full h-auto p-4 text-white font-belanosima text-xl flex flex-col justify-center items-center gap-3 rounded-md" style={{backgroundColor:background}}>
         <p>{text}</p>
         <IconContext.Provider value={{...iconProperties}}>
             {icon}
