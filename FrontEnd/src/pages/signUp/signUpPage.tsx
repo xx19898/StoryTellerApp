@@ -4,8 +4,10 @@ import { gsap } from "../../gsap"
 import { useForm, } from "react-hook-form"
 import ErrorComponent from "../../common/forms/ErrorComponent"
 import { useDebouncedCallback } from "use-debounce"
-import {BsFillPersonCheckFill} from 'react-icons/bs'
+import {BsFillPersonCheckFill, BsPersonFillAdd} from 'react-icons/bs'
 import { IconContext } from "react-icons"
+import Notification from "../../common/forms/auth/Notification"
+import { BiErrorCircle } from "react-icons/bi"
 
 interface ISignUpForm{
     username: string,
@@ -113,7 +115,7 @@ const SignUpPage = (
                 </div>
                 </Transition>
                 :
-                <button ref={button} className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up</button>
+                <button ref={button} className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up <IconContext.Provider value={{color:'#3B429F',size:'2em'}}><BsPersonFillAdd /></IconContext.Provider> </button>
             }
             </form>
             </Transition>
