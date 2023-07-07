@@ -3,7 +3,8 @@ import { gsap } from "gsap/src"
 import { Transition } from "react-transition-group"
 
 
-const LoginPage = () => {
+const LoginPage = ({login}:{login:(username:string,password:string) => void}) => {
+    
     useEffect(() => {
        setPageActive(true)
     },[])
