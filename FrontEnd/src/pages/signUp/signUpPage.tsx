@@ -43,7 +43,7 @@ const SignUpPage = (
             if(username.length === 0) {
                 clearErrors("username")
                 setError('username',{type:'required',message:'This field cannot be empty'})
-            } 
+            }
             const result = await checkIfUsernameIsTaken(username)
             console.log({checkResult:result})
             if(result) clearErrors('username')
@@ -72,40 +72,40 @@ const SignUpPage = (
 
     console.log({isValid:isValid})
     console.log({errors:errors})
-    
+
     return(
         <div ref={mainRef} className="w-auto min-h-screen h-auto bg-base font-belanosima flex flex-col justify-center items-center text-white">
             <Transition in={pageIsActive} nodeRef={formComp} onEnter={onEnter} timeout={400}>
-            <form ref={formComp} onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-3 gap-2 justify-center items-center py-[4rem] w-[90%] rounded-md pl-4 pr-8 bg-secondary">
-            <h2 ref={headerRef} className="text-xl col-span-3 mx-auto my-4">Enter your information</h2>
-            <label ref={usernameLabel} className="mx-auto col-span-1 col-start-0">Username</label>
-            
+            <form ref={formComp} onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 justify-center items-center py-[4rem] w-[90%] rounded-md pl-4 pr-8 bg-secondary">
+            <h2 ref={headerRef} className="text-xl mx-auto my-4">Enter your information</h2>
+            <label ref={usernameLabel} className="mx-auto col-start-0">Username</label>
+
             <input {...usernameInputRest} defaultValue={''} ref={(e) => {
                 refForUsernameInput(e)
                 usernameInput.current = e
-            }} className="input col-span-2 col-start-0 bg-white text-black"/>
+            }} className="bg-white text-black"/>
             {
                 errors.username && errors.username.type === 'usernameTaken' ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage='taken' /></div> : null
             }
             {
                 (errors.username && errors.username.type != 'usernameTaken') ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage={errors.username.message as string} /></div> : null
             }
-            
+
             <label ref={passwordLabel} className="mx-auto col-span-1 col-start-0">Password</label>
-            
+
             <input {...passwordInputRest} ref={(e) => {
                 refForPasswordInput(e)
                 passwordInput.current = e
             }}
             type={'password'} className="input col-span-2 bg-white text-black"/>
-            
+
             {
                 errors.password ? <div className="col-span-2 col-start-2 w-full"><ErrorComponent errorMessage={errors.password.message as string} /></div> : null
             }
-                
+
 
             {
-                signUpSuccess ? 
+                signUpSuccess ?
                 <Transition timeout={400} in={signUpSuccess} onEnter={onEnterSignUpSuccess}>
                 <div className="flex flex-col justify-center items-center bg-secSpecial rounded-md w-full p-3 col-span-2 col-start-2" ref={loginRedirectButton}>
                         <IconContext.Provider value={{size:'3em',color:'#D81E5B'}} >
@@ -131,7 +131,7 @@ const SignUpPage = (
             passwordInput.current
         ],{
             autoAlpha:0,x:'-100vw',stagger:0.03
-        }).play() 
+        }).play()
     }
 
     function onEnterSignUpSuccess(){

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { gsap } from "gsap/src" 
+import { gsap } from "gsap/src"
 import { Transition } from "react-transition-group"
 import { useForm } from "react-hook-form"
 import ErrorComponent from "../../common/forms/ErrorComponent"
@@ -13,13 +13,13 @@ interface ILoginForm{
 const LoginPage = ({login}:{login:(username:string,password:string) => void}) => {
     const {register,clearErrors,formState:{errors,isValid},getValues,handleSubmit} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
     console.log({errors})
-    
+
     useEffect(() => {
        setPageActive(true)
     },[])
 
     const [pageIsActive,setPageActive] = useState(false)
-    
+
     const headerRef = useRef(null)
     const form = useRef(null)
     const usernameLabel = useRef(null)
@@ -72,7 +72,6 @@ const LoginPage = ({login}:{login:(username:string,password:string) => void}) =>
                 button.current,
             ],
             {x:'-40vw',autoAlpha:0,stagger:0.03}).play()
-        
     }
 }
 

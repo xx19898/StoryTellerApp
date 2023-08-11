@@ -11,7 +11,7 @@ import { useNavigate} from "react-router-dom";
 
 
 const Welcome = () => {
-    
+
     useEffect(() => {
         setPageVisible(true)
     },[])
@@ -29,23 +29,23 @@ const Welcome = () => {
     const [pageVisible,setPageVisible] = useState(false)
     const navigate = useNavigate()
     const [action,setAction] = useState(false)
-    
+
     return(
         <>
-        <Transition timeout={400} in={pageVisible} nodeRef={mainRef} unmountOnExit mountOnEnter 
+        <Transition timeout={400} in={pageVisible} nodeRef={mainRef} unmountOnExit mountOnEnter
         onEnter={() => gsap.from(mainRef.current,{autoAlpha:0,x:"-100vw"})}
         onExit={() => handleExit()}>
                 <div  className="w-full min-h-screen bg-base flex flex-col justify-center items-center font-belanosima">
-                    <div ref={mainRef} className="h-auto bg-secondary flex flex-col justify-center items-center rounded-md mx-10 py-[10%] shadow-3xl">
-                        <h1 ref={headerRef} className="card-title text-4xl font-normal text-white my-4">Hello, <u className="text-primary decoration-transparent">stranger</u></h1>
-                        <p className="indent-4 text-white text-xl w-[90%] w-auto mb-4">Do you have a <u className="text-primary decoration-transparent">story</u> to <u className="text-primary decoration-transparent">tell?</u> Or maybe you would be interested to read the stories of others then?
+                    <div ref={mainRef} className=" p-4 h-auto bg-secondary flex flex-col justify-center items-center rounded-md mx-10 py-[10%] shadow-3xl">
+                        <h1 ref={headerRef} className="text-4xl font-normal text-white my-4">Hello, <u className="text-primary decoration-transparent">stranger</u></h1>
+                        <p className="indent-4 text-white text-xl w-auto mb-4">Do you have a <u className="text-primary decoration-transparent">story</u> to <u className="text-primary decoration-transparent">tell?</u> Or maybe you would be interested to read the stories of others then?
                         Either way, we've got you <u className="text-primary decoration-transparent">covered</u>. Sign in or sign up and get going! </p>
                         <button ref={actionButtonRef} onClick={() => setAction(true)}
                         className="btn-neutral rounded-md px-8 py-4 text-lg mb-4">
                             Get going!
                         </button>
                         <Transition timeout={500} in={action} nodeRef={buttonRef}  unmountOnExit mountOnEnter onEnter={() => clickedActionButton()}>
-                        <IconContext.Provider value={{size:"2em",color:"white"}}>        
+                        <IconContext.Provider value={{size:"2em",color:"white"}}>
                             <div className="flex flex-row h-auto bg-darkerSecondary w-[90%] rounded-md justify-between items-center text-white px-4 py-4" ref={buttonRef}>
                                 <button ref={loginButtonRef} onClick={() => handleLoginClick()} className="bg-darkestSecondary rounded-md py-2 px-[3em] flex flex-col gap-1 justify-center items-center">
                                     Login<FaRegArrowAltCircleUp/>
@@ -54,13 +54,13 @@ const Welcome = () => {
                                     Sign Up<FaUserPlus/>
                                 </button>
                             </div>
-                        </IconContext.Provider> 
+                        </IconContext.Provider>
                         </Transition>
                     </div>
-                </div>                
+                </div>
         </Transition>
         </>
-    )   
+    )
     function clickedActionButton(){
         console.log('xd')
         const timeline = gsap.timeline()
@@ -78,7 +78,7 @@ const Welcome = () => {
         setPageVisible(false)
     }
     function handleExit(){
-        const timeline = gsap.timeline({onComplete:() => navigate(nextPage)}) 
+        const timeline = gsap.timeline({onComplete:() => navigate(nextPage)})
         timeline.to(mainRef.current,{autoAlpha:0,x:"100vw"}).play()
     }
 }
