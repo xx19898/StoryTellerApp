@@ -13,7 +13,8 @@ import 'react-quill/dist/quill.snow.css';
             <div className="w-full h-screen bg-base flex flex-col justify-center items-center">
                 <ReactQuill
                 onChange={onChange}
-                className="w-[80%]"
+                className="w-[80%] bg-secondPrimary"
+
                 modules={{
                     toolbar:
                     [
