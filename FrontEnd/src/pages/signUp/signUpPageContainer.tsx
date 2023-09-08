@@ -18,9 +18,9 @@ const SignUpPageContainer = () => {
 
     function registerFunction(username:string,password:string){
         console.log(`MAKING REQUEST TO ${BACKEND_URL}`)
-        if(password === 'correct8888') return {status:201,message:'Allt bra'}
+        if(password === 'correct' && username === 'test') return {status:201,message:'Allt bra'}
         return {status:500,message: 'Could not create password, sorry'}
-    } 
+    }
 
     return(
         <SignUpPage checkIfUsernameIsTaken={mockFunction} signUp={registerFunction} />

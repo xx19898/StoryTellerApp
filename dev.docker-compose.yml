@@ -1,0 +1,68 @@
+services:
+    tellastory_db:
+        container_name: tellastory_db
+        image: postgres:latest
+        environment:
+            - POSTGRES_DB=tellastory_db
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=verySecurePassword
+    tellastory_test_db:
+        container_name: tellastory_test_db
+        image: postgres:latest
+        environment:
+            - POSTGRES_DB=tellastory_test_db
+            - POSTGRES_USER=test_admin
+            - POSTGRES_PASSWORD=testDBPassword
+    storyteller_backend_dev:
+        image: storyteller-backend-dev-img
+        container_name: storyteller-backend-dev
+        build:
+            context: .
+            dockerfile: ./BackEnd/dev.Dockerfile
+        depends_on:
+            - tellastory_db
+            - tellastory_test_db
+        environment:
+            - host=tellastory_db
+            - dbname=tellastory_db
+            - PORT=5432
+            - password=verySecurePassword
+            - user=admin
+        volumes:
+            - type: bind
+              source: ./BackEnd
+              target: /backend
+    storyteller_frontend_dev:
+        image: storyteller-frontend-dev-img
+        container_name: storyteller-frontend-dev
+        volumes:
+            - type: bind
+              source: ./FrontEnd
+              target: /frontEnd
+            - /frontEnd/node_modules
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - WDS_SOCKET_HOST=127.0.0.1
+            - WATCHPACK_POLLING=true
+        build:
+          context: .
+          dockerfile: ./FrontEnd/dev.Dockerfile
+        depends_on:
+            - tellastory_test_db
+            - tellastory_db
+            - storyteller_backend_dev
+    nginx_dev:
+        container_name: nginx_dev
+        image: nginx:1.20.1
+        volumes:
+            - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+        depends_on:
+            - tellastory_db
+            - tellastory_test_db
+            - storyteller_frontend_dev
+            - storyteller_backend_dev
+        ports:
+           - 8080:80
+volumes:
+    postgres-db:
+        driver: local

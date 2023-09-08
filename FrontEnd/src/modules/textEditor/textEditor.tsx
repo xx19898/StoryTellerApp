@@ -2,7 +2,7 @@ import { useState } from "react";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 
-    const X =  () => {
+     export const TextEditor = () => {
         const [value,setValue] = useState('')
         console.log({value})
         function onChange(newval:string){
@@ -29,4 +29,3 @@ import 'react-quill/dist/quill.snow.css';
             </div>);
     }
 
-export default X

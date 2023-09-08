@@ -20,9 +20,7 @@ const Welcome = () => {
     const headerRef = useRef(null)
     const buttonRef = useRef(null)
     const loginButtonRef = useRef(null)
-    const signUpButtonRef = useRef(null)
     const actionButtonRef = useRef(null)
-    const buttonsRef = useRef(null)
     const registerButtonRef = useRef(null)
 
     const [nextPage,setNextPage] = useState<string>('')

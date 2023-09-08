@@ -6,8 +6,6 @@ import ErrorComponent from "../../common/forms/ErrorComponent"
 import { useDebouncedCallback } from "use-debounce"
 import {BsFillPersonCheckFill, BsPersonFillAdd} from 'react-icons/bs'
 import { IconContext } from "react-icons"
-import Notification from "../../common/forms/auth/Notification"
-import { BiErrorCircle } from "react-icons/bi"
 
 interface ISignUpForm{
     username: string,

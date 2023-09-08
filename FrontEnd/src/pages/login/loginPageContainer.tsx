@@ -5,13 +5,13 @@ import { BACKEND_URL } from "../../constants"
 
 
 const LoginPageContainer = () => {
-    const {mutate,data,error} = useMutation({
+    const {mutate} = useMutation({
         mutationFn: ({username,password}:{username:string,password:string}) => {
             return axios.post(`${BACKEND_URL}/api/signIn`,{username:username,password:password})
         },
     })
     return(
-        <LoginPage login={login} error={error} data={data}/>
+        <LoginPage login={login}/>
     )
 
     function login(username:string,password:string){

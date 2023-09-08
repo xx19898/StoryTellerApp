@@ -6,9 +6,9 @@ export default{
     component: Notification,
     title: 'Notification',
     decorators: [
-        (Story:any) => (
+        (Story: JSX.Element) => (
           <div className="w-[200px] h-[200px] flex flex-col justify-center items-center">
-            {Story()}
+            {Story}
           </div>
         ),],
     tags:['autodocs'],

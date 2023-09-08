@@ -11,7 +11,7 @@ interface ILoginForm{
 
 
 const LoginPage = ({login}:{login:(username:string,password:string) => void}) => {
-    const {register,clearErrors,formState:{errors,isValid},getValues,handleSubmit} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
+    const {register,formState:{errors,isValid},getValues} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
     console.log({errors})
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const LoginPage = ({login}:{login:(username:string,password:string) => void}) =>
                 {
                 errors.username && errors.username.type === 'password' ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage='Password is too short' /></div> : null
                 }
-                <button ref={button} disabled={!isValid} className="col-start-2 col-span-1s mt-4 bg-white text-black rounded-md py-4">Sign In</button>
+                <button ref={button} onClick={() => login(getValues('username'),getValues('password'))} disabled={!isValid} className="col-start-2 col-span-1s mt-4 bg-white text-black rounded-md py-4">Sign In</button>
             </form>
             </Transition>
         </div>
@@ -61,7 +61,6 @@ const LoginPage = ({login}:{login:(username:string,password:string) => void}) =>
 
     function onEnter(){
         const tl = gsap.timeline()
-        console.log('started')
         tl
         .from(
             [
