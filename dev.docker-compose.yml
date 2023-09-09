@@ -28,6 +28,12 @@ services:
             - PORT=5432
             - password=verySecurePassword
             - user=admin
+
+            - test_db_host=tellastory_test_db
+            - test_db_name=tellastory_test_db
+            - test_db_PORT=5432
+            - test_db_user=test_admin
+            - test_db_password=testDBPassword
         volumes:
             - type: bind
               source: ./BackEnd

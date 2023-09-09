@@ -24,7 +24,7 @@ type AuthTestSuite struct {
 }
 
 func (suite *AuthTestSuite) SetupSuite() {
-	godotenv.Load("../.env")
+	godotenv.Load("../test.env")
 	configuration.ConfigureDatabaseForTest()
 }
 

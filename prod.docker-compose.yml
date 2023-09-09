@@ -14,7 +14,7 @@ services:
             - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     storyteller_backend_prod:
         container_name: storyteller_backend_prod
-        image: <nameOfBackendProdBuild>
+        image: storyteller-backend-prod
         env_file:
             - secrets.env
         build:

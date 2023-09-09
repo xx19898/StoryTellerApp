@@ -41,7 +41,12 @@ func ConnectDb(config *gorm.Config) {
 
 func ConnectTestDb(config *gorm.Config) {
 	var err error
-	dsn := "host=localhost user=test_admin password=testDBPassword dbname=tellastory_test_db port=1339 sslmode=disable TimeZone=Europe/Berlin"
+	host, _ := helpers.GetEnv("test_db_host")
+	port, _ := helpers.GetEnv("test_db_PORT")
+	user, _ := helpers.GetEnv("test_db_user")
+	password, _ := helpers.GetEnv("test_db_password")
+	dbname, _ := helpers.GetEnv("test_db_name")
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/Berlin", host, user, password, dbname, port)
 	DB, err = gorm.Open(postgres.Open(dsn), config)
 	if err != nil {
 		log.Fatal("Failed to connect to the Database")
