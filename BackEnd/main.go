@@ -1,8 +1,8 @@
 package main
 
 import (
+	"StoryTellerAppBackend/auth"
 	"StoryTellerAppBackend/configuration"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -12,11 +12,11 @@ import (
 func main() {
 	r := gin.Default()
 
-	router := r.Group("/auth")
+	authGroup := r.Group("/auth")
 
-	router.POST("/register")
-	router.POST("/login")
-	fmt.Println("hello")
+	authGroup.POST("/register", auth.Register)
+	authGroup.POST("/login", auth.Login)
+
 	godotenv.Load()
 	configuration.ConnectDb(&gorm.Config{})
 	r.Run()

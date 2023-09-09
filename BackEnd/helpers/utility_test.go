@@ -2,8 +2,6 @@ package helpers
 
 import (
 	"StoryTellerAppBackend/models"
-	"fmt"
-	"strconv"
 	"testing"
 	"time"
 
@@ -25,7 +23,6 @@ func TestThatPasswordGetsEncryptedAndCanThenBeComparedWithAString(t *testing.T) 
 		t.Fatal(err.Error())
 	}
 	passwordsMatch := PasswordMatchesTheHash(testPassword, string(encryptedTestPassword))
-	fmt.Println("passwords should match: " + strconv.FormatBool(passwordsMatch))
 	if !passwordsMatch {
 		t.Fatal("Given password and hash of the encrypted password do not match")
 	}
@@ -49,9 +46,6 @@ func TestThatJWTTokenGetsCreated(t *testing.T) {
 	if username != "testUser" {
 		t.Fatal("Incorrect username parsed")
 	}
-	date := time.Unix(claims.ExpiresAt, 0)
-	fmt.Println("expiration date: ", date)
-
 }
 
 func TestThatPasswordReturnsNegativeWhenPasswordsDontMatch(t *testing.T) {

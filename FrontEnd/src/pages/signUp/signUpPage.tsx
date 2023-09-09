@@ -81,7 +81,7 @@ const SignUpPage = (
             <input {...usernameInputRest} defaultValue={''} ref={(e) => {
                 refForUsernameInput(e)
                 usernameInput.current = e
-            }} className="bg-white text-black"/>
+            }} className="input col-span-2 bg-white text-black"/>
             {
                 errors.username && errors.username.type === 'usernameTaken' ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage='taken' /></div> : null
             }
