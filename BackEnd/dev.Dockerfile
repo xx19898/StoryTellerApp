@@ -2,7 +2,8 @@ FROM golang:1.21.0-alpine
 
 WORKDIR /backend
 
-COPY go.mod go.sum /backend/
+COPY go.mod /backend/
+COPY go.sum /backend/
 
 RUN go mod download
 
