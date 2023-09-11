@@ -2,21 +2,14 @@ import axios from "axios"
 import LoginPage from "./loginPage"
 import {useMutation} from 'react-query'
 import { BACKEND_URL } from "../../constants"
+import UseSignIn from "../../hooks/mutations/useSignIn"
 
 
 const LoginPageContainer = () => {
-    const {mutate} = useMutation({
-        mutationFn: ({username,password}:{username:string,password:string}) => {
-            return axios.post(`${BACKEND_URL}/api/signIn`,{username:username,password:password})
-        },
-    })
+    const {data,error,isLoading,signIn} = UseSignIn()
     return(
-        <LoginPage login={login}/>
+        <LoginPage login={(username:string, password:string) => signIn({username,password})} />
     )
-
-    function login(username:string,password:string){
-        mutate({username:username,password:password})
-    }
 }
 
 export default LoginPageContainer

@@ -3,9 +3,11 @@ package main
 import (
 	"StoryTellerAppBackend/auth"
 	"StoryTellerAppBackend/configuration"
+	"StoryTellerAppBackend/helpers"
+	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"gorm.io/gorm"
 )
 
@@ -17,7 +19,16 @@ func main() {
 	authGroup.POST("/register", auth.Register)
 	authGroup.POST("/login", auth.Login)
 
-	godotenv.Load()
 	configuration.ConnectDb(&gorm.Config{})
-	r.Run()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+	PORT, ok := helpers.GetEnv("PORT")
+	fmt.Println("This is secret " + PORT)
+	if !ok {
+		panic("could not retrieve env variable with port")
+	}
+	r.Run(fmt.Sprintf(":%s", PORT))
 }

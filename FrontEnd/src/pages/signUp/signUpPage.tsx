@@ -13,9 +13,9 @@ interface ISignUpForm{
 }
 
 const SignUpPage = (
-    {checkIfUsernameIsTaken,signUp}:{
-        checkIfUsernameIsTaken: (username:string) => Promise<boolean>,
-        signUp: (username:string,password:string) => {status:number,message:string}
+    {signUp,httpStatus}:{
+        signUp: ({username,password}:{username:string,password:string}) => unknown,
+        httpStatus: number | undefined
     }) => {
 
     useEffect(() => {
@@ -36,32 +36,13 @@ const SignUpPage = (
     const formComp = useRef(null)
     const loginRedirectButton = useRef(null)
 
-    const usernameTaken = useDebouncedCallback(
-        async (username:string) => {
-            if(username.length === 0) {
-                clearErrors("username")
-                setError('username',{type:'required',message:'This field cannot be empty'})
-            }
-            const result = await checkIfUsernameIsTaken(username)
-            console.log({checkResult:result})
-            if(result) clearErrors('username')
-            else{
-                setError('username',{type:'usernameTaken'})
-            }
-            return result
-        },
-        10
-    )
-
     const {
         ref:refForUsernameInput,
         ...usernameInputRest
     } = register("username",{
         minLength:{message:'Length of the username should be at least 4 characters',value:4},
         required:{value:true,message:'This field cannot be empty'},
-        validate:{
-            usernameTaken,
-        }})
+        })
 
     const {
         ref:refForPasswordInput,
@@ -70,6 +51,7 @@ const SignUpPage = (
 
     console.log({isValid:isValid})
     console.log({errors:errors})
+    console.log({httpStatus:httpStatus})
 
     return(
         <div ref={mainRef} className="w-auto min-h-screen h-auto bg-base font-belanosima flex flex-col justify-center items-center text-white">
@@ -113,7 +95,10 @@ const SignUpPage = (
                 </div>
                 </Transition>
                 :
-                <button ref={button} className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up <IconContext.Provider value={{color:'#3B429F',size:'2em'}}><BsPersonFillAdd /></IconContext.Provider> </button>
+                <button
+                onClick={() => onSubmit()}
+                ref={button}
+                className="text-black hover:bg-primary col-span-3 mx-auto mt-4 btn-secondary bg-white py-4 px-8 rounded-md">Sign Up <IconContext.Provider value={{color:'#3B429F',size:'2em'}}><BsPersonFillAdd /></IconContext.Provider> </button>
             }
             </form>
             </Transition>
@@ -143,8 +128,9 @@ const SignUpPage = (
     }
 
     function onSubmit(){
-        const response = signUp(getValues('username'),getValues('password'))
-        if(response.status === 201) setSignUpSuccess(true)
+        const response = signUp({
+            username:getValues('username'),
+            password:getValues('password')})
     }
 }
 

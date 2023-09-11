@@ -25,9 +25,11 @@ services:
         environment:
             - host=tellastory_db
             - dbname=tellastory_db
-            - PORT=5432
+            - db_port=5432
             - password=verySecurePassword
             - user=admin
+
+            - PORT=4000
 
             - test_db_host=tellastory_test_db
             - test_db_name=tellastory_test_db

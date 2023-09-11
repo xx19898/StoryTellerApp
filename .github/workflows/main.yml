@@ -1,0 +1,16 @@
+name: Development pipeline
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    initial_pipeline:
+        runs-on: ubuntu:latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Print hello world
+              run: echo "Hello world"
