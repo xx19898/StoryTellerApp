@@ -17,8 +17,8 @@ services:
         image: storyteller-backend-dev-img
         container_name: storyteller-backend-dev
         build:
-            context: .
-            dockerfile: ./BackEnd/dev.Dockerfile
+            context: ./BackEnd
+            dockerfile: ./dev.Dockerfile
         depends_on:
             - tellastory_db
             - tellastory_test_db
@@ -44,17 +44,17 @@ services:
         image: storyteller-frontend-dev-img
         container_name: storyteller-frontend-dev
         volumes:
+            - /frontEnd/node_modules
             - type: bind
               source: ./FrontEnd
               target: /frontEnd
-            - /frontEnd/node_modules
         environment:
             - CHOKIDAR_USEPOLLING=true
             - WDS_SOCKET_HOST=127.0.0.1
             - WATCHPACK_POLLING=true
         build:
-          context: .
-          dockerfile: ./FrontEnd/dev.Dockerfile
+          context: ./FrontEnd
+          dockerfile: ./dev.Dockerfile
         depends_on:
             - tellastory_test_db
             - tellastory_db

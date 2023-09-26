@@ -73,3 +73,35 @@ func ValidateJWTToken(token string, secret string) bool {
 
 	return err == nil
 }
+
+func ExtractRolesAndUsername(token string, secret string) (string, []string, error) {
+	parsedToken, _ := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		secretAsBytes := []byte(secret)
+		return secretAsBytes, nil
+	})
+	claims := parsedToken.Claims.(jwt.MapClaims)
+	username, _ := claims.GetIssuer()
+	fmt.Println(claims)
+	roles, exists := claims["Roles"]
+	if !exists {
+		return "", []string{}, errors.New("roles not found in claims")
+	}
+	rolesAsInterfaceArray, ok := roles.([]interface{})
+	if !ok {
+		return "", []string{}, errors.New("Error when parsing array of roles in custom claims of jwt token")
+	}
+	var rolesAsStringArray []string
+	for i := 0; i < len(rolesAsInterfaceArray); i++ {
+		roleString, ok := rolesAsInterfaceArray[i].(string)
+		if !ok {
+			return "", []string{}, errors.New(fmt.Sprintf("Error when casting role under index %s to string", fmt.Sprintf("%d", i)))
+
+		}
+		rolesAsStringArray = append(rolesAsStringArray, roleString)
+	}
+	fmt.Println(rolesAsStringArray)
+	return username, rolesAsStringArray, nil
+}

@@ -15,6 +15,8 @@ func ConfigureDatabaseForTest() {
 
 func ResetEverythingElseExceptRoles() {
 	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.User{})
+	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.Story{})
+	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.Comment{})
 }
 
 func ResetEverythingAndPopulateRoles() {

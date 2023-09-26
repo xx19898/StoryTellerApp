@@ -22,7 +22,7 @@ services:
             dockerfile: ./BackEnd/prod.Dockerfile
     nginx_prod:
         container_name: nginx_prod
-        image: <nameOfCustomNginxBuild>
+        image: nginx-prod
         depends_on:
             - storyteller_backend_prod
             - tellastory_db

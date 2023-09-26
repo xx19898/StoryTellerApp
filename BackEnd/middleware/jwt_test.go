@@ -30,3 +30,21 @@ func TestDecidingValidTimeInHours(t *testing.T) {
 		t.Fatal("Incorrect time returned for the refreshToken")
 	}
 }
+
+func TestEncodingAndDecodingClaims(t *testing.T) {
+	testedToken, errTokenGen := GenerateJWTToken("testUser", 1, []string{"ROLE_USER", "ROLE_ADMIN"}, testSecret, AccessToken)
+	username, roles, errRolesExtract := ExtractRolesAndUsername(testedToken, testSecret)
+	if errRolesExtract != nil {
+		t.Fatal(errRolesExtract.Error())
+	}
+	if errTokenGen != nil {
+		t.Fatal("Could not generate JWT token")
+	}
+	if username != "testUser" {
+		t.Fatal("Wrong username")
+	}
+	if roles[0] != "ROLE_USER" {
+		fmt.Println(roles[0])
+		t.Fatal("Wrong role")
+	}
+}

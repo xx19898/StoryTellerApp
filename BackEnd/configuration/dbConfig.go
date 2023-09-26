@@ -27,7 +27,7 @@ func ConnectDb(config *gorm.Config) {
 	}
 
 	fmt.Println("Connected Successfully to the Database")
-	DB.AutoMigrate(&models.User{}, &models.Role{})
+	DB.AutoMigrate(&models.User{}, &models.Role{}, &models.Story{}, &models.Comment{})
 
 	var count int64
 	DB.Find(&models.Role{}).Count(&count)
@@ -52,6 +52,6 @@ func ConnectTestDb(config *gorm.Config) {
 		log.Fatal("Failed to connect to the Database")
 	}
 	fmt.Println("Connected Successfully to the Database")
-	DB.AutoMigrate(&models.User{}, &models.Role{})
+	DB.AutoMigrate(&models.User{}, &models.Role{}, &models.Comment{}, &models.Story{})
 	fmt.Println("Connected Successfully to the Database")
 }
