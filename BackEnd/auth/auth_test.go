@@ -74,7 +74,6 @@ func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
 	router.ServeHTTP(v, loginReq)
 	fmt.Println(v.Body.String())
 	assert.Equal(suite.T(), http.StatusAccepted, v.Code)
-
 }
 
 func TestAuthTestSuite(t *testing.T) {

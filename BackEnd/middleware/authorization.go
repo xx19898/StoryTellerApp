@@ -1,13 +1,13 @@
-// TODO: implement and test authorization
 package middleware
 
 import (
 	"StoryTellerAppBackend/helpers"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthorizationMiddleware() gin.HandlerFunc {
+func RolesExtractionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		headersWithAuthorizationKey, authHeadersFound := c.Request.Header["Authorization"]
@@ -43,4 +43,39 @@ func AuthorizationMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func AuthorizationMiddleware(compareRoles func([]string, []string) bool, neededRoles []string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		grantedRoles := c.GetStringSlice("ROLES")
+		result := compareRoles(grantedRoles, neededRoles)
+		if !result {
+			c.JSON(403, gin.H{
+				"message": "You are not authorized to access this resource",
+			})
+		}
+	}
+}
+
+func CompareRoles(rolesFound []string, rolesNeeded []string) bool {
+	var roleIsFound bool
+
+	for _, roleToFind := range rolesNeeded {
+		roleIsFound = false
+		for _, roleFound := range rolesFound {
+			fmt.Println("***")
+			fmt.Println(roleToFind + " " + roleFound)
+			fmt.Println(roleToFind == roleFound)
+			fmt.Println("***")
+			if roleFound == roleToFind {
+				roleIsFound = true
+				break
+			}
+		}
+		if !roleIsFound {
+			break
+		}
+	}
+
+	return roleIsFound
 }
