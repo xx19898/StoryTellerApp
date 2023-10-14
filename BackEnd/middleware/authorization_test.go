@@ -14,7 +14,7 @@ import (
 func TestThatNotAuthorizedIfNoAuthTokenAttached(t *testing.T) {
 	godotenv.Load("../.test.env")
 	router := gin.Default()
-	router.Use(RolesExtractionMiddleware())
+	router.Use(UserInfoExtractionMiddleware())
 	router.POST("/test", func(c *gin.Context) {})
 
 	w := httptest.NewRecorder()
@@ -62,7 +62,7 @@ func TestThatAuthorizationPipelineWorks(t *testing.T) {
 	}
 
 	router := gin.Default()
-	router.Use(RolesExtractionMiddleware())
+	router.Use(UserInfoExtractionMiddleware())
 	router.Use(AuthorizationMiddleware(CompareRoles, neededRoles))
 	router.POST("/testAuth", func(c *gin.Context) {
 		c.JSON(200, gin.H{

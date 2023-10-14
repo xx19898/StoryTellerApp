@@ -14,7 +14,7 @@ import Story from "../story/Story";
             <div className="w-full h-screen bg-base flex flex-col gap-[3.5em] justify-center items-center">
                 <ReactQuill
                 onChange={onChange}
-                className="w-[80%] bg-secondPrimary p-10 pb-20"
+                className="w-[80%] p-10 pb-20"
 
                 modules={{
                     toolbar:

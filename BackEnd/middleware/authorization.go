@@ -2,12 +2,11 @@ package middleware
 
 import (
 	"StoryTellerAppBackend/helpers"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RolesExtractionMiddleware() gin.HandlerFunc {
+func UserInfoExtractionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		headersWithAuthorizationKey, authHeadersFound := c.Request.Header["Authorization"]
@@ -30,7 +29,7 @@ func RolesExtractionMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		_, roles, errRolesExtract := ExtractRolesAndUsername(authToken, secret)
+		_, _, roles, errRolesExtract := ExtractUserInfo(authToken, secret)
 
 		if errRolesExtract != nil {
 			c.JSON(500, gin.H{
@@ -63,10 +62,6 @@ func CompareRoles(rolesFound []string, rolesNeeded []string) bool {
 	for _, roleToFind := range rolesNeeded {
 		roleIsFound = false
 		for _, roleFound := range rolesFound {
-			fmt.Println("***")
-			fmt.Println(roleToFind + " " + roleFound)
-			fmt.Println(roleToFind == roleFound)
-			fmt.Println("***")
 			if roleFound == roleToFind {
 				roleIsFound = true
 				break

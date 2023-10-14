@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -21,26 +20,24 @@ var (
 
 type CustomClaims struct {
 	Roles []string
+	ID    int
 	jwt.RegisteredClaims
 }
 
 func GenerateJWTToken(Username string, Id int, Roles []string, Secret string, TokenType TokenType) (string, error) {
 	timeValidInHours, err := decideTimeValidInHours(TokenType)
-	fmt.Println("Time token is proper: " + strconv.Itoa(timeValidInHours))
-	fmt.Println("Time now : " + jwt.NewNumericDate(time.Now()).String())
-	fmt.Println("Time token expires: " + jwt.NewNumericDate(time.Now().Add(time.Hour*time.Duration(timeValidInHours))).String())
 	if err != nil {
 		log.Fatal(err)
 	}
 	customClaims := CustomClaims{
 		Roles,
+		Id,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour + time.Duration(timeValidInHours))),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 			Issuer:    Username,
 			Subject:   "User",
-			ID:        strconv.Itoa(Id),
 			Audience:  []string{"StoryTellerApp"},
 		},
 	}
@@ -61,20 +58,18 @@ func decideTimeValidInHours(tokenType TokenType) (int, error) {
 }
 
 func ValidateJWTToken(token string, secret string) bool {
-	parsedToken, err := jwt.ParseWithClaims(token, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+	_, err := jwt.ParseWithClaims(token, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		secretAsBytes := []byte(secret)
 		return secretAsBytes, nil
 	})
-	claims := parsedToken.Claims
-	fmt.Println(claims.GetExpirationTime())
 
 	return err == nil
 }
 
-func ExtractRolesAndUsername(token string, secret string) (string, []string, error) {
+func ExtractUserInfo(token string, secret string) (string, uint, []string, error) {
 	parsedToken, _ := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -83,25 +78,45 @@ func ExtractRolesAndUsername(token string, secret string) (string, []string, err
 		return secretAsBytes, nil
 	})
 	claims := parsedToken.Claims.(jwt.MapClaims)
-	username, _ := claims.GetIssuer()
-	fmt.Println(claims)
+
+	username, usernameNotFoundError := claims.GetIssuer()
+
+	if usernameNotFoundError != nil {
+		return "", 0, []string{}, errors.New("issuer not found in claims")
+	}
+
+	id, idNotFoundError := claims["ID"]
+
+	if !idNotFoundError {
+		return "", 0, []string{}, errors.New("id not found in claims")
+	}
+
+	idAsFloat, idTransformOk := id.(float64)
+
+	if !idTransformOk {
+		return "", 0, []string{}, errors.New("id is in improper format when parsing string to int")
+	}
+
+	idAsInt := int(idAsFloat)
+
+	fmt.Println("Id:")
+	fmt.Println(idAsInt)
+
 	roles, exists := claims["Roles"]
 	if !exists {
-		return "", []string{}, errors.New("roles not found in claims")
+		return "", 0, []string{}, errors.New("roles not found in claims")
 	}
 	rolesAsInterfaceArray, ok := roles.([]interface{})
 	if !ok {
-		return "", []string{}, errors.New("Error when parsing array of roles in custom claims of jwt token")
+		return "", 0, []string{}, errors.New("Error when parsing array of roles in custom claims of jwt token")
 	}
 	var rolesAsStringArray []string
 	for i := 0; i < len(rolesAsInterfaceArray); i++ {
 		roleString, ok := rolesAsInterfaceArray[i].(string)
 		if !ok {
-			return "", []string{}, errors.New(fmt.Sprintf("Error when casting role under index %s to string", fmt.Sprintf("%d", i)))
-
+			return "", 0, []string{}, errors.New(fmt.Sprintf("Error when casting role under index %s to string", fmt.Sprintf("%d", i)))
 		}
 		rolesAsStringArray = append(rolesAsStringArray, roleString)
 	}
-	fmt.Println(rolesAsStringArray)
-	return username, rolesAsStringArray, nil
+	return username, uint(idAsInt), rolesAsStringArray, nil
 }

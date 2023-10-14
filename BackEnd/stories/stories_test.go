@@ -43,6 +43,11 @@ func (suite *StoriesTestSuite) TestThatCreatingNewStoryAndRetrievingItWorks() {
 // 6) Test that comments sender association works
 // 7) Implement authorization and only allow changing users own stories
 
+
+//TODO: test that the user is not able to update the story if he does not own it
+
+func (suite *StoriesTestSuite)
+
 func TestStoriesTestSuite(t *testing.T) {
 	suite.Run(t, new(StoriesTestSuite))
 }
