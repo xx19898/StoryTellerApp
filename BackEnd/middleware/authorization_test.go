@@ -24,7 +24,6 @@ func TestThatNotAuthorizedIfNoAuthTokenAttached(t *testing.T) {
 	if w.Code != 403 {
 		t.Error("Http code is wrong. Should be 403, as no auth token is attached to the request")
 	}
-
 }
 
 func TestThatComparingRolesWorks(t *testing.T) {

@@ -9,15 +9,15 @@ import (
 )
 
 func CreateStory(c *gin.Context) {
+	var newStoryUserInput StoryDTO
 	var newStory models.Story
+	//TODO: /For later/ probably should sanitize the html input in the new stories
 
-	if err := c.ShouldBindJSON(&newStory); err != nil {
+	if err := c.ShouldBindJSON(&newStoryUserInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Malformed story",
 		})
 	}
-
-	//TODO: save userId and username in c object in auth middleware and test it
 
 	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory)
 

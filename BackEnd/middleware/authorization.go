@@ -29,7 +29,7 @@ func UserInfoExtractionMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		_, _, roles, errRolesExtract := ExtractUserInfo(authToken, secret)
+		username, id, roles, errRolesExtract := ExtractUserInfo(authToken, secret)
 
 		if errRolesExtract != nil {
 			c.JSON(500, gin.H{
@@ -39,6 +39,8 @@ func UserInfoExtractionMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("ROLES", roles)
+		c.Set("LOGGED_USER_NAME", username)
+		c.Set("LOGGED_USER_NAME", id)
 
 		c.Next()
 	}

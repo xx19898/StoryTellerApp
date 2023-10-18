@@ -31,7 +31,6 @@ func TestDecidingValidTimeInHours(t *testing.T) {
 func TestEncodingAndDecodingClaims(t *testing.T) {
 	testedToken, errTokenGen := GenerateJWTToken("testUser", 1, []string{"ROLE_USER", "ROLE_ADMIN"}, testSecret, AccessToken)
 	username, id, roles, errUserInfoExtract := ExtractUserInfo(testedToken, testSecret)
-	//TODO: id is in improper form, check transformation from interface{}
 	if errUserInfoExtract != nil {
 		t.Fatal(errUserInfoExtract.Error())
 	}
