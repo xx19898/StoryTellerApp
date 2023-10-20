@@ -3,7 +3,12 @@ package stories
 import (
 	"StoryTellerAppBackend/configuration"
 	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"StoryTellerAppBackend/helpers"
+	"StoryTellerAppBackend/middleware"
 	"StoryTellerAppBackend/models"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -26,8 +31,7 @@ func (suite *StoriesTestSuite) SetupSuite() {
 }
 
 func (suite *StoriesTestSuite) TestThatCreatingNewStoryAndRetrievingItWorks() {
-	user := databaselayer.FindUserByName("testuser")
-	story := models.Story{Title: "Test Title", Content: "Test Content", Owner: models.User{ID: uint(user.ID)}}
+	story := models.Story{Title: "Test Title", Content: "Test Content", Username: "testuser"}
 	databaselayer.CreateNewStory(story)
 	storyFromDb := databaselayer.FindStoryByTitle("Test Title")
 	assert.Equal(suite.T(), "Test Title", storyFromDb.Title)
@@ -35,11 +39,22 @@ func (suite *StoriesTestSuite) TestThatCreatingNewStoryAndRetrievingItWorks() {
 
 func (suite *StoriesTestSuite) TestThatStoryCreatingPipelineWorks() {
 	mockRouter := gin.Default()
-	//TODO: get jwt access token and put it into the mockrequest
+	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
+	mockRouter.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	secret, _ := helpers.GetEnv("JWT_SECRET")
+	accToken, _ := middleware.GenerateJWTToken("testuser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
 	mockRouter.POST("/testCreatingNewStory", CreateStory)
-
 	w := httptest.NewRecorder()
-	mockRequest, _ := http.NewRequest("POST", "/testCreatingNewStory")
+	mockStory := StoryDTO{Content: "<p>Test</p>", Title: "Test Title"}
+	mockStoryJson, err := json.Marshal(mockStory)
+	if err != nil {
+		panic("Could not marshal mockStory")
+	}
+	mockRequest, _ := http.NewRequest("POST", "/testCreatingNewStory", bytes.NewBuffer(mockStoryJson))
+	mockRequest.Header.Set("Authorization", accToken)
+	mockRouter.ServeHTTP(w, mockRequest)
+	fmt.Printf(w.Body.String())
+	assert.Equal(suite.T(), 202, w.Code)
 }
 
 // 1) Implement some kind of role based authorization DONE

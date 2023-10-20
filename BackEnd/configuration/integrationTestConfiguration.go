@@ -2,6 +2,7 @@ package configuration
 
 import (
 	"StoryTellerAppBackend/models"
+	"fmt"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -9,19 +10,20 @@ import (
 
 func ConfigureDatabaseForTest() {
 	ConnectTestDb(&gorm.Config{})
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.User{})
 	ResetEverythingAndPopulateRoles()
 }
 
 func ResetEverythingElseExceptRoles() {
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.User{})
+	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.User{Name: "testuser"})
 	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.Story{})
 	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.Comment{})
 }
 
 func ResetEverythingAndPopulateRoles() {
+	fmt.Print("START")
 	DB.Exec("DELETE FROM user_roles;")
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.User{})
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Select(clause.Associations).Delete(&models.Role{})
+	DB.Exec("DELETE FROM stories;")
+	DB.Exec("DELETE FROM roles;")
+	DB.Exec("DELETE FROM users;")
 	DB.CreateInBatches([]models.Role{{Name: "User"}, {Name: "Admin"}}, 2)
 }

@@ -69,7 +69,7 @@ func ValidateJWTToken(token string, secret string) bool {
 	return err == nil
 }
 
-func ExtractUserInfo(token string, secret string) (string, uint, []string, error) {
+func ExtractUserInfo(token string, secret string) (string, []string, error) {
 	parsedToken, _ := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -82,41 +82,24 @@ func ExtractUserInfo(token string, secret string) (string, uint, []string, error
 	username, usernameNotFoundError := claims.GetIssuer()
 
 	if usernameNotFoundError != nil {
-		return "", 0, []string{}, errors.New("issuer not found in claims")
+		return "", []string{}, errors.New("issuer not found in claims")
 	}
-
-	id, idNotFoundError := claims["ID"]
-
-	if !idNotFoundError {
-		return "", 0, []string{}, errors.New("id not found in claims")
-	}
-
-	idAsFloat, idTransformOk := id.(float64)
-
-	if !idTransformOk {
-		return "", 0, []string{}, errors.New("id is in improper format when parsing string to int")
-	}
-
-	idAsInt := int(idAsFloat)
-
-	fmt.Println("Id:")
-	fmt.Println(idAsInt)
 
 	roles, exists := claims["Roles"]
 	if !exists {
-		return "", 0, []string{}, errors.New("roles not found in claims")
+		return "", []string{}, errors.New("roles not found in claims")
 	}
 	rolesAsInterfaceArray, ok := roles.([]interface{})
 	if !ok {
-		return "", 0, []string{}, errors.New("Error when parsing array of roles in custom claims of jwt token")
+		return "", []string{}, errors.New("Error when parsing array of roles in custom claims of jwt token")
 	}
 	var rolesAsStringArray []string
 	for i := 0; i < len(rolesAsInterfaceArray); i++ {
 		roleString, ok := rolesAsInterfaceArray[i].(string)
 		if !ok {
-			return "", 0, []string{}, errors.New(fmt.Sprintf("Error when casting role under index %s to string", fmt.Sprintf("%d", i)))
+			return "", []string{}, errors.New(fmt.Sprintf("Error when casting role under index %s to string", fmt.Sprintf("%d", i)))
 		}
 		rolesAsStringArray = append(rolesAsStringArray, roleString)
 	}
-	return username, uint(idAsInt), rolesAsStringArray, nil
+	return username, rolesAsStringArray, nil
 }

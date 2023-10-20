@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"StoryTellerAppBackend/helpers"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func UserInfoExtractionMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		username, id, roles, errRolesExtract := ExtractUserInfo(authToken, secret)
+		username, roles, errRolesExtract := ExtractUserInfo(authToken, secret)
 
 		if errRolesExtract != nil {
 			c.JSON(500, gin.H{
@@ -40,8 +41,7 @@ func UserInfoExtractionMiddleware() gin.HandlerFunc {
 
 		c.Set("ROLES", roles)
 		c.Set("LOGGED_USER_NAME", username)
-		c.Set("LOGGED_USER_NAME", id)
-
+		fmt.Print(username)
 		c.Next()
 	}
 }
@@ -55,6 +55,7 @@ func AuthorizationMiddleware(compareRoles func([]string, []string) bool, neededR
 				"message": "You are not authorized to access this resource",
 			})
 		}
+		c.Next()
 	}
 }
 

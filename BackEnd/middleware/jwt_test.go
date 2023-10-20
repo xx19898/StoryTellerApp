@@ -30,15 +30,12 @@ func TestDecidingValidTimeInHours(t *testing.T) {
 
 func TestEncodingAndDecodingClaims(t *testing.T) {
 	testedToken, errTokenGen := GenerateJWTToken("testUser", 1, []string{"ROLE_USER", "ROLE_ADMIN"}, testSecret, AccessToken)
-	username, id, roles, errUserInfoExtract := ExtractUserInfo(testedToken, testSecret)
+	username, roles, errUserInfoExtract := ExtractUserInfo(testedToken, testSecret)
 	if errUserInfoExtract != nil {
 		t.Fatal(errUserInfoExtract.Error())
 	}
 	if errTokenGen != nil {
 		t.Fatal("Could not generate JWT token")
-	}
-	if id != 1 {
-		t.Fatal("Wrong Id")
 	}
 	if username != "testUser" {
 		t.Fatal("Wrong username")

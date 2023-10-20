@@ -21,9 +21,3 @@ func FindUserPasswordHashByName(username string) (string, error) {
 	user := FindUserByName(username)
 	return user.Password, nil
 }
-
-func FindUserById(id int) models.User {
-	var user models.User
-	configuration.DB.Where(models.User{ID: uint(id)}).First(&user)
-	return user
-}
