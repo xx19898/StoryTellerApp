@@ -3,4 +3,5 @@ package stories
 type StoryDTO struct {
 	Content string
 	Title   string
+	ID      uint
 }

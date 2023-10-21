@@ -7,10 +7,8 @@ import (
 	"StoryTellerAppBackend/models"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +27,6 @@ func (suite *AuthTestSuite) SetupSuite() {
 }
 
 func (suite *AuthTestSuite) SetupTest() {
-	fmt.Println("Before each test")
 	configuration.ResetEverythingElseExceptRoles()
 }
 
@@ -40,7 +37,6 @@ func (suite *AuthTestSuite) TestingBasicCreationOfUserEntityInDB() {
 	//result := configuration.DB.Create(&newUser2)
 	userFromDataBase := databaselayer.FindUserByName("NewUser")
 	assert.Equal(suite.T(), "NewUser", userFromDataBase.Name)
-	fmt.Println("Username: " + userFromDataBase.Name + " id: " + strconv.FormatUint(uint64(userFromDataBase.ID), 10))
 }
 
 func (suite *AuthTestSuite) TestingThatRegisterEndPointWorks() {
@@ -54,7 +50,7 @@ func (suite *AuthTestSuite) TestingThatRegisterEndPointWorks() {
 	assert.Equal(suite.T(), http.StatusCreated, w.Code)
 	freshlyCreatedUser := databaselayer.FindUserByName("NewUser")
 	assert.True(suite.T(), helpers.PasswordMatchesTheHash("PasswordZ", freshlyCreatedUser.Password))
-	fmt.Println("freshlyCreatedUserId: " + strconv.FormatUint(uint64(freshlyCreatedUser.ID), 10))
+
 }
 
 func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
@@ -72,7 +68,6 @@ func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
 	loginReq, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(userFormAsJson))
 	v := httptest.NewRecorder()
 	router.ServeHTTP(v, loginReq)
-	fmt.Println(v.Body.String())
 	assert.Equal(suite.T(), http.StatusAccepted, v.Code)
 }
 

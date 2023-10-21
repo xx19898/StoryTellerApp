@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"StoryTellerAppBackend/models"
-	"fmt"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -20,7 +19,6 @@ func ResetEverythingElseExceptRoles() {
 }
 
 func ResetEverythingAndPopulateRoles() {
-	fmt.Print("START")
 	DB.Exec("DELETE FROM user_roles;")
 	DB.Exec("DELETE FROM stories;")
 	DB.Exec("DELETE FROM roles;")

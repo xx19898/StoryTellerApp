@@ -3,7 +3,6 @@ package stories
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
 	"StoryTellerAppBackend/models"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +10,7 @@ import (
 
 func CreateStory(c *gin.Context) {
 	var newStoryUserInput StoryDTO
-	fmt.Println("----")
-	fmt.Println(c.GetString("LOGGED_USER_NAME"))
-	fmt.Println("----")
+
 	//TODO: /For later/ probably should sanitize the html input in the new stories
 
 	if err := c.ShouldBindJSON(&newStoryUserInput); err != nil {
@@ -23,7 +20,7 @@ func CreateStory(c *gin.Context) {
 		return
 	}
 
-	newStory := models.Story{Username: c.GetString("LOGGED_USER_NAME"), Content: newStoryUserInput.Content, Title: newStoryUserInput.Content}
+	newStory := models.Story{Username: c.GetString("LOGGED_USER_NAME"), Content: newStoryUserInput.Content, Title: newStoryUserInput.Title}
 
 	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory)
 
@@ -34,7 +31,7 @@ func CreateStory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"newStory": res,
 	})
 	return
@@ -49,6 +46,7 @@ func UpdateStory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Malformed story",
 		})
+		return
 	}
 
 	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory)
@@ -57,10 +55,12 @@ func UpdateStory(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Error when creating new story",
 		})
+		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "New Story created",
 		"story":   res,
 	})
+	return
 }

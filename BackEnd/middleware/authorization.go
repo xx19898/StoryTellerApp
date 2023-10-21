@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"StoryTellerAppBackend/helpers"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +40,6 @@ func UserInfoExtractionMiddleware() gin.HandlerFunc {
 
 		c.Set("ROLES", roles)
 		c.Set("LOGGED_USER_NAME", username)
-		fmt.Print(username)
 		c.Next()
 	}
 }

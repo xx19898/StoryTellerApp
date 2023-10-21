@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -41,7 +40,6 @@ func TestEncodingAndDecodingClaims(t *testing.T) {
 		t.Fatal("Wrong username")
 	}
 	if roles[0] != "ROLE_USER" {
-		fmt.Println(roles[0])
 		t.Fatal("Wrong role")
 	}
 }
