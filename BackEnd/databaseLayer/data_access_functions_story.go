@@ -10,6 +10,11 @@ func CreateNewStory(story models.Story) (models.Story, error) {
 	return story, result.Error
 }
 
+func DeleteStory(story models.Story) (models.Story, error) {
+	result := configuration.DB.Delete(&story)
+	return story, result.Error
+}
+
 func UpdateStoryContentById(ID uint, newContent string) (models.Story, error) {
 	storyToUpdate, err := FindStoryById(ID)
 	if err != nil {
