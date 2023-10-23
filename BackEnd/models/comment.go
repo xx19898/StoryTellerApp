@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Comment struct {
 	gorm.Model
-	ID          uint `gorm:"primaryKey;unique;autoIncrement" json:"omitempty"`
+	ID          uint `gorm:"primaryKey;unique;autoIncrement"`
 	TextContent string
 	Username    string
 	Sender      User  `gorm:"foreignKey:Username;references:Name"`

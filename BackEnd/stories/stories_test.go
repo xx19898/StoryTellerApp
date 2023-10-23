@@ -135,12 +135,6 @@ func (suite *StoriesTestSuite) TestThatStoryUpdatingPipelineWorks() {
 	assert.Equal(suite.T(), "<p>Updated</p>", updatedStory.Content)
 }
 
-// 3) Test that adding a comment works
-// 4) Test that deleting a comment works
-// 5) Test that comments reply to association works
-// 6) Test that comments sender association works
-// 7) Implement authorization and only allow changing user's own stories
-
 func (suite *StoriesTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() {
 	newStory, err := databaselayer.CreateNewStory(models.Story{Content: "Test Content", Title: "Story To Delete", Username: "testuser"})
 
@@ -160,7 +154,11 @@ func (suite *StoriesTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() 
 }
 
 func (suite *StoriesTestSuite) TestThatStoryDeletionPipelineWorks() {
-	newStory, err := databaselayer.CreateNewStory(models.Story{Content: "Test Content", Title: "Story To Delete", Username: "testuser"})
+	newStory, err := databaselayer.CreateNewStory(models.Story{
+		Content:  "Test Content",
+		Title:    "Story To Delete",
+		Username: "testuser",
+	})
 
 	if err != nil {
 		panic("Error when creating new story to test deletion")

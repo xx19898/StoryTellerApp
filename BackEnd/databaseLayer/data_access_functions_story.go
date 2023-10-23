@@ -27,7 +27,7 @@ func UpdateStoryContentById(ID uint, newContent string) (models.Story, error) {
 
 func FindStoryById(ID uint) (models.Story, error) {
 	var story models.Story
-	result := configuration.DB.Where(models.Story{ID: ID}).First(&story)
+	result := configuration.DB.Where(models.Story{ID: ID}).Preload("Comments").First(&story)
 	if result.Error != nil {
 		return models.Story{}, result.Error
 	}

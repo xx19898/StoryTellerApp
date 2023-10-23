@@ -26,3 +26,12 @@ func ResetEverythingAndPopulateRoles() {
 	DB.Exec("DELETE FROM users;")
 	DB.CreateInBatches([]models.Role{{Name: "User"}, {Name: "Admin"}}, 2)
 }
+
+func ResetComments() {
+	DB.Exec("DELETE FROM comments;")
+}
+
+func ResetCommentsAndStories() {
+	ResetComments()
+	DB.Exec("DELETE FROM stories;")
+}
