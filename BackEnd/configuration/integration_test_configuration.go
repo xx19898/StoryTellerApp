@@ -20,6 +20,7 @@ func ResetEverythingElseExceptRoles() {
 
 func ResetEverythingAndPopulateRoles() {
 	DB.Exec("DELETE FROM user_roles;")
+	DB.Exec("DELETE FROM comments")
 	DB.Exec("DELETE FROM stories;")
 	DB.Exec("DELETE FROM roles;")
 	DB.Exec("DELETE FROM users;")

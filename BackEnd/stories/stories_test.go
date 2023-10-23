@@ -8,7 +8,6 @@ import (
 	"StoryTellerAppBackend/models"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -30,7 +29,6 @@ func (suite *StoriesTestSuite) SetupSuite() {
 	databaselayer.CreateNewUser("testuser", "testpassword", "xx", []models.Role{newRole})
 }
 
-/*
 func (suite *StoriesTestSuite) TestThatCreatingNewStoryAndRetrievingItInDatabaseLayerWorks() {
 	story := models.Story{Title: "Test Title", Content: "Test Content", Username: "testuser"}
 	databaselayer.CreateNewStory(story)
@@ -137,9 +135,6 @@ func (suite *StoriesTestSuite) TestThatStoryUpdatingPipelineWorks() {
 	assert.Equal(suite.T(), "<p>Updated</p>", updatedStory.Content)
 }
 
-// 1) Implement some kind of role based authorization DONE
-// 1) Test  that updating the story works TODO!!!
-// 2) Test that deleting the story works
 // 3) Test that adding a comment works
 // 4) Test that deleting a comment works
 // 5) Test that comments reply to association works
@@ -163,8 +158,6 @@ func (suite *StoriesTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() 
 	assert.NotEqual(suite.T(), nil, findStoryErr)
 	assert.Equal(suite.T(), "record not found", findStoryErr.Error())
 }
-
-*/
 
 func (suite *StoriesTestSuite) TestThatStoryDeletionPipelineWorks() {
 	newStory, err := databaselayer.CreateNewStory(models.Story{Content: "Test Content", Title: "Story To Delete", Username: "testuser"})
@@ -209,10 +202,6 @@ func (suite *StoriesTestSuite) TestThatStoryDeletionPipelineWorks() {
 	accTokenWithAnotherUser, _ := middleware.GenerateJWTToken("wrongUser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
 	notAuthrzdUserStoryDelReq.Header.Set("Authorization", accTokenWithAnotherUser)
 	mockRouter.ServeHTTP(notAuthrzdUserStoryDelReqRecorder, notAuthrzdUserStoryDelReq)
-	fmt.Println("+++++")
-	fmt.Println(notAuthrzdUserStoryDelReqRecorder.Body.String())
-	fmt.Println(story.ID)
-	fmt.Println("+++++")
 	assert.Equal(suite.T(), 403, notAuthrzdUserStoryDelReqRecorder.Code)
 
 	//Deleting right story with right user encoded into JWT
