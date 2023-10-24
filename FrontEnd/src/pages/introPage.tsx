@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react"
 import {
     Transition,
 } from 'react-transition-group';
+
 import {FaRegArrowAltCircleUp,FaUserPlus} from "react-icons/fa"
 import { IconContext } from "react-icons";
 import { useNavigate} from "react-router-dom";
-
 
 const Welcome = () => {
 
@@ -30,7 +30,10 @@ const Welcome = () => {
 
     return(
         <>
-        <Transition timeout={400} in={pageVisible} nodeRef={mainRef} unmountOnExit mountOnEnter
+        <Transition
+        timeout={400} in={pageVisible}
+        nodeRef={mainRef}
+        unmountOnExit mountOnEnter
         onEnter={() => gsap.from(mainRef.current,{autoAlpha:0,x:"-100vw"})}
         onExit={() => handleExit()}>
                 <div  className="w-full min-h-screen bg-base flex flex-col justify-center items-center font-belanosima">
@@ -59,8 +62,8 @@ const Welcome = () => {
         </Transition>
         </>
     )
+
     function clickedActionButton(){
-        console.log('xd')
         const timeline = gsap.timeline()
         timeline
         .to(actionButtonRef.current,{background:'#D81E5B',duration:0.5,color:"white"})

@@ -6,17 +6,19 @@ import ErrorComponent from "../../common/forms/ErrorComponent"
 import { useDebouncedCallback } from "use-debounce"
 import {BsFillPersonCheckFill, BsPersonFillAdd} from 'react-icons/bs'
 import { IconContext } from "react-icons"
+import { useNavigate } from "react-router-dom"
 
 interface ISignUpForm{
     username: string,
     password: string,
 }
 
-const SignUpPage = (
-    {signUp,httpStatus}:{
-        signUp: ({username,password}:{username:string,password:string}) => unknown,
-        httpStatus: number | undefined
-    }) => {
+interface ISignUpPage{
+    signUp: ({username,password}:{username:string,password:string}) => unknown,
+    httpStatus: number | undefined
+}
+
+const SignUpPage = ({signUp,httpStatus}:ISignUpPage) => {
 
     useEffect(() => {
         setPageIsActive(true)
@@ -24,7 +26,10 @@ const SignUpPage = (
 
     const [pageIsActive,setPageIsActive] = useState(false)
     const [signUpSuccess,setSignUpSuccess] = useState(false)
-    const {register,handleSubmit,formState:{errors,isValid},setError,clearErrors,getValues} = useForm<ISignUpForm>({reValidateMode:'onChange',mode:'onChange'})
+    const {register,handleSubmit,formState:{errors,isValid},setError,clearErrors,getValues} = useForm<ISignUpForm>({
+        reValidateMode:'onChange',
+        mode:'onChange'
+    })
 
     const headerRef = useRef(null)
     const usernameLabel = useRef(null)
@@ -35,6 +40,8 @@ const SignUpPage = (
     const mainRef = useRef(null)
     const formComp = useRef(null)
     const loginRedirectButton = useRef(null)
+
+    const navigate = useNavigate()
 
     const {
         ref:refForUsernameInput,
@@ -47,15 +54,19 @@ const SignUpPage = (
     const {
         ref:refForPasswordInput,
         ...passwordInputRest
-    } = register("password",{minLength:{value:8,message:'Password should contain at least 8 characters'},required:{value:true,message:'This field cannot be empty'}})
-
-    console.log({isValid:isValid})
-    console.log({errors:errors})
-    console.log({httpStatus:httpStatus})
+    } = register("password",{
+        minLength:{
+            value:8,
+            message:'Password should contain at least 8 characters'
+        },
+        required:{
+            value:true,
+            message:'This field cannot be empty'
+        }})
 
     return(
         <div ref={mainRef} className="w-auto min-h-screen h-auto bg-base font-belanosima flex flex-col justify-center items-center text-white">
-            <Transition in={pageIsActive} nodeRef={formComp} onEnter={onEnter} timeout={400}>
+            <Transition in={pageIsActive} nodeRef={formComp} onEnter={() => onPageStatusChange(true)} onExit={() => onPageStatusChange(false)} timeout={400}>
             <form ref={formComp} onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 justify-center items-center py-[4rem] w-[90%] rounded-md pl-4 pr-8 bg-secondary">
             <h2 ref={headerRef} className="text-xl mx-auto my-4">Enter your information</h2>
             <label ref={usernameLabel} className="mx-auto col-start-0">Username</label>
@@ -83,7 +94,6 @@ const SignUpPage = (
                 errors.password ? <div className="col-span-2 col-start-2 w-full"><ErrorComponent errorMessage={errors.password.message as string} /></div> : null
             }
 
-
             {
                 signUpSuccess ?
                 <Transition timeout={400} in={signUpSuccess} onEnter={onEnterSignUpSuccess}>
@@ -105,16 +115,31 @@ const SignUpPage = (
         </div>
     )
 
-    function onEnter(){
-        const timeline = gsap.timeline()
-        timeline.
-        from([
-            formComp.current,usernameLabel.current,passwordLabel.current,
-            headerRef.current,button.current,usernameInput.current,
-            passwordInput.current
-        ],{
-            autoAlpha:0,x:'-100vw',stagger:0.03
-        }).play()
+    function onPageStatusChange(newStat:boolean){
+        if(newStat){
+            const timeline = gsap.timeline()
+            timeline.
+            from([
+                formComp.current,usernameLabel.current,passwordLabel.current,
+                headerRef.current,button.current,usernameInput.current,
+                passwordInput.current
+            ],{
+                autoAlpha:0,x:'-100vw',stagger:0.03
+            }).play()
+        }else{
+            const timeline = gsap.timeline()
+            timeline.
+            to([
+                formComp.current,usernameLabel.current,passwordLabel.current,
+                headerRef.current,button.current,usernameInput.current,
+                passwordInput.current
+            ],{
+                autoAlpha:0,x:'-100vw',stagger:0.03
+            }).play()
+
+            timeline.eventCallback("onComplete",() => navigate("/login"))
+        }
+
     }
 
     function onEnterSignUpSuccess(){

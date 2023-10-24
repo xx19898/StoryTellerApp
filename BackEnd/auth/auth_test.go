@@ -42,8 +42,10 @@ func (suite *AuthTestSuite) TestingBasicCreationOfUserEntityInDB() {
 func (suite *AuthTestSuite) TestingThatRegisterEndPointWorks() {
 	router := gin.Default()
 	router.POST("/register", Register)
+
 	user := models.User{Name: "NewUser", Password: "PasswordZ", Email: "Email"}
 	jsonValue, _ := json.Marshal(user)
+
 	req, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)

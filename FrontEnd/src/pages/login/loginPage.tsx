@@ -12,7 +12,6 @@ interface ILoginForm{
 
 const LoginPage = ({login}:{login:(username:string,password:string) => void}) => {
     const {register,formState:{errors,isValid},getValues} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
-    console.log({errors})
 
     useEffect(() => {
        setPageActive(true)

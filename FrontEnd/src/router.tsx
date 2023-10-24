@@ -3,6 +3,7 @@ import IntroPage from "./pages/introPage";
 import LoginPage from "./pages/login/loginPage";
 import SignUpPageContainer from "./pages/signUp/signUpPageContainer";
 import { TextEditor } from "./modules/textEditor/textEditor";
+import MainPageContainer from "./pages/main/MainPageContainer";
 
 
 const router = createBrowserRouter([
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
     {
         path:"/textEditor",
         element: <TextEditor />
+    },
+    {
+        path:"/storytellerLobby",
+        element: <MainPageContainer  />
     },
     {
         path: "/login",
