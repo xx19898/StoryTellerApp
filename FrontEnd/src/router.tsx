@@ -4,6 +4,7 @@ import LoginPage from "./pages/login/loginPage";
 import SignUpPageContainer from "./pages/signUp/signUpPageContainer";
 import { TextEditor } from "./modules/textEditor/textEditor";
 import MainPageContainer from "./pages/main/MainPageContainer";
+import LoginPageContainer from "./pages/login/loginPageContainer";
 
 
 const router = createBrowserRouter([
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/login",
-        element:<LoginPage login={(username:string,password:string) => console.log({username,password})}/>
+        element:<LoginPageContainer/>
     },{
         path: "/signUp",
         element:<SignUpPageContainer/>

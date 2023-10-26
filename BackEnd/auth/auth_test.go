@@ -43,14 +43,17 @@ func (suite *AuthTestSuite) TestingThatRegisterEndPointWorks() {
 	router := gin.Default()
 	router.POST("/register", Register)
 
-	user := models.User{Name: "NewUser", Password: "PasswordZ", Email: "Email"}
+	user := models.User{Name: "NewUser2", Password: "PasswordZ", Email: "Email"}
 	jsonValue, _ := json.Marshal(user)
 
 	req, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(jsonValue))
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
+
 	assert.Equal(suite.T(), http.StatusCreated, w.Code)
-	freshlyCreatedUser := databaselayer.FindUserByName("NewUser")
+
+	freshlyCreatedUser := databaselayer.FindUserByName("NewUser2")
+
 	assert.True(suite.T(), helpers.PasswordMatchesTheHash("PasswordZ", freshlyCreatedUser.Password))
 
 }
@@ -69,7 +72,9 @@ func (suite *AuthTestSuite) TestThatLoginWithRightCredsWorks() {
 	userFormAsJson, _ := json.Marshal(userForm)
 	loginReq, _ := http.NewRequest("POST", "/login", bytes.NewBuffer(userFormAsJson))
 	v := httptest.NewRecorder()
+
 	router.ServeHTTP(v, loginReq)
+
 	assert.Equal(suite.T(), http.StatusAccepted, v.Code)
 }
 

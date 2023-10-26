@@ -13,9 +13,9 @@ type CustomClaims struct {
 }
 
 func CreateToken(username string, id int64, roles []string, expirationDate int64, issuedAt int64) (string, error) {
-	secretKey, err := GetEnv("JWT_SECRET")
+	secretKey, ok := GetEnv("JWT_SECRET")
 
-	if !err {
+	if !ok {
 		return "", errors.New("could not load jwtSecret from env variables")
 	}
 
