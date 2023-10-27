@@ -3,8 +3,6 @@ import { gsap } from "gsap/src"
 import { Transition } from "react-transition-group"
 import { useForm } from "react-hook-form"
 import ErrorComponent from "../../common/forms/ErrorComponent"
-import { AxiosResponse, HttpStatusCode } from "axios"
-import { useNavigate } from "react-router-dom"
 
 interface ILoginForm{
     username:string,
@@ -19,7 +17,7 @@ interface ILoginPage{
     onSuccess: () => void
 }
 
-const LoginPage = ({login,error,isLoading,loginSuccess,onSuccess}:ILoginPage) => {
+const LoginPage = ({login,error,loginSuccess,onSuccess}:ILoginPage) => {
     const {register,formState:{errors,isValid},getValues} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
 
     useEffect(() => {
@@ -52,16 +50,16 @@ const LoginPage = ({login,error,isLoading,loginSuccess,onSuccess}:ILoginPage) =>
             <Transition timeout={400} in={pageIsActive} mountOnEnter unmountOnExit nodeRef={form} onEnter={onEnter}>
             <form ref={form} className="bg-secondary sm:flex sm:flex-col sm:justify-center sm:items-center w-[90%] py-[4rem] px-4 lg:grid lg:grid-cols-3 gap-3 lg:grid-rows-3 rounded-md">
                 <h2 ref={headerRef} className="col-start-0 col-span-3 text-xl mx-auto">Welcome, please <u className="text-primary decoration-transparent">login</u></h2>
-                <label ref={usernameLabel} className="col-start-0 md:col-span-1 flex flex-col justify-center items-center">Username</label>
-                <input {...usernameInputRest} ref={(e) => {
+                <label id="username-label" ref={usernameLabel} className="col-start-0 md:col-span-1 flex flex-col justify-center items-center">Username</label>
+                <input aria-labelledby="username-label"  {...usernameInputRest} ref={(e) => {
                     usernameInputRefForValid(e)
                     usernameInput.current = e
                     }} className="col-start-0 text-center input md:col-span-2 sm:w-full text-black"></input>
                 {
                 errors.username ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage='Username is too short' /></div> : null
                 }
-                <label ref={passwordLabel} className="col-start-0 col-span-1 flex flex-col justify-center items-center">Password</label>
-                <input {...passwordInputRest} ref={(e) => {
+                <label id="password-label" ref={passwordLabel} className="col-start-0 col-span-1 flex flex-col justify-center items-center">Password</label>
+                <input aria-labelledby="password-label" {...passwordInputRest} ref={(e) => {
                     passwordInputRefForValid(e)
                     passwordInput.current = e
                     }} type='password' className="col-start-0 text-center input sm:w-full md:col-span-2 text-black"></input>
@@ -71,7 +69,6 @@ const LoginPage = ({login,error,isLoading,loginSuccess,onSuccess}:ILoginPage) =>
                 <button ref={button} onClick={(e) => {
                     e.preventDefault()
                     login(getValues('username'),getValues('password'))
-
                 }} disabled={!isValid} className="md:col-start-2 md:col-span-2 sm:w-1/2 bg-white text-black rounded-md py-4">Sign In</button>
                 {
                     error ? <div className="md:col-start-1 col-span-3 sm:w-full flex justify-center items-center">
