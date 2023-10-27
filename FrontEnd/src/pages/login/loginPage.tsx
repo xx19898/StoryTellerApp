@@ -11,25 +11,29 @@ interface ILoginForm{
     password:string,
 }
 
-type ISignInRequest = {
-    httpCode:  number,
-    authToken: string | undefined,
-}
-
 interface ILoginPage{
-    login: (username:string,password:string) => Promise<{httpStatus:number}>,
-    onSuccessfulLogin: () => void,
+    login: (username:string,password:string) => void,
+    loginSuccess: boolean,
+    error: string | undefined,
+    isLoading: boolean,
+    onSuccess: () => void
 }
 
-const LoginPage = ({login,onSuccessfulLogin}:ILoginPage) => {
+const LoginPage = ({login,error,isLoading,loginSuccess,onSuccess}:ILoginPage) => {
     const {register,formState:{errors,isValid},getValues} = useForm<ILoginForm>({mode:"onChange",reValidateMode:"onChange"})
 
     useEffect(() => {
        setPageActive(true)
     },[])
 
+    useEffect(() => {
+        if(loginSuccess){
+            onExit()
+            setPageActive(false)
+        }
+    },[loginSuccess])
+
     const [pageIsActive,setPageActive] = useState(false)
-    const [error,setError] = useState<string | undefined>(undefined)
 
     const headerRef = useRef(null)
     const form = useRef(null)
@@ -38,7 +42,6 @@ const LoginPage = ({login,onSuccessfulLogin}:ILoginPage) => {
     const passwordLabel = useRef(null)
     const passwordInput = useRef<HTMLElement | null>(null)
     const button = useRef(null)
-    const navigate = useNavigate()
 
     const {ref:usernameInputRefForValid,...usernameInputRest} = register('username',{minLength:{value:4,message:'Username too short'}})
 
@@ -67,27 +70,18 @@ const LoginPage = ({login,onSuccessfulLogin}:ILoginPage) => {
                 }
                 <button ref={button} onClick={(e) => {
                     e.preventDefault()
-                    onSignInClick()
+                    login(getValues('username'),getValues('password'))
+
                 }} disabled={!isValid} className="md:col-start-2 md:col-span-2 sm:w-1/2 bg-white text-black rounded-md py-4">Sign In</button>
                 {
                     error ? <div className="md:col-start-1 col-span-3 sm:w-full flex justify-center items-center">
-                        <ErrorComponent errorMessage={"There was an error when trying to log in, please check your credentials"}/>
+                        <ErrorComponent errorMessage={error}/>
                         </div> : null
                 }
             </form>
             </Transition>
         </div>
     )
-
-    async function onSignInClick(){
-        console.log('got to onsigninclick')
-        const result = await login(getValues('username'),getValues('password'))
-        if(result.httpStatus == 202){
-            onSuccessfulLogin()
-        }else{
-            setError('Error occured while trying to log in')
-        }
-    }
 
     function onEnter(){
         const tl = gsap.timeline()
@@ -103,7 +97,7 @@ const LoginPage = ({login,onSuccessfulLogin}:ILoginPage) => {
             {x:'-40vw',autoAlpha:0,stagger:0.03}).play()
     }
 
-    function onExit(authToken:string){
+    function onExit(){
         const tl = gsap.timeline()
         tl.to(
             [
@@ -114,7 +108,7 @@ const LoginPage = ({login,onSuccessfulLogin}:ILoginPage) => {
                 button.current,
             ],
             {x:'-40vw',autoAlpha:0,stagger:0.03}).play()
-        tl.eventCallback("onComplete",() => navigate("/storytellerLobby"))
+        tl.eventCallback("onComplete",() => onSuccess())
         }
 }
 

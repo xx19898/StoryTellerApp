@@ -3,7 +3,7 @@ import { BACKEND_URL } from "../../constants"
 import axios from "axios"
 
 const UseSignIn = () => {
-    const { mutateAsync:signIn, isLoading, data, error} = useMutation({
+    const { mutate:signIn, isLoading, data, error} = useMutation({
         mutationFn: (params: {username: string, password:string }) => {
             return axios.post(`${BACKEND_URL}/auth/login`,{
                 username: params.username,
