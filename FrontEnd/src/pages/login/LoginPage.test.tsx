@@ -1,36 +1,48 @@
-import { expect, test, describe } from 'vitest'
-import {fireEvent, render,screen, waitFor} from '@testing-library/react'
+import { expect, test, describe,vi,afterEach } from 'vitest'
+import {cleanup, fireEvent, render,screen, waitFor} from '@testing-library/react'
 import LoginPage from './loginPage'
 
 describe('Testing the Login page', () => {
-    test.only('Username and Password labels exist',async () => {
+    afterEach(() => {
+        cleanup()
+    })
+    test('Username and Password inputs are defined',async () => {
         render(<LoginPage error='' isLoading={false} login={() => console.log('')} loginSuccess={false} onSuccess={() => console.log('')}/>)
 
-        const usernameLabel = await waitFor(() => screen.findByText('Username'))
-        const passwordLabel = await waitFor(() => screen.findByText('Password'))
+        const usernameInput = await waitFor(() => screen.findByTestId('username-input'))
+        const passwordInput = await waitFor(() => screen.findByTestId('password-input'))
 
-        expect(usernameLabel).toBeDefined()
-        expect(passwordLabel).toBeDefined()
+        expect(usernameInput).toBeDefined()
+        expect(passwordInput).toBeDefined()
     })
 
     test('Login func gets called with proper parameters', async () => {
-        const mockCallback = jest.fn((username:string,password:string) => username + password)
+        const mockFn = vi.fn((username:string,password:string) => 0)
 
-        render(<LoginPage error='' isLoading={false} login={mockCallback} loginSuccess={false} onSuccess={() => console.log('')}/>)
+        render(<LoginPage error='' isLoading={false} login={(username:string,password:string) => mockFn(username,password)} loginSuccess={false} onSuccess={() => console.log('')}/>)
 
-        const usernameInput = await waitFor(() => screen.findByLabelText('Username'))
-        const passwordInput = await waitFor(() => screen.findByLabelText('Password'))
+        const usernameInput = await waitFor(() => screen.findByTestId('username-input'))
+        const passwordInput = await waitFor(() => screen.findByTestId('password-input'))
 
         expect(usernameInput).toBeDefined()
         expect(passwordInput).toBeDefined()
 
-        fireEvent.change(usernameInput,{target:{value:'User'}})
+        fireEvent.change(usernameInput,{target:{value:'Username'}})
         fireEvent.change(passwordInput,{target:{value:'Password'}})
+
+        expect(usernameInput.value).toEqual('Username')
+        expect(passwordInput.value).toEqual('Password')
 
         const signInButton = await waitFor(() => screen.findByText('Sign In'))
 
-        fireEvent(signInButton, new MouseEvent('click'))
+        expect(signInButton).toBeDefined()
 
-        expect(mockCallback).toHaveBeenCalledWith({Username:'User',Password:'Password'})
+        fireEvent(signInButton, new MouseEvent('click',{
+            bubbles: true,
+            cancelable: true,
+        }))
+
+        expect(mockFn).toHaveBeenCalledOnce()
+        expect(mockFn).toHaveBeenCalledWith('Username','Password')
     })
 })

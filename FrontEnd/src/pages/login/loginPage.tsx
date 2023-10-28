@@ -50,16 +50,16 @@ const LoginPage = ({login,error,loginSuccess,onSuccess}:ILoginPage) => {
             <Transition timeout={400} in={pageIsActive} mountOnEnter unmountOnExit nodeRef={form} onEnter={onEnter}>
             <form ref={form} className="bg-secondary sm:flex sm:flex-col sm:justify-center sm:items-center w-[90%] py-[4rem] px-4 lg:grid lg:grid-cols-3 gap-3 lg:grid-rows-3 rounded-md">
                 <h2 ref={headerRef} className="col-start-0 col-span-3 text-xl mx-auto">Welcome, please <u className="text-primary decoration-transparent">login</u></h2>
-                <label id="username-label" ref={usernameLabel} className="col-start-0 md:col-span-1 flex flex-col justify-center items-center">Username</label>
-                <input aria-labelledby="username-label"  {...usernameInputRest} ref={(e) => {
+                <label ref={usernameLabel} className="col-start-0 md:col-span-1 flex flex-col justify-center items-center">Username</label>
+                <input  data-testid="username-input"  {...usernameInputRest} ref={(e) => {
                     usernameInputRefForValid(e)
                     usernameInput.current = e
                     }} className="col-start-0 text-center input md:col-span-2 sm:w-full text-black"></input>
                 {
                 errors.username ? <div className="col-span-2 col-start-2"><ErrorComponent errorMessage='Username is too short' /></div> : null
                 }
-                <label id="password-label" ref={passwordLabel} className="col-start-0 col-span-1 flex flex-col justify-center items-center">Password</label>
-                <input aria-labelledby="password-label" {...passwordInputRest} ref={(e) => {
+                <label ref={passwordLabel} className="col-start-0 col-span-1 flex flex-col justify-center items-center">Password</label>
+                <input data-testid="password-input" {...passwordInputRest} ref={(e) => {
                     passwordInputRefForValid(e)
                     passwordInput.current = e
                     }} type='password' className="col-start-0 text-center input sm:w-full md:col-span-2 text-black"></input>
