@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         element: <IntroPage/>
     },
     {
-        path:"/textEditor",
+        path:"/tellstory",
         element: <TextEditor />
     },
     {
