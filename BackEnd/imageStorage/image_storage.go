@@ -6,7 +6,7 @@ import (
 )
 
 func RetrieveFileFromImageFolder(filename string, subfolderName string) (*os.File, error) {
-	path := filepath.Join("IMAGES", subfolderName, filename)
+	path := filepath.Join("/backend", "IMAGES", subfolderName, filename)
 	file, err := os.Open(path)
 	return file, err
 }
