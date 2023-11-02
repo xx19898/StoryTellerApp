@@ -9,11 +9,24 @@ import (
 
 func UploadUserAvatar(ctx *gin.Context) {
 
+	fmt.Println("-------")
+	fmt.Println(ctx.Request.ParseForm())
+	x := ctx.Request.Form
+	for k, v := range x {
+		fmt.Println(k, "value is ", v)
+	}
+
+	fmt.Println("-------")
+
 	newAvatarFileHeader, err := ctx.FormFile("avatarPic")
+
+	fmt.Println("******")
+	fmt.Println(newAvatarFileHeader)
+	fmt.Println("******")
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error when forming file": err.Error(),
 		})
 		return
 	}
