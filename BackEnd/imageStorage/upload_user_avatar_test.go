@@ -65,7 +65,7 @@ func TestUploadUserAvatar(t *testing.T) {
 
 	picUploadRequest, _ := http.NewRequest("POST", "/setUserAvatar", &b)
 	picUploadRequest.Body.Close()
-	picUploadRequest.Header.Add("Content-Type", fmt.Sprintf("multipart/form-data; boundary=----%d", n))
+	picUploadRequest.Header.Add("Content-Type", mw.FormDataContentType())
 	mockRouter.POST("/setUserAvatar", UploadUserAvatar)
 
 	mockRouter.ServeHTTP(reqRecorder, picUploadRequest)
