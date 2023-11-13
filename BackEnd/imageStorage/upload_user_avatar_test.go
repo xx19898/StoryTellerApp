@@ -74,4 +74,7 @@ func TestUploadUserAvatar(t *testing.T) {
 		fmt.Println(reqRecorder.Body)
 		t.Errorf("Code : " + strconv.Itoa(reqRecorder.Code))
 	}
+	//TODO: Test that the image gets saved under correct name in IMAGES folder folder
+	//TODO: Write test for downloading the user avatar from the backend
+	//TODO: Write test for uploading and downloading story pictures
 }
