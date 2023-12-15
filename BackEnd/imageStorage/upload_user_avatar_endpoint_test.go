@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestUploadUserAvatar(t *testing.T) {
+func TestUploadingUserAvatar(t *testing.T) {
 	var b bytes.Buffer
 	mw := multipart.NewWriter(&b)
 	var err error
@@ -74,7 +74,22 @@ func TestUploadUserAvatar(t *testing.T) {
 		fmt.Println(reqRecorder.Body)
 		t.Errorf("Code : " + strconv.Itoa(reqRecorder.Code))
 	}
-	//TODO: Test that the image gets saved under correct name in IMAGES folder folder
-	//TODO: Write test for downloading the user avatar from the backend
-	//TODO: Write test for uploading and downloading story pictures
+
+	_, err = os.Open("/backend/IMAGES/test/test_imageLA.jpg")
+
+	if err != nil {
+		t.Errorf("Image is not found in correct location when testing upload and saving")
+	}
+
+	err = os.Remove("/backend/IMAGES/test/test_imageLA.jpg")
+
+	if err != nil {
+		t.Errorf("Error when deleting the image after the test")
+	}
+
+	_, err = os.Open("/backend/IMAGES/test/test_imageLA.jpg")
+
+	if err == nil {
+		t.Errorf("Image not deleted after the test")
+	}
 }

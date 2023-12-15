@@ -33,4 +33,5 @@ func UploadUserAvatar(ctx *gin.Context) {
 	ctx.SaveUploadedFile(newAvatarFile, dest)
 
 	ctx.JSON(http.StatusOK, gin.H{})
+	//TODO: test that file gets saved under correct name in the correct folder(IMAGES/test), delete after each test
 }
