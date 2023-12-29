@@ -25,7 +25,7 @@ func DownloadUserAvatar(ctx *gin.Context) {
 	var sb strings.Builder
 
 	sb.WriteString(username)
-	sb.WriteString("Avatar")
+	sb.WriteString("_avatar")
 
 	finalFilepathToAvatar := filepath.Join(parent, "IMAGES", sb.String())
 
