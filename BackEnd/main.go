@@ -2,8 +2,11 @@ package main
 
 import (
 	"StoryTellerAppBackend/auth"
+	"StoryTellerAppBackend/comments"
 	"StoryTellerAppBackend/configuration"
 	"StoryTellerAppBackend/helpers"
+	imagestorage "StoryTellerAppBackend/imageStorage"
+	"StoryTellerAppBackend/middleware"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +25,18 @@ func main() {
 	configuration.ConnectDb(&gorm.Config{})
 
 	PORT, portIsFound := helpers.GetEnv("PORT")
+
+	commentGroup := r.Group("/comments")
+	commentGroup.POST("/comment", comments.CreateComment)
+	commentGroup.GET("/commentsByStoryId", comments.GetCommentsByStoryId)
+	commentGroup.Use(middleware.UserInfoExtractionMiddleware())
+	commentGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+
+	imageGroup := r.Group("/images")
+	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
+	imageGroup.POST("/avatar", imagestorage.DownloadUserAvatar)
+	imageGroup.Use(middleware.UserInfoExtractionMiddleware())
+	imageGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
 
 	if !portIsFound {
 		panic("could not retrieve env variable with port")

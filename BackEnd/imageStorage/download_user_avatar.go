@@ -1,6 +1,7 @@
 package imagestorage
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -18,16 +19,25 @@ func DownloadUserAvatar(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Internal server error",
 		})
+		return
 	}
 
 	parent := filepath.Dir(currPath)
 
 	var sb strings.Builder
 
+	fmt.Println("***********")
+	fmt.Println(username)
+	fmt.Println("***********")
+
 	sb.WriteString(username)
 	sb.WriteString("_avatar")
 
 	finalFilepathToAvatar := filepath.Join(parent, "IMAGES", sb.String())
+
+	fmt.Println("***********")
+	fmt.Println(finalFilepathToAvatar)
+	fmt.Println("***********")
 
 	avatarFile, err := os.ReadFile(finalFilepathToAvatar)
 
@@ -35,6 +45,7 @@ func DownloadUserAvatar(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": "Could not find avatar for chosen user",
 		})
+		return
 	}
 
 	ctx.Data(

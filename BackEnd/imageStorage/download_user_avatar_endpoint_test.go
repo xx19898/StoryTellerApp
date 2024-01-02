@@ -3,6 +3,7 @@ package imagestorage
 import (
 	"StoryTellerAppBackend/helpers"
 	"StoryTellerAppBackend/middleware"
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -54,7 +55,7 @@ func (suite *DownloadUserAvatarTestSuite) TestDownloadingAvatarEndpoint() {
 
 	mockRouter := gin.Default()
 	secret, _ := helpers.GetEnv("JWT_SECRET")
-	accToken, _ := middleware.GenerateJWTToken("testuser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
+	accToken, _ := middleware.GenerateJWTToken("testUser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
 
 	recorder := httptest.NewRecorder()
 	mockRouter.GET("/getUserAvatar", DownloadUserAvatar)
@@ -63,12 +64,27 @@ func (suite *DownloadUserAvatarTestSuite) TestDownloadingAvatarEndpoint() {
 	avatarDownloadingRequest.Header.Set("Authorization", accToken)
 
 	mockRouter.ServeHTTP(recorder, avatarDownloadingRequest)
+	assert.Equal(suite.T(), 200, recorder.Result().StatusCode)
 
 	receivedFile := recorder.Body.Bytes()
 
-	fmt.Println("-----------")
-	fmt.Println(receivedFile)
-	fmt.Println("-----------")
+	currDir, _ := os.Getwd()
+
+	parentDir := filepath.Dir(currDir)
+	imagePath := filepath.Join(parentDir, "testAssets", "test_imageLA.jpg")
+
+	image, err := os.Open(imagePath)
+	assert.Nil(suite.T(), err)
+
+	stat, err := image.Stat()
+	assert.Nil(suite.T(), err)
+
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(image).Read(bs)
+
+	assert.Nil(suite.T(), err)
+
+	assert.True(suite.T(), bytes.Equal(bs, receivedFile))
 
 	/*
 
