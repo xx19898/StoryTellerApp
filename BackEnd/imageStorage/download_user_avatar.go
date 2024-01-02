@@ -16,7 +16,7 @@ func DownloadUserAvatar(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Internal error",
+			"error": "Internal server error",
 		})
 	}
 
