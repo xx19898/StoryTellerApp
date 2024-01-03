@@ -31,13 +31,13 @@ func DownloadUserAvatar(ctx *gin.Context) {
 	fmt.Println("***********")
 
 	sb.WriteString(username)
-	sb.WriteString("_avatar")
+	sb.WriteString("_avatar.jpg")
 
 	finalFilepathToAvatar := filepath.Join(parent, "IMAGES", sb.String())
 
-	fmt.Println("***********")
+	fmt.Println("?????????")
 	fmt.Println(finalFilepathToAvatar)
-	fmt.Println("***********")
+	fmt.Println("?????????")
 
 	avatarFile, err := os.ReadFile(finalFilepathToAvatar)
 

@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -54,10 +55,14 @@ func (suite *DownloadUserAvatarTestSuite) TearDownTest() {
 func (suite *DownloadUserAvatarTestSuite) TestDownloadingAvatarEndpoint() {
 
 	mockRouter := gin.Default()
+	godotenv.Load("../.env")
 	secret, _ := helpers.GetEnv("JWT_SECRET")
 	accToken, _ := middleware.GenerateJWTToken("testUser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
 
 	recorder := httptest.NewRecorder()
+
+	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
+	mockRouter.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
 	mockRouter.GET("/getUserAvatar", DownloadUserAvatar)
 
 	avatarDownloadingRequest, _ := http.NewRequest("GET", "/getUserAvatar", bytes.NewBuffer([]byte{}))
@@ -85,7 +90,7 @@ func (suite *DownloadUserAvatarTestSuite) TestDownloadingAvatarEndpoint() {
 	assert.Nil(suite.T(), err)
 
 	assert.True(suite.T(), bytes.Equal(bs, receivedFile))
-
+	//TODO: added middleware to extract and authorize user, test and fix all the errors
 	/*
 
 		parentDir := filepath.Dir(currDir)

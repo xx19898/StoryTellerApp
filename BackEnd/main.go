@@ -34,7 +34,7 @@ func main() {
 
 	imageGroup := r.Group("/images")
 	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
-	imageGroup.POST("/avatar", imagestorage.DownloadUserAvatar)
+	imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
 	imageGroup.Use(middleware.UserInfoExtractionMiddleware())
 	imageGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
 
