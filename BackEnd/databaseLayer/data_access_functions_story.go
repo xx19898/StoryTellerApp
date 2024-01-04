@@ -5,9 +5,25 @@ import (
 	"StoryTellerAppBackend/models"
 )
 
-func CreateNewStory(story models.Story) (models.Story, error) {
-	result := configuration.DB.Create(&story)
-	return story, result.Error
+func CreateNewStoryCustomId(ownerUsername string, id int, content string, title string) (models.Story, error) {
+	newStory := models.Story{
+		ID:       uint(id),
+		Content:  content,
+		Title:    title,
+		Username: ownerUsername,
+	}
+	result := configuration.DB.Create(&newStory)
+	return newStory, result.Error
+}
+
+func CreateNewStory(ownerUsername string, content string, title string) (models.Story, error) {
+	newStory := models.Story{
+		Content:  content,
+		Title:    title,
+		Username: ownerUsername,
+	}
+	result := configuration.DB.Create(&newStory)
+	return newStory, result.Error
 }
 
 func DeleteStory(story models.Story) (models.Story, error) {

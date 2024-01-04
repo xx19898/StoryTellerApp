@@ -2,7 +2,6 @@ package stories
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
-	"StoryTellerAppBackend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,9 +19,11 @@ func CreateStory(c *gin.Context) {
 		return
 	}
 
-	newStory := models.Story{Username: c.GetString("LOGGED_USER_NAME"), Content: newStoryUserInput.Content, Title: newStoryUserInput.Title}
-
-	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory)
+	res, errWhenCreatingStory := databaselayer.CreateNewStory(
+		c.GetString("LOGGED_USER_NAME"),
+		newStoryUserInput.Content,
+		newStoryUserInput.Title,
+	)
 
 	if errWhenCreatingStory != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -37,8 +38,8 @@ func CreateStory(c *gin.Context) {
 	return
 }
 
+/*
 func UpdateStory(c *gin.Context) {
-	//TODO: make this an endpoint which updates an already created thestory
 
 	var newStory models.Story
 
@@ -64,3 +65,4 @@ func UpdateStory(c *gin.Context) {
 	})
 	return
 }
+*/

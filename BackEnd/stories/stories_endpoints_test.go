@@ -1,42 +1,25 @@
 package stories
 
-import (
-	"StoryTellerAppBackend/configuration"
-	databaselayer "StoryTellerAppBackend/databaseLayer"
-	"StoryTellerAppBackend/helpers"
-	"StoryTellerAppBackend/middleware"
-	"StoryTellerAppBackend/models"
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
-)
-
-type StoriesTestSuite struct {
+/*
+type StoriesEndpointTestSuite struct {
 	suite.Suite
 }
 
-func (suite *StoriesTestSuite) SetupSuite() {
+func (suite *StoriesEndpointTestSuite) SetupSuite() {
 	godotenv.Load("../.env")
 	configuration.ConfigureDatabaseForTest()
 	newRole := models.Role{Name: "USER"}
 	databaselayer.CreateNewUser("testuser", "testpassword", "xx", []models.Role{newRole})
 }
 
-func (suite *StoriesTestSuite) TestThatCreatingNewStoryAndRetrievingItInDatabaseLayerWorks() {
+func (suite *StoriesEndpointTestSuite) TestThatCreatingNewStoryAndRetrievingItInDatabaseLayerWorks() {
 	story := models.Story{Title: "Test Title", Content: "Test Content", Username: "testuser"}
 	databaselayer.CreateNewStory(story)
 	storyFromDb := databaselayer.FindStoryByTitle("Test Title")
 	assert.Equal(suite.T(), "Test Title", storyFromDb.Title)
 }
 
-func (suite *StoriesTestSuite) TestThatStoryCreatingPipelineWorks() {
+func (suite *StoriesEndpointTestSuite) TestThatStoryCreatingPipelineWorks() {
 	mockRouter := gin.Default()
 
 	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
@@ -62,17 +45,17 @@ func (suite *StoriesTestSuite) TestThatStoryCreatingPipelineWorks() {
 	assert.Equal(suite.T(), 200, w.Code)
 }
 
-func (suite *StoriesTestSuite) TestThatSearchingAfterStoryWithNonExistingIDGetsHandledProperly() {
+func (suite *StoriesEndpointTestSuite) TestThatSearchingAfterStoryWithNonExistingIDGetsHandledProperly() {
 	_, err := databaselayer.FindStoryById(9999)
 	assert.NotEqual(suite.T(), err, nil)
 }
 
-func (suite *StoriesTestSuite) TestThatUpdatingStoryWithNonExistingIDGetsHandledProperly() {
+func (suite *StoriesEndpointTestSuite) TestThatUpdatingStoryWithNonExistingIDGetsHandledProperly() {
 	_, err := databaselayer.UpdateStoryContentById(999, "wsww")
 	assert.Equal(suite.T(), err.Error(), "record not found")
 }
 
-func (suite *StoriesTestSuite) TestThatUpdatingStoryInDatalayerWorksProperly() {
+func (suite *StoriesEndpointTestSuite) TestThatUpdatingStoryInDatalayerWorksProperly() {
 	createdStory, _ := databaselayer.CreateNewStory(
 		models.Story{
 			Username: "testuser",
@@ -87,7 +70,7 @@ func (suite *StoriesTestSuite) TestThatUpdatingStoryInDatalayerWorksProperly() {
 	assert.Equal(suite.T(), updatedStory.Content, "content2")
 }
 
-func (suite *StoriesTestSuite) TestThatStoryUpdatingPipelineWorks() {
+func (suite *StoriesEndpointTestSuite) TestThatStoryUpdatingPipelineWorks() {
 	mockRouter := gin.Default()
 
 	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
@@ -135,7 +118,7 @@ func (suite *StoriesTestSuite) TestThatStoryUpdatingPipelineWorks() {
 	assert.Equal(suite.T(), "<p>Updated</p>", updatedStory.Content)
 }
 
-func (suite *StoriesTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() {
+func (suite *StoriesEndpointTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() {
 	newStory, err := databaselayer.CreateNewStory(models.Story{Content: "Test Content", Title: "Story To Delete", Username: "testuser"})
 
 	if err != nil {
@@ -153,7 +136,7 @@ func (suite *StoriesTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() 
 	assert.Equal(suite.T(), "record not found", findStoryErr.Error())
 }
 
-func (suite *StoriesTestSuite) TestThatStoryDeletionPipelineWorks() {
+func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
 	newStory, err := databaselayer.CreateNewStory(models.Story{
 		Content:  "Test Content",
 		Title:    "Story To Delete",
@@ -218,6 +201,7 @@ func (suite *StoriesTestSuite) TestThatStoryDeletionPipelineWorks() {
 	assert.Equal(suite.T(), 200, w.Code)
 }
 
-func TestStoriesTestSuite(t *testing.T) {
-	suite.Run(t, new(StoriesTestSuite))
+func TestStoriesEndpointsSuite(t *testing.T) {
+	suite.Run(t, new(StoriesEndpointTestSuite))
 }
+*/

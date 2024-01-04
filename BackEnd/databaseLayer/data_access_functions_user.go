@@ -11,13 +11,21 @@ func CreateNewUser(name string, password string, email string, roles []models.Ro
 	return newUser
 }
 
-func FindUserByName(name string) models.User {
+func FindUserByName(name string) (models.User, error) {
 	var user models.User
-	configuration.DB.Where(models.User{Name: name}).First(&user)
-	return user
+	err := configuration.DB.Where(models.User{Name: name}).First(&user)
+
+	if err != nil {
+		return user, error(err.Error)
+	}
+
+	return user, nil
 }
 
 func FindUserPasswordHashByName(username string) (string, error) {
-	user := FindUserByName(username)
+	user, err := FindUserByName(username)
+	if err != nil {
+		return "", err
+	}
 	return user.Password, nil
 }

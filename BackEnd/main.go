@@ -26,17 +26,21 @@ func main() {
 
 	PORT, portIsFound := helpers.GetEnv("PORT")
 
+	storiesGroup := r.Group("/stories")
+	storiesGroup.Use(middleware.UserInfoExtractionMiddleware())
+	storiesGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+
 	commentGroup := r.Group("/comments")
-	commentGroup.POST("/comment", comments.CreateComment)
-	commentGroup.GET("/commentsByStoryId", comments.GetCommentsByStoryId)
 	commentGroup.Use(middleware.UserInfoExtractionMiddleware())
 	commentGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	commentGroup.POST("/comment", comments.CreateComment)
+	commentGroup.GET("/commentsByStoryId", comments.GetCommentsByStoryId)
 
 	imageGroup := r.Group("/images")
-	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
-	imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
 	imageGroup.Use(middleware.UserInfoExtractionMiddleware())
 	imageGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
+	imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
 
 	if !portIsFound {
 		panic("could not retrieve env variable with port")

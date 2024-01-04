@@ -14,9 +14,11 @@ export interface IMainPage{
 }
 
 const MainPage = ({stories, loggedInUser, onClickNewStoryBut, onClickMyProfileBut, onClickStoryBut}:IMainPage) => {
+    /*
     useEffect(() => {
         onEnter()
     },[])
+    */
     const headerRef = useRef(null)
     const storiesListRef = useRef(null)
     const myAccountButRef = useRef(null)
@@ -36,6 +38,9 @@ const MainPage = ({stories, loggedInUser, onClickNewStoryBut, onClickMyProfileBu
             rounded-md w-full flex sm:flex-col sm:justify-center sm:items-center
             sm:text-4xl sm:py-4">
             {
+                "STORIES"
+
+                /*
                 stories.map(
                     (story) =>
                     <li className="
@@ -43,6 +48,7 @@ const MainPage = ({stories, loggedInUser, onClickNewStoryBut, onClickMyProfileBu
                     rounded-md py-3 drop-shadow-md">
                         {story.name}
                     </li>)
+                */
             }
             </ul>
         </div>

@@ -11,7 +11,7 @@ import (
 )
 
 func DownloadUserAvatar(ctx *gin.Context) {
-	username := ctx.GetString("LOGGED_USER_NAME")
+	//username := ctx.GetString("LOGGED_USER_NAME")
 
 	currPath, err := os.Getwd()
 
@@ -26,11 +26,7 @@ func DownloadUserAvatar(ctx *gin.Context) {
 
 	var sb strings.Builder
 
-	fmt.Println("***********")
-	fmt.Println(username)
-	fmt.Println("***********")
-
-	sb.WriteString(username)
+	//TODO: later have to make endpoint support other image formats
 	sb.WriteString("_avatar.jpg")
 
 	finalFilepathToAvatar := filepath.Join(parent, "IMAGES", sb.String())
