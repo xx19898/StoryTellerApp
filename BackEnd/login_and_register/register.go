@@ -1,4 +1,4 @@
-package auth
+package login_and_register
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"

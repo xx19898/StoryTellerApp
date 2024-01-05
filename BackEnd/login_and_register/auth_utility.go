@@ -1,4 +1,4 @@
-package auth
+package login_and_register
 
 type Role struct {
 	roleName string

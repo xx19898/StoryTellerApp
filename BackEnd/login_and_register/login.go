@@ -1,11 +1,10 @@
-package auth
+package login_and_register
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
 	"StoryTellerAppBackend/helpers"
 	"StoryTellerAppBackend/models"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,19 +39,21 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	user := databaselayer.FindUserByName(loginInfo.Name)
+	/*
+		user := databaselayer.FindUserByName(loginInfo.Name)
 
-	jwtToken, err := helpers.CreateToken(user.Name, int64(user.ID), helpers.RolesToString(user.Roles), time.Now().Add(time.Hour*time.Duration(2)).Unix(), time.Now().Unix())
+		jwtToken, err := helpers.CreateToken(user.Name, int64(user.ID), helpers.RolesToString(user.Roles), time.Now().Add(time.Hour*time.Duration(2)).Unix(), time.Now().Unix())
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
-		return
-	} else {
-		c.JSON(http.StatusAccepted, gin.H{
-			"token": jwtToken,
-		})
-		return
-	}
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		} else {
+			c.JSON(http.StatusAccepted, gin.H{
+				"token": jwtToken,
+			})
+			return
+		}
+	*/
 }

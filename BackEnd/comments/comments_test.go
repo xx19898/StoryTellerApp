@@ -29,13 +29,14 @@ func (suite *CommentsTestSuite) SetupSuite() {
 	fmt.Println("Setting up Comments Test Suite")
 	newRole := models.Role{Name: "User"}
 	databaselayer.CreateNewUser("testuser", "testpassword", "testEmail@gmail.com", []models.Role{newRole})
-	databaselayer.CreateNewStory(
-		models.Story{
-			ID:       1,
-			Content:  "Test Story Content",
-			Title:    "Test Story Title",
-			Username: "testuser",
-		})
+	/* databaselayer.CreateNewStory(
+	models.Story{
+		ID:       1,
+		Content:  "Test Story Content",
+		Title:    "Test Story Title",
+		Username: "testuser",
+	})
+	*/
 }
 
 func (suite *CommentsTestSuite) TearDownTest() {

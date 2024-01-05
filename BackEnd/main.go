@@ -1,11 +1,12 @@
 package main
 
 import (
-	"StoryTellerAppBackend/auth"
 	"StoryTellerAppBackend/comments"
 	"StoryTellerAppBackend/configuration"
 	"StoryTellerAppBackend/helpers"
 	imagestorage "StoryTellerAppBackend/imageStorage"
+	"StoryTellerAppBackend/login_and_register"
+	auth "StoryTellerAppBackend/login_and_register"
 	"StoryTellerAppBackend/middleware"
 	"fmt"
 
@@ -19,7 +20,7 @@ func main() {
 	godotenv.Load(".env")
 	authGroup := r.Group("/auth")
 
-	authGroup.POST("/register", auth.Register)
+	authGroup.POST("/register", login_and_register.Register)
 	authGroup.POST("/login", auth.Login)
 
 	configuration.ConnectDb(&gorm.Config{})

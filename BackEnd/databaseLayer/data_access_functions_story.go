@@ -13,6 +13,7 @@ func CreateNewStoryCustomId(ownerUsername string, id int, content string, title 
 		Username: ownerUsername,
 	}
 	result := configuration.DB.Create(&newStory)
+
 	return newStory, result.Error
 }
 
@@ -23,6 +24,7 @@ func CreateNewStory(ownerUsername string, content string, title string) (models.
 		Username: ownerUsername,
 	}
 	result := configuration.DB.Create(&newStory)
+
 	return newStory, result.Error
 }
 

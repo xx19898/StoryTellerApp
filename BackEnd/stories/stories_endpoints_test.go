@@ -1,6 +1,24 @@
 package stories
 
-/*
+import (
+	"StoryTellerAppBackend/configuration"
+	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"StoryTellerAppBackend/helpers"
+	"StoryTellerAppBackend/middleware"
+	"StoryTellerAppBackend/models"
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+)
+
 type StoriesEndpointTestSuite struct {
 	suite.Suite
 }
@@ -10,13 +28,6 @@ func (suite *StoriesEndpointTestSuite) SetupSuite() {
 	configuration.ConfigureDatabaseForTest()
 	newRole := models.Role{Name: "USER"}
 	databaselayer.CreateNewUser("testuser", "testpassword", "xx", []models.Role{newRole})
-}
-
-func (suite *StoriesEndpointTestSuite) TestThatCreatingNewStoryAndRetrievingItInDatabaseLayerWorks() {
-	story := models.Story{Title: "Test Title", Content: "Test Content", Username: "testuser"}
-	databaselayer.CreateNewStory(story)
-	storyFromDb := databaselayer.FindStoryByTitle("Test Title")
-	assert.Equal(suite.T(), "Test Title", storyFromDb.Title)
 }
 
 func (suite *StoriesEndpointTestSuite) TestThatStoryCreatingPipelineWorks() {
@@ -45,32 +56,7 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryCreatingPipelineWorks() {
 	assert.Equal(suite.T(), 200, w.Code)
 }
 
-func (suite *StoriesEndpointTestSuite) TestThatSearchingAfterStoryWithNonExistingIDGetsHandledProperly() {
-	_, err := databaselayer.FindStoryById(9999)
-	assert.NotEqual(suite.T(), err, nil)
-}
-
-func (suite *StoriesEndpointTestSuite) TestThatUpdatingStoryWithNonExistingIDGetsHandledProperly() {
-	_, err := databaselayer.UpdateStoryContentById(999, "wsww")
-	assert.Equal(suite.T(), err.Error(), "record not found")
-}
-
-func (suite *StoriesEndpointTestSuite) TestThatUpdatingStoryInDatalayerWorksProperly() {
-	createdStory, _ := databaselayer.CreateNewStory(
-		models.Story{
-			Username: "testuser",
-			Title:    "Test Title",
-			Content:  "content1",
-		})
-
-	databaselayer.UpdateStoryContentById(createdStory.ID, "content2")
-
-	updatedStory, _ := databaselayer.FindStoryById(createdStory.ID)
-
-	assert.Equal(suite.T(), updatedStory.Content, "content2")
-}
-
-func (suite *StoriesEndpointTestSuite) TestThatStoryUpdatingPipelineWorks() {
+func (suite *StoriesEndpointTestSuite) TestStoryUpdatingEndpoint() {
 	mockRouter := gin.Default()
 
 	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
@@ -118,30 +104,12 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryUpdatingPipelineWorks() {
 	assert.Equal(suite.T(), "<p>Updated</p>", updatedStory.Content)
 }
 
-func (suite *StoriesEndpointTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() {
-	newStory, err := databaselayer.CreateNewStory(models.Story{Content: "Test Content", Title: "Story To Delete", Username: "testuser"})
-
-	if err != nil {
-		panic("Error when creating new story to test deletion")
-	}
-
-	newStoryInDb, findCreatedStoryErr := databaselayer.FindStoryById(newStory.ID)
-	assert.Equal(suite.T(), nil, findCreatedStoryErr)
-	assert.Equal(suite.T(), "Story To Delete", newStoryInDb.Title)
-
-	databaselayer.DeleteStory(newStory)
-	_, findStoryErr := databaselayer.FindStoryById(newStory.ID)
-
-	assert.NotEqual(suite.T(), nil, findStoryErr)
-	assert.Equal(suite.T(), "record not found", findStoryErr.Error())
-}
-
 func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
-	newStory, err := databaselayer.CreateNewStory(models.Story{
-		Content:  "Test Content",
-		Title:    "Story To Delete",
-		Username: "testuser",
-	})
+	newStory, err := databaselayer.CreateNewStory(
+		"testuser",
+		"Test Content",
+		"Story To Delete",
+	)
 
 	if err != nil {
 		panic("Error when creating new story to test deletion")
@@ -188,6 +156,9 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
 	//Deleting right story with right user encoded into JWT
 	w := httptest.NewRecorder()
 	storyToDeleteJSON, err := json.Marshal(&newStoryInDb)
+	fmt.Println("XXXXXXXXXXXXXXX")
+	fmt.Println(newStoryInDb.ID)
+	fmt.Println("XXXXXXXXXXXXXXX")
 	if err != nil {
 		panic("Error when marshalling story to delete")
 	}
@@ -195,7 +166,7 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
 	mockRequest.Header.Set("Authorization", accToken)
 	mockRouter.ServeHTTP(w, mockRequest)
 
-	_, errSameStoryLookup := databaselayer.FindStoryById(newStory.ID)
+	_, errSameStoryLookup := databaselayer.FindStoryById(newStoryInDb.ID)
 
 	assert.NotNil(suite.T(), errSameStoryLookup)
 	assert.Equal(suite.T(), 200, w.Code)
@@ -204,4 +175,3 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
 func TestStoriesEndpointsSuite(t *testing.T) {
 	suite.Run(t, new(StoriesEndpointTestSuite))
 }
-*/
