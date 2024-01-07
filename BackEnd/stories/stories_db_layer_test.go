@@ -75,12 +75,15 @@ func (suite *StoriesDBLayerTestSuite) TestThatUpdatingStoryInDatalayerWorksPrope
 
 func (suite *StoriesDBLayerTestSuite) TestThatDatabaselayersDeleteStoryFunctionWorks() {
 	newStory, err := databaselayer.CreateNewStory("testuser", "Test Content", "Story To Delete")
-
+	fmt.Println("*********")
+	fmt.Println(newStory.ID)
+	fmt.Println("*********")
 	if err != nil {
 		panic("Error when creating new story to test deletion")
 	}
 
 	newStoryInDb, findCreatedStoryErr := databaselayer.FindStoryById(newStory.ID)
+
 	assert.Equal(suite.T(), nil, findCreatedStoryErr)
 	assert.Equal(suite.T(), "Story To Delete", newStoryInDb.Title)
 

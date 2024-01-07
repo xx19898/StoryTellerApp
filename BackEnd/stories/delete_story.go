@@ -2,6 +2,7 @@ package stories
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 
 func DeleteStory(c *gin.Context) {
 	userBehindRequest := c.GetString("LOGGED_USER_NAME")
+
+	fmt.Println(userBehindRequest)
 
 	var storyToDelete StoryDTO
 
@@ -27,6 +30,7 @@ func DeleteStory(c *gin.Context) {
 		})
 		return
 	}
+
 	if storyFromDb.Username != userBehindRequest {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "Not allowed. You can only delete your own stories",
@@ -35,6 +39,7 @@ func DeleteStory(c *gin.Context) {
 	}
 
 	_, errStoryDeletion := databaselayer.DeleteStory(storyFromDb)
+
 	if errStoryDeletion != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error when trying to delete the story",
@@ -45,5 +50,4 @@ func DeleteStory(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Story deleted",
 	})
-	return
 }

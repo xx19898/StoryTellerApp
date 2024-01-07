@@ -8,7 +8,6 @@ import (
 	"StoryTellerAppBackend/models"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -156,13 +155,13 @@ func (suite *StoriesEndpointTestSuite) TestThatStoryDeletionPipelineWorks() {
 	//Deleting right story with right user encoded into JWT
 	w := httptest.NewRecorder()
 	storyToDeleteJSON, err := json.Marshal(&newStoryInDb)
-	fmt.Println("XXXXXXXXXXXXXXX")
-	fmt.Println(newStoryInDb.ID)
-	fmt.Println("XXXXXXXXXXXXXXX")
+
 	if err != nil {
 		panic("Error when marshalling story to delete")
 	}
+
 	mockRequest, _ := http.NewRequest("DELETE", "/testDeletingStory", bytes.NewBuffer(storyToDeleteJSON))
+
 	mockRequest.Header.Set("Authorization", accToken)
 	mockRouter.ServeHTTP(w, mockRequest)
 
