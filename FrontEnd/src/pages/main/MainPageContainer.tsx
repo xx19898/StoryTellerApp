@@ -9,10 +9,10 @@ const MainPageContainer = () => {
     return(
         <MainPage
         loggedInUser=""
-        onClickMyProfileBut={}
-        onClickNewStoryBut={}
-        onClickStoryBut={}
-        stories={}
+        onClickMyProfileBut={() => console.log('clicked')}
+        onClickNewStoryBut={() => console.log('clicked')}
+        onClickStoryBut={() => console.log('clicked')}
+        stories={[{id:2,name:'xd'}]}
         />
     )
 }
