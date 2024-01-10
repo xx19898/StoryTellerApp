@@ -1,15 +1,17 @@
+import { IUser } from "../users/user"
+
 export interface IStory{
     Title:string,
     ID: number,
     Content: string,
-    Owner: string,
+    Owner: IUser,
 }
 
 const Story = (storyParams:IStory) => {
     return(
-        <li>
+        <div>
             <h2>{storyParams.Title}</h2>
-        </li>
+        </div>
     )
 }
 
