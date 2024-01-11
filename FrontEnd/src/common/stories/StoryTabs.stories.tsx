@@ -5,7 +5,7 @@ import { IStory } from "./Story";
 
 export default{
     component: Stories,
-    title: 'Stories'
+    title: 'StoryTabs'
 }
 
 type Story = StoryObj<typeof Stories>

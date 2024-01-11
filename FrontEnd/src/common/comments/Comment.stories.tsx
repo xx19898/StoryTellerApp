@@ -1,6 +1,5 @@
 import { StoryObj } from "@storybook/react";
 import Comment, { IComment } from "./comment";
-import { IStory } from "../stories/Story";
 
 
 export default{
