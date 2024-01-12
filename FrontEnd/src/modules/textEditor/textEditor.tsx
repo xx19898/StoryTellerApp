@@ -7,11 +7,10 @@ import Story from "../story/Story";
         const [story,setStory] = useState('')
 
         function onChange(newStory:string){
-            console.log({newValue: newStory})
             setStory(newStory)
         }
         return(
-            <div className="w-full h-screen bg-base flex flex-col gap-[3.5em] justify-center items-center">
+            <div className="w-full min-h-screen h-auto bg-base flex flex-col gap-[3.5em] justify-center items-center">
                 <ReactQuill
                 onChange={onChange}
                 className="w-[80%] p-10 pb-20"
@@ -31,6 +30,11 @@ import Story from "../story/Story";
                 <div className="w-[80%] p-10">
                     <Story htmlString={story}/>
                 </div>
+                <p className="w-auto h-auto py-10">
+                    {
+                        story
+                    }
+                </p>
             </div>);
     }
 
