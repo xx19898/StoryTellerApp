@@ -4,6 +4,9 @@ export interface INewStory{
     username: string,
 }
 
+
+//TODO: npm install
+
 const NewStory = ({username}:INewStory) => {
     return(
         <div>

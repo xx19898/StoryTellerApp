@@ -10,10 +10,10 @@ import Story from "../story/Story";
             setStory(newStory)
         }
         return(
-            <div className="w-full min-h-screen h-auto bg-base flex flex-col gap-[3.5em] justify-center items-center">
+            <div className="w-screen min-h-screen h-auto bg-base flex flex-col gap-[3.5em] justify-center items-center">
                 <ReactQuill
                 onChange={onChange}
-                className="w-[80%] p-10 pb-20"
+                className="w-[700px]"
 
                 modules={{
                     toolbar:
@@ -23,14 +23,15 @@ import Story from "../story/Story";
                         [{ 'script': 'sub'}, { 'script': 'super' }],
                         [{ 'indent': '-1'}, { 'indent': '+1' }],
                         [{ 'direction': 'rtl' }],
-                        ['align']
+                        ['align'],
+                        ['image']
                     ]
                     }}
                 />
                 <div className="w-[80%] p-10">
                     <Story htmlString={story}/>
                 </div>
-                <p className="w-auto h-auto py-10">
+                <p className="w-[] h-auto py-10">
                     {
                         story
                     }
