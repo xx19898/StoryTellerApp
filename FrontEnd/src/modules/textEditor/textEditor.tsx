@@ -14,7 +14,6 @@ import Story from "../story/Story";
                 <ReactQuill
                 onChange={onChange}
                 className="w-[80%] p-10 pb-20"
-
                 modules={{
                     toolbar:
                     [
@@ -28,7 +27,7 @@ import Story from "../story/Story";
                     }}
                 />
                 <div className="w-[80%] p-10">
-                    <Story htmlString={story}/>
+                    <Story htmlString={story} />
                 </div>
                 <p className="w-auto h-auto py-10">
                     {
