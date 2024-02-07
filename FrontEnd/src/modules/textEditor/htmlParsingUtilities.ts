@@ -11,9 +11,10 @@ export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     contents: string
 }{
     let i = 0
-    while(htmlString[i] <= '<') i++
+    while(htmlString[i] != '<') i++
 
     let j = i
+    j++
 
     let elementType = ''
 
@@ -21,12 +22,15 @@ export function extractTypeAndContentOfHtmlElement(htmlString:string): {
         elementType = elementType + htmlString[j]
         j++
     }
+
     let theElement = ''
-    while(htmlString[i] != '>'){
+    let closingBracket = 0
+
+    while(closingBracket < 2){
         theElement = theElement + htmlString[i]
+        if(htmlString[i] == '>') closingBracket++
         i++
     }
-    theElement = theElement + htmlString[i]
 
     let contents = ''
 
