@@ -1,4 +1,5 @@
-
+import { useState } from "react"
+import EditingBlockManipulationToolbar from "./manipulationToolbar"
 
 interface IEditingBlock{
     type: 'paragraph' | 'title',
@@ -6,8 +7,13 @@ interface IEditingBlock{
 }
 
 const EditingBlock = ({type,content}:IEditingBlock) => {
+    const [toolbarVisible,setToolbarVisible] = useState(false)
+
     return(
-        <div>
+        <div onMouseEnter={() => setToolbarVisible(true)} onMouseLeave={() => setToolbarVisible(false)}>
+            {
+                toolbarVisible && <EditingBlockManipulationToolbar />
+            }
             {
                 type === 'paragraph' ? <p className="indent-4">{content}</p> : <h2 className="font-semibold text-lg py-2">{content}</h2>
             }

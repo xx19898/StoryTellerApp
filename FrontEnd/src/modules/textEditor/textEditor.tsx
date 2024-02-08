@@ -3,6 +3,7 @@ import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 import Story from "../story/Story";
 import EditingBlock from "./EditingBlock";
+import EditingInput from "./EditingInput";
 
 
      export const TextEditor = () => {
@@ -14,45 +15,11 @@ import EditingBlock from "./EditingBlock";
         ]
 
         return(
-<<<<<<< HEAD
-            <div className="w-screen min-h-screen h-auto bg-base flex flex-col gap-[3.5em] justify-center items-center">
-                <button>Title</button>
-            </div>);
-    }
-
-
-    /*
-    <ReactQuill
-                onChange={onChange}
-                className="w-[700px] p-10"
-
-                modules={{
-                    toolbar:
-                    [
-                        [{ header: [1, 2, false] }], 
-                        ['bold', 'italic', 'underline'],
-                        [{ 'script': 'sub'}, { 'script': 'super' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        [{ 'direction': 'rtl' }],
-                        ['align'],
-                        ['image']
-                    ]
-                    }}
-                />
-                <div className="w-[80%] p-10">
-                    <Story htmlString={story}/>
-                </div>
-                <p className="w-[] h-auto py-10">
-                    {
-                        story
-                    }
-                </p>
-    */
-=======
-            <div className="w-auto max-w-[60%] py-2 px-4 min-h-screen h-auto
+            <div className="w-auto max-w-[40%] py-2 px-4 min-h-screen h-auto
             flex flex-col gap-[3.5em] justify-start items-center
             text-white">
-                <section className="w-3/4 min-h-screen flex flex-col justify-start items-center">
+                <EditingInput />
+                <section className="flex flex-col justify-start items-center">
                 {
                     arr.map((el) => {
                         if(el.elementType === 'title') return <EditingBlock content={el.contents} type={el.elementType}/>
@@ -62,5 +29,4 @@ import EditingBlock from "./EditingBlock";
                 </section>
             </div>);
     }
->>>>>>> dada76c4c000ac56fe0d3beffe648fbd29d66e6a
 
