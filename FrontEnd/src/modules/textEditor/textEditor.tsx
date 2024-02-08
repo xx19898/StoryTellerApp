@@ -11,14 +11,20 @@ import Story from "../story/Story";
         }
         return(
             <div className="w-screen min-h-screen h-auto bg-base flex flex-col gap-[3.5em] justify-center items-center">
-                <ReactQuill
+                <button>Title</button>
+            </div>);
+    }
+
+
+    /*
+    <ReactQuill
                 onChange={onChange}
-                className="w-[700px]"
+                className="w-[700px] p-10"
 
                 modules={{
                     toolbar:
                     [
-                        [{ header: [1, 2, false] }],
+                        [{ header: [1, 2, false] }], 
                         ['bold', 'italic', 'underline'],
                         [{ 'script': 'sub'}, { 'script': 'super' }],
                         [{ 'indent': '-1'}, { 'indent': '+1' }],
@@ -36,6 +42,5 @@ import Story from "../story/Story";
                         story
                     }
                 </p>
-            </div>);
-    }
+    */
 
