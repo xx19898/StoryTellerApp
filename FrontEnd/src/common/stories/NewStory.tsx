@@ -4,16 +4,11 @@ export interface INewStory{
     username: string,
 }
 
-
-//TODO: npm install
-
 const NewStory = ({username}:INewStory) => {
     return(
-        <div>
-            <h1>Write a new Story</h1>
-            <section className="w-[80%] py-5">
-                <TextEditor />
-            </section>
+        <div className="w-full min-h-screen bg-secondary h-auto text-white flex flex-col items-center justify-center">
+            <h1 className="mx-auto text-center text-xl pt-5 font-bold ">Write a new Story</h1>
+            <TextEditor />
         </div>
     )
 }

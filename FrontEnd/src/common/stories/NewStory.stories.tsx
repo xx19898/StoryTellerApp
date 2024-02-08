@@ -6,10 +6,9 @@ export default{
     title: 'NewStory',
     decorators: [
         (NewStory) => (
-            <div className="min-h-screen bg-base h-auto w-auto flex flex-col justify-center items-center">
+            <div className="min-h-screen h-auto w-full flex flex-col justify-center items-center bg-special">
                 <NewStory />
-            </div>
-        )
+            </div>        )
     ]
 }
 
