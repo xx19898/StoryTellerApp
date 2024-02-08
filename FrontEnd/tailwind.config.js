@@ -9,6 +9,16 @@ module.exports = {
       'xl': '1280px',
       '2xl': '1536px',
     },
+    fontSize: {
+      sm: '1rem',
+      base: '1.5rem',
+      lg: '1.7rem',
+      xl: '2rem',
+      '2xl': '2.5rem',
+      '3xl': '3rem',
+      '4xl': '4.5rem',
+      '5xl': '5rem',
+    },
     colors:{
       primary: "#D81E5B",
       secondary: "#3F3F37",
