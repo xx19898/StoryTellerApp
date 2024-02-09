@@ -1,5 +1,5 @@
 import { useState } from "react"
-import EditingBlockManipulationToolbar from "./manipulationToolbar"
+import EditingBlockManipulationToolbar from "./ManipulationToolbar"
 
 interface IEditingBlock{
     type: 'paragraph' | 'title',
@@ -10,7 +10,7 @@ const EditingBlock = ({type,content}:IEditingBlock) => {
     const [toolbarVisible,setToolbarVisible] = useState(false)
 
     return(
-        <div onMouseEnter={() => setToolbarVisible(true)} onMouseLeave={() => setToolbarVisible(false)}>
+        <div className="relative" onMouseEnter={() => setToolbarVisible(true)} onMouseLeave={() => setToolbarVisible(false)}>
             {
                 toolbarVisible && <EditingBlockManipulationToolbar />
             }
