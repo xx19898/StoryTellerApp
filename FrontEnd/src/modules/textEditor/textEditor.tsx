@@ -1,29 +1,76 @@
-import { useState } from "react";
-import ReactQuill from "react-quill";
-import 'react-quill/dist/quill.snow.css';
+import { useEffect, useRef, useState } from "react";
+
 import Story from "../story/Story";
 import EditingBlock from "./EditingBlock";
 import EditingInput from "./EditingInput";
+import { extractTypeAndContentOfHtmlElement, processHtmlString } from "./htmlParsingUtilities";
 
 
      export const TextEditor = () => {
-        const [story, setStory] = useState('')
+        const [elementOrderArray,setElementOrderArray] = useState<string[]>()
+        const [elementMap,setElementMap] = useState<Map<string,string>>()
 
-        const arr = [
-            {elementType: 'title', contents: 'Title'},
-            {elementType: 'paragraph', contents:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sollicitudin consequat condimentum. Suspendisse vitae libero et mi semper molestie. Suspendisse sed bibendum arcu. Suspendisse et aliquam tortor, eget sagittis lacus. Maecenas consectetur sollicitudin turpis, sed consequat felis mollis at. Nunc nec lectus condimentum, ultrices eros ut, auctor eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce a sapien pharetra, pulvinar nibh ac, vestibulum lorem.'}
-        ]
+        const [currentlyEditedElement,setCurrentlyEditedElement] = useState<string | undefined>(undefined)
 
+        const editSectionRef = useRef<HTMLBaseElement>(null)
+
+        useEffect(() => {
+            document.addEventListener("mousedown", onClickOutsideEditSection)
+            return () => {
+                document.addEventListener("mousedown", onClickOutsideEditSection)
+            }
+        })
+        useEffect(() => {
+            const htmlString = '<h2>Title</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sollicitudin consequat condimentum. Suspendisse vitae libero et mi semper molestie. Suspendisse sed bibendum arcu. Suspendisse et aliquam tortor, eget sagittis lacus. Maecenas consectetur sollicitudin turpis, sed consequat felis mollis at. Nunc nec lectus condimentum, ultrices eros ut, auctor eros. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce a sapien pharetra, pulvinar nibh ac, vestibulum lorem.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a velit lacinia, varius lorem id, euismod massa. Integer ornare varius congue. Pellentesque congue nulla quis mauris tincidunt, vel consectetur lorem.</p>'
+            
+            const {
+                htmlElementMap,htmlOrderArray  
+            } = processHtmlString(htmlString)
+            console.log('processed')
+            setElementOrderArray(htmlOrderArray)
+            setElementMap(htmlElementMap)
+            console.log({htmlElementMap,elementOrderArray})
+        },[])
+        
+
+        function editBlock(newVal:string,blockIdentifier:string){
+            const newElementMap = new Map(elementMap)
+            newElementMap.set(blockIdentifier,newVal)
+            setElementMap(newElementMap)
+        }
+
+        function onClickOutsideEditSection(e:MouseEvent){
+            if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
+                console.log({result:!editSectionRef.current.contains(e.target as Node)})
+                stopEditing()
+            }
+        }
+
+        function stopEditing(){
+            setCurrentlyEditedElement(undefined)
+        }
+        
         return(
             <div className="w-auto max-w-[40%] py-2 px-4 min-h-screen h-auto
             flex flex-col gap-[3.5em] justify-start items-center
             text-white">
-                <EditingInput />
-                <section className="flex flex-col justify-start items-center">
+                <h1>Text editor</h1>
+                <section ref={editSectionRef}  className=" bg-secondPrimary flex flex-col justify-start items-center">
                 {
-                    arr.map((el) => {
-                        if(el.elementType === 'title') return <EditingBlock content={el.contents} type={el.elementType}/>
-                        else if(el.elementType === 'paragraph') return <EditingBlock content={el.contents} type={el.elementType}/>
+                    elementOrderArray && elementOrderArray.map((identifier) => {
+                        const el = elementMap?.get(identifier)
+                        if(el != undefined){
+                            const {contents,element,elementType} = extractTypeAndContentOfHtmlElement(el)
+                            console.log({elementType})
+                            if(currentlyEditedElement === identifier) return <EditingInput identifier={identifier} setValue={editBlock} stopEditing={stopEditing} origValue={contents}/>
+                            return <EditingBlock 
+                                    content={contents} 
+                                    type={elementType} 
+                                    identifier={identifier}
+                                    chooseToEdit={setCurrentlyEditedElement}
+                                    
+                                    />
+                        }                        
                 })
                 }
                 </section>

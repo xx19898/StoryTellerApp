@@ -1,16 +1,30 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SlActionUndo } from "react-icons/sl";
 import { SlCheck } from "react-icons/sl";
 
 
 interface IEditingInput{
-    value: string,
-    setValue: (val:string) => void,
+    origValue: string,
+    setValue: (val:string,identifier:string) => void,
+    identifier: string,
+    stopEditing: () => void, 
 }
 
-const EditingInput = () => {
+
+const EditingInput = ({identifier,setValue,origValue,stopEditing}:IEditingInput) => {
     const [inputValue,setInputValue] = useState<string>()
     const [originalValue,setOriginalValue] = useState<string>()
+
+    useEffect(() => {
+        setOriginalValue(origValue)
+    },[])
+
+    function onChange(newVal:string){
+        setInputValue(newVal)
+        setValue(newVal,identifier)
+    }
+
+    //TODO: clicks dont get registered to the section element, fix
 
     return(
         <div className="w-full flex flex-col justify-center items-center bg-darkerSecondary rounded-md p-3">

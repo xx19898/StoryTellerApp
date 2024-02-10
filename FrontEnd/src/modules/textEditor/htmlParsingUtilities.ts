@@ -5,9 +5,27 @@ type IHtmlStringParsed = {
     htmlStringArray: Array<string>
 }
 
+export function composeHtmlElement(newContent:string,elementType:'title' | 'paragraph'){
+    const tagType = elementType === 'paragraph' ? 'p' : 'h2'
+
+    const resultingString = `<${tagType}>${newContent}</${tagType}>`
+    return resultingString
+
+}
+
+function tagToType(tag:string){
+    if(tag === 'h2') return 'title'
+    if(tag === 'p') return 'paragraph'
+    return 'unknown'
+}
+
+function isElementType(elementType: string): elementType is ('title' | 'paragraph'){
+    return (elementType === 'paragraph' || elementType === 'title')
+}
+
 export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     element: string,
-    elementType: string,
+    elementType: 'title' | 'paragraph',
     contents: string
 }{
     let i = 0
@@ -17,10 +35,17 @@ export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     j++
 
     let elementType = ''
+    
 
     while(htmlString[j] != '>'){
         elementType = elementType + htmlString[j]
         j++
+    }
+
+    elementType = tagToType(elementType)
+
+    if(!isElementType(elementType)){
+        throw new Error(`Incorrect html element type: ${elementType}`)
     }
 
     let theElement = ''
