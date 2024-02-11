@@ -13,9 +13,15 @@ export function composeHtmlElement(newContent:string,elementType:'title' | 'para
 
 }
 
-function tagToType(tag:string){
+export function tagToType(tag:string){
     if(tag === 'h2') return 'title'
     if(tag === 'p') return 'paragraph'
+    return 'unknown'
+}
+
+export function typeToTag(type: 'title' | 'paragraph'){
+    if(type === 'title') return 'h2'
+    if(type === 'paragraph') return 'p'
     return 'unknown'
 }
 
