@@ -8,7 +8,7 @@ export default{
         (NewStory) => (
             <div className="min-h-screen h-auto w-full flex flex-col justify-center items-center bg-special">
                 <NewStory />
-            </div>        )
+            </div>)
     ]
 }
 

@@ -67,20 +67,19 @@ import { addHtmlElementIdentifier, extractTypeAndContentOfHtmlElement, processHt
             flex flex-col gap-[3.5em] justify-start items-center
             text-white">
                 <h1>Text editor</h1>
-                <section ref={editSectionRef}  className=" bg-secondPrimary flex flex-col justify-start items-center">
+                <section ref={editSectionRef}  className="flex gap-4 flex-col justify-start items-center text-md">
                 {
                     elementOrderArray && elementOrderArray.map((identifier) => {
                         const el = elementMap?.get(identifier)
                         if(el != undefined){
                             const {contents,element,elementType} = extractTypeAndContentOfHtmlElement(el)
                             console.log({elementType})
-                            if(currentlyEditedElement === identifier) return <EditingInput identifier={identifier} edit={editBlock} stopEditing={stopEditing} origValue={contents}/>
+                            if(currentlyEditedElement === identifier) return <EditingInput identifier={identifier} edit={editBlock} stopEditing={stopEditing} origValue={contents} />
                             return <EditingBlock 
                                     content={contents} 
                                     type={elementType} 
                                     identifier={identifier}
                                     chooseToEdit={setCurrentlyEditedElement}
-                                    
                                     />
                         }                        
                 })

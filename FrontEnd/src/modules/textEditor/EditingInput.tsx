@@ -17,6 +17,7 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
     const [inputValue,setInputValue] = useState<string>(origValue)
     const [originalValue,setOriginalValue] = useState<string>(origValue)
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const [currHeight,setCurrHeight] = useState(200)
 
     useEffect(() => {
         textAreaRef.current?.focus()
@@ -26,11 +27,12 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
 
     function onChange(newVal:string){
         edit(newVal,identifier)
+        if(textAreaRef.current?.scrollHeight) setCurrHeight(textAreaRef.current?.scrollHeight)
     }
 
     return(
-        <div className="w-full flex flex-col justify-center items-center bg-darkerSecondary rounded-md p-3">
-            <textarea className="indent-4 p-4 w-full h-auto text-black focus:outline-none rounded-md" 
+        <div className="w-full h-auto p-4 flex flex-col justify-center items-center bg-darkerSecondary rounded-md">
+            <textarea style={{height:`${currHeight}px`}} className="indent-4 p-2 w-full h-full text-black focus:outline-none rounded-md" 
             defaultValue={inputValue} 
             onChange={(e) => onChange(e.target.value)}
             ref={textAreaRef}
