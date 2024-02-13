@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { SlActionUndo } from "react-icons/sl";
 import { SlCheck } from "react-icons/sl";
+import _debounce from 'lodash.debounce'
 import LoadingSpinner from "./LoadingSpinner";
 
 interface IEditingInput{
@@ -24,6 +25,8 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
         updateTextAreaHeight()
     },[])
 
+    
+
     function updateTextAreaHeight(){
         if(textAreaRef.current?.scrollHeight && textAreaRef.current?.style.height){
             console.log({currHeight:textAreaRef.current?.scrollHeight})
@@ -31,27 +34,34 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
         }
     }
 
-    async function onChange(newVal:string){
+    const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
         await edit(newVal,identifier)
         console.log('got here')
         setStoryUpdating(false)
         updateTextAreaHeight()
+    },2000),[])
+
+    async function onChange(newVal:string){
+        await debouncedMessage(newVal)
     }
 
+    //TODO: implement debounce here
     return(
         <div className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
             {
                 storyUpdating ? 
+
                 <LoadingSpinner />
                 :
                 null
             }
             <textarea 
+            spellCheck={false}
             className="indent-4 p-2 h-auto w-full text-white bg-secondary focus:outline-none rounded-md resize-none" 
             defaultValue={inputValue}
             style={{height: textAreaHeight === 'auto' ? 'auto' : `${textAreaHeight}px`}} 
-            onChange={(e) => onChange(e.target.value)}
+            onChange={async (e) => await onChange(e.target.value)}
             ref={textAreaRef}
             >
             </textarea>

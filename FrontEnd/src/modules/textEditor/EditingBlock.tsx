@@ -6,9 +6,10 @@ interface IEditingBlock{
     content: string,
     identifier: string,
     chooseToEdit: (identifier:string) => void,
+    chooseToDelete: (identifier: string) => Promise<void>,
 }
 
-const EditingBlock = ({type,content,chooseToEdit,identifier}:IEditingBlock) => {
+const EditingBlock = ({type,content,chooseToEdit,identifier,chooseToDelete}:IEditingBlock) => {
     const [toolbarVisible,setToolbarVisible] = useState(false)
 
     function startEditing(){
@@ -18,7 +19,7 @@ const EditingBlock = ({type,content,chooseToEdit,identifier}:IEditingBlock) => {
     return(
         <div className="relative" onMouseEnter={() => setToolbarVisible(true)} onMouseLeave={() => setToolbarVisible(false)}>
             {
-                toolbarVisible && <EditingBlockManipulationToolbar chooseEdit={() => startEditing()} />
+                toolbarVisible && <EditingBlockManipulationToolbar chooseDelete={async () =>  await chooseToDelete(identifier)} chooseEdit={() => startEditing()} />
             }
             {
                 type === 'paragraph' ? <p className="indent-4">{content}</p> : <h2 className="font-semibold text-lg py-2">{content}</h2>

@@ -12,7 +12,7 @@ export default () => {
 
     return (
     <div ref={spinnerRef}>
-        <IoIosSync ref={spinnerRef} size={50}/>
+        <IoIosSync size={50}/>
     </div>
     )
 }

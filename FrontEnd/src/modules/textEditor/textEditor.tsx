@@ -27,7 +27,6 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
             const {
                 htmlElementMap,htmlOrderArray  
             } = processHtmlString(htmlString)
-            console.log('processed')
             setElementOrderArray(htmlOrderArray)
             setElementMap(htmlElementMap)
             
@@ -44,13 +43,19 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
                 if(tag != 'unknown'){
                     const newElement = addHtmlElementIdentifier(tag,newTextContext) 
                     newElementMap.set(blockIdentifier,newElement)
-                    console.log({newElementMap})
                     setElementMap(newElementMap)
                 }
             }
 
             await sendChangedStoryToServer()
-            console.log('finished')
+        }
+
+        async function deleteBlock(blockIdentifier:string){
+            const newElementMap = new Map(elementMap)
+            if(newElementMap.delete(blockIdentifier)){
+                setElementMap(newElementMap)
+                await sendChangedStoryToServer()
+            }
         }
 
         async function sendChangedStoryToServer(){
@@ -64,7 +69,6 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
 
         function onClickOutsideEditSection(e:MouseEvent){
             if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
-                console.log({result:!editSectionRef.current.contains(e.target as Node)})
                 stopEditing()
             }
         }
@@ -84,13 +88,13 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
                         const el = elementMap?.get(identifier)
                         if(el != undefined){
                             const {contents,element,elementType} = extractTypeAndContentOfHtmlElement(el)
-                            console.log({elementType})
                             if(currentlyEditedElement === identifier) return <EditingInput identifier={identifier} edit={editBlock} stopEditing={stopEditing} origValue={contents} />
                             return <EditingBlock 
                                     content={contents} 
                                     type={elementType} 
                                     identifier={identifier}
                                     chooseToEdit={setCurrentlyEditedElement}
+                                    chooseToDelete={deleteBlock}
                                     />
                         }                        
                 })
