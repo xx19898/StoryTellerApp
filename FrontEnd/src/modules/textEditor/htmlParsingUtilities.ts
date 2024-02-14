@@ -118,7 +118,7 @@ export function addHtmlElementIdentifier( elType:'h2' | 'p', content: string){
     return `<${elType}>${content}</${elType}>`
 }
 
-function getNewIdentifierForElement(){
+export function getNewIdentifierForElement(){
     return uuidv4()
 }
 

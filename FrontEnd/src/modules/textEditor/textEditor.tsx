@@ -3,9 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import Story from "../story/Story";
 import EditingBlock from "./EditingBlock";
 import EditingInput from "./EditingInput";
-import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlElement, processHtmlString, typeToTag } from "./htmlParsingUtilities";
+import { CgAdd } from "react-icons/cg";
+import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlElement, getNewIdentifierForElement, processHtmlString, typeToTag } from "./htmlParsingUtilities";
+import AddNewBlock from "./AddNewBlock";
 
 
+
+//TODO: start implementing images
      export const TextEditor = () => {
         const [elementOrderArray,setElementOrderArray] = useState<string[]>([])
         const [elementMap,setElementMap] = useState<Map<string,string>>(new Map())
@@ -58,11 +62,23 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
             }
         }
 
+        async function addNewBlock(blockType: 'image' | 'text' | 'title'){
+            const newElementOrderArray = [...elementOrderArray]
+            const newIdentifier = getNewIdentifierForElement()
+            newElementOrderArray.push(newIdentifier)
+            const newElementMap = new Map(elementMap)
+            newElementMap.set(newIdentifier,'<p></p>')
+            setElementOrderArray(newElementOrderArray)
+            setElementMap(newElementMap)
+            await sendChangedStoryToServer()
+            setCurrentlyEditedElement(newIdentifier)
+        }
+
         async function sendChangedStoryToServer(){
             const newStoryString = buildHtmlString(elementMap,elementOrderArray)
             //SWAP FOR REAL MUTATION LATER
             await new Promise(resolve => {
-                setTimeout(() => resolve("xd"),3000)
+                setTimeout(() => resolve("xd"),500)
             }
                 )
         }  
@@ -99,6 +115,7 @@ import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlE
                         }                        
                 })
                 }
+                <AddNewBlock addNewBlock={addNewBlock}/>
                 </section>
             </div>);
     }
