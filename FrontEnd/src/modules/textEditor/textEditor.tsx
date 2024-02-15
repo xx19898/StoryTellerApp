@@ -6,6 +6,7 @@ import EditingInput from "./EditingInput";
 import { CgAdd } from "react-icons/cg";
 import { addHtmlElementIdentifier, buildHtmlString, extractTypeAndContentOfHtmlElement, getNewIdentifierForElement, processHtmlString, typeToTag } from "./htmlParsingUtilities";
 import AddNewBlock from "./AddNewBlock";
+import ImageInput from "./ImageInput";
 
 
 
@@ -67,7 +68,11 @@ import AddNewBlock from "./AddNewBlock";
             const newIdentifier = getNewIdentifierForElement()
             newElementOrderArray.push(newIdentifier)
             const newElementMap = new Map(elementMap)
-            newElementMap.set(newIdentifier,'<p></p>')
+            if(blockType === 'text'){
+                newElementMap.set(newIdentifier,'<p></p>')
+            }else if(blockType === 'image'){
+                newElementMap.set(newIdentifier,'<p></p>')
+            }
             setElementOrderArray(newElementOrderArray)
             setElementMap(newElementMap)
             await sendChangedStoryToServer()
@@ -104,7 +109,10 @@ import AddNewBlock from "./AddNewBlock";
                         const el = elementMap?.get(identifier)
                         if(el != undefined){
                             const {contents,element,elementType} = extractTypeAndContentOfHtmlElement(el)
-                            if(currentlyEditedElement === identifier) return <EditingInput identifier={identifier} edit={editBlock} stopEditing={stopEditing} origValue={contents} />
+                            if(currentlyEditedElement === identifier){
+                                if(elementType === 'paragraph') return <EditingInput identifier={identifier} edit={editBlock} stopEditing={stopEditing} origValue={contents} />
+                                else if(elementType === 'image') return <ImageInput setNewImage={}/>
+                            }
                             return <EditingBlock 
                                     content={contents} 
                                     type={elementType} 
