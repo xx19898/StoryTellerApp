@@ -1,4 +1,4 @@
-import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, extractTypeAndContentOfHtmlElement, processHtmlString, setNewTitle} from './htmlParsingUtilities'
+import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, extractTypeAndContentOfHtmlElement, processHtmlString, setNewTitle} from './HtmlParsingUtilities'
 
 import { expect, test, describe } from 'vitest'
 

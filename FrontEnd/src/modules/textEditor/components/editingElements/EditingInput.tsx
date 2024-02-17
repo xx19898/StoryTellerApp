@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { SlActionUndo } from "react-icons/sl";
 import { SlCheck } from "react-icons/sl";
 import _debounce from 'lodash.debounce'
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface IEditingInput{
     origValue: string,
@@ -45,8 +45,7 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
     async function onChange(newVal:string){
         await debouncedMessage(newVal)
     }
-
-    //TODO: implement debounce here
+    
     return(
         <div className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
             {

@@ -1,27 +1,28 @@
 import { v4 as uuidv4 } from 'uuid';
+import { BACKEND_URL } from '../../../constants';
 
-type IHtmlStringParsed = {
-    htmlStringMap: Map<string,string>,
-    htmlStringArray: Array<string>
-}
-
-export function composeHtmlElement(newContent:string,elementType:'title' | 'paragraph'){
+export function composeHtmlElement(newContent:string, elementType: 'title' | 'paragraph'){
     const tagType = elementType === 'paragraph' ? 'p' : 'h2'
 
     const resultingString = `<${tagType}>${newContent}</${tagType}>`
     return resultingString
+}
 
+export function createNewImageElement(identifier:string){
+    return `<img src={${BACKEND_URL}/images/stories/${identifier}}'></img>`
 }
 
 export function tagToType(tag:string){
     if(tag === 'h2') return 'title'
     if(tag === 'p') return 'paragraph'
+    if(tag === 'img') return 'image'
     return 'unknown'
 }
 
-export function typeToTag(type: 'title' | 'paragraph'){
+export function typeToTag(type: 'title' | 'paragraph' | 'image'){
     if(type === 'title') return 'h2'
     if(type === 'paragraph') return 'p'
+    if(type === 'image') return 'img'
     return 'unknown'
 }
 
@@ -31,7 +32,7 @@ function isElementType(elementType: string): elementType is ('title' | 'paragrap
 
 export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     element: string,
-    elementType: 'title' | 'paragraph',
+    elementType: 'title' | 'paragraph' | 'image',
     contents: string
 }{
     let i = 0
@@ -42,12 +43,11 @@ export function extractTypeAndContentOfHtmlElement(htmlString:string): {
 
     let elementType = ''
     
-
     while(htmlString[j] != '>'){
         elementType = elementType + htmlString[j]
         j++
     }
-
+    
     elementType = tagToType(elementType)
 
     if(!isElementType(elementType)){

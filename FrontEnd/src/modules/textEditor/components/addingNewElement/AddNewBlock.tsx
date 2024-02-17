@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { CgAdd } from "react-icons/cg"
-import TextOrImage from "./newImageInput"
+import TextOrImage from "./NewImageInput"
  "./NewImageInput"
 
 interface IAddNewBlock{

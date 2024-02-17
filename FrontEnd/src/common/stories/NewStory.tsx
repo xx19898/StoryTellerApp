@@ -1,4 +1,4 @@
-import { TextEditor } from "../../modules/textEditor/textEditor"
+import { TextEditor } from "../../modules/textEditor/components/TextEditor"
 
 export interface INewStory{
     username: string,

@@ -19,7 +19,7 @@ export default ({setNewImage}:IAddNewImage) => {
 
     return(
     <div className="flex flex-col justify-center items-center gap-3 bg-white p-3 rounded-md shadow-md">
-    <input onChange={async (e) => {
+    <input onChange={ async (e) => {
         if(e.target.files){
             const buffer = await e.target.files[0].arrayBuffer()
             const data = arrayBufferToBase64(buffer)

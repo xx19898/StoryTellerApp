@@ -1,5 +1,5 @@
 import {StoryObj} from "@storybook/react";
-import AddNewImage from "../../modules/textEditor/ImageInput";
+import AddNewImage from "../../modules/textEditor/components/editingElements/ImageInput";
 
 export default{
     component: AddNewImage,

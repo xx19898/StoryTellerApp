@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import IntroPage from "./pages/introPage";
 import LoginPage from "./pages/login/loginPage";
 import SignUpPageContainer from "./pages/signUp/signUpPageContainer";
-import { TextEditor } from "./modules/textEditor/textEditor";
+import { TextEditor } from "./modules/textEditor/components/TextEditor";
 import MainPageContainer from "./pages/main/MainPageContainer";
 import LoginPageContainer from "./pages/login/loginPageContainer";
 
