@@ -3,20 +3,22 @@ import { SlActionUndo } from "react-icons/sl";
 import { SlCheck } from "react-icons/sl";
 import _debounce from 'lodash.debounce'
 import LoadingSpinner from "../LoadingSpinner";
+import UseEditBlock from "../../hooks/useEditBlock";
+import useEditBlock from "../../hooks/useEditBlock";
 
 interface IEditingInput{
     origValue: string,
-    edit: (val:string,identifier:string) => Promise<void>,
-    identifier: string,
-    stopEditing: () => void, 
+    identifier: string, 
 }
 
-const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => {
+const EditingInput = ({identifier,origValue}:IEditingInput) => {
     const [inputValue,setInputValue] = useState<string>(origValue)
-    const [originalValue,setOriginalValue] = useState<string>(origValue)
+    const origValueRef = useRef(origValue)
     const [textAreaHeight,setTextAreaHeight] = useState<string | number>('auto')
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [storyUpdating,setStoryUpdating] = useState<boolean>(false)
+
+    const {editBlock} = useEditBlock(identifier,textAreaRef)
 
     useEffect(() => {
         textAreaRef.current?.focus()
@@ -36,7 +38,7 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
 
     const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
-        await edit(newVal,identifier)
+        await editBlock(newVal,identifier)
         console.log('got here')
         setStoryUpdating(false)
         updateTextAreaHeight()
@@ -49,8 +51,8 @@ const EditingInput = ({identifier,edit,origValue,stopEditing}:IEditingInput) => 
     return(
         <div className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
             {
-                storyUpdating ? 
-
+                storyUpdating 
+                ? 
                 <LoadingSpinner />
                 :
                 null

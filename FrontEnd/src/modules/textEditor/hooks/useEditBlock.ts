@@ -1,15 +1,18 @@
 import { sendChangedStoryToServer } from "./useTextEditor"
 import { useEffect } from "react"
-import { addHtmlElementIdentifier, extractTypeAndContentOfHtmlElement, processHtmlString, typeToTag } from "../helpers/HtmlParsingUtilities"
+import { addHtmlElementIdentifier, processHtmlString} from "../helpers/HtmlParsingUtilities"
 import useGetState from "./useGetElementState"
+import UseSelectElement from "./useSelectElement"
+import { extractTypeAndContentOfHtmlElement } from "../helpers/HtmlParsingElementUtilities"
+import { typeToTag } from "../helpers/HtmlElementTagUtlities"
 
 
-const UseEditBlock = () => {
+const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextAreaElement>) => {
     const {
-        elementMap,setElementMap,
-        elementOrderArray,setElementOrderArray
+        elementMap,setElementMap,setElementOrderArray
     } = useGetState()
 
+    const {selectElement} = UseSelectElement()
     
     //TO USE ONLY WHILE DEVELOPING WITH STORYBOOK, LATER IS REPLACED BY REACT QUERY
     useEffect(() => {
@@ -22,6 +25,23 @@ const UseEditBlock = () => {
         setElementOrderArray(htmlOrderArray)
         setElementMap(htmlElementMap)
     },[])
+
+    useEffect(() => {
+        document.addEventListener("mousedown", onClickOutsideEditSection)
+        return () => {
+            document.addEventListener("mousedown", onClickOutsideEditSection)
+        }
+    },[])
+
+    function onClickOutsideEditSection(e:MouseEvent){
+        if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
+            stopEditing()
+        }
+    }
+
+    function stopEditing(){
+        selectElement(undefined)
+    }
     
 
     async function editBlock(newContent:string,blockIdentifier:string){
@@ -50,3 +70,5 @@ const UseEditBlock = () => {
 
     return {editBlock}
 }
+
+export default useEditBlock

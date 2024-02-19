@@ -4,7 +4,7 @@ import (
 	"StoryTellerAppBackend/comments"
 	"StoryTellerAppBackend/configuration"
 	"StoryTellerAppBackend/helpers"
-	imagestorage "StoryTellerAppBackend/imageStorage"
+	imagestorage "StoryTellerAppBackend/image_storage"
 	"StoryTellerAppBackend/login_and_register"
 	auth "StoryTellerAppBackend/login_and_register"
 	"StoryTellerAppBackend/middleware"
