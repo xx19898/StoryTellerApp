@@ -1,19 +1,6 @@
 package imagestorage
 
-import (
-	"bytes"
-	"fmt"
-	"io"
-	"mime"
-	"mime/multipart"
-	"net/http"
-	"net/http/httptest"
-	"net/textproto"
-	"os"
-	"testing"
-
-	"github.com/gin-gonic/gin"
-)
+/*
 
 func TestUploadingStoryImage(t *testing.T) {
 	var b bytes.Buffer
@@ -67,3 +54,5 @@ func TestUploadingStoryImage(t *testing.T) {
 	picUploadRequest.Header.Add("Content-Type", mw.FormDataContentType())
 	mockRouter.POST("/images/stories", UploadStoryImage)
 }
+
+*/

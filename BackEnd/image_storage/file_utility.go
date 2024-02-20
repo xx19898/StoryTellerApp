@@ -1,10 +1,10 @@
 package imagestorage
 
+/*
+
 import (
 	"os"
 )
-
-/*
 
 func checkThatFileIsImage(data []byte) bool {
 	dataType := http.DetectContentType(data)
@@ -17,10 +17,3 @@ func checkThatFileIsImage(data []byte) bool {
 }
 
 */
-
-func CheckThatDirectoryExists(path string) bool {
-	if stat, err := os.Stat(path); err == nil && stat.IsDir() {
-		return true
-	}
-	return false
-}
