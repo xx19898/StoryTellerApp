@@ -1,6 +1,7 @@
 package imagestorage
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -24,6 +25,9 @@ func getParentPath() string {
 func StoriesImagesFolderForUserExists(username string) bool {
 	parent := getParentPath()
 	userFolderPath := filepath.Join(parent, "IMAGES", "stories", username)
+	fmt.Println("*****")
+	fmt.Println(userFolderPath)
+	fmt.Println("*****")
 	return CheckThatDirectoryExists(userFolderPath)
 }
 

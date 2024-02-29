@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"testing"
-	"time"
 )
 
 func TestThatStoriesFolderExistanceFolderOperatesProperly(t *testing.T) {
@@ -36,22 +35,31 @@ func TestThatFolderForStoryIdExistanceCheckOperatesProperly(t *testing.T) {
 }
 
 func TestThatFolderCreationForUserWorks(t *testing.T) {
-	CreateUserDirInStoriesFolder("tu")
-	result := StoriesImagesFolderForUserExists("tu")
+	CreateUserDirInStoriesFolder("tx")
 
-	time.Sleep(10 * time.Second)
+	// resets working directory from IMAGES/stories to /image_storage
+	os.Chdir("../")
+	os.Chdir("../")
+	os.Chdir("./image_storage")
+
+	result := StoriesImagesFolderForUserExists("tx")
 
 	if !result {
-		t.Fatal("folder tu should exist inside IMAGES/stories")
+		t.Fatal("folder tx should exist inside IMAGES/stories")
 	} else {
 		fmt.Println("HERE")
 		os.Chdir("..")
 		os.Chdir("IMAGES")
 		os.Chdir("stories")
-		os.Remove("tu")
+		os.Remove("tx")
 	}
 
-	result = StoriesImagesFolderForUserExists("tu")
+	// resets working directory from IMAGES/stories to /image_storage
+	os.Chdir("../")
+	os.Chdir("../")
+	os.Chdir("./image_storage")
+
+	result = StoriesImagesFolderForUserExists("tx")
 
 	if result {
 		t.Fatal("folder tu should not exist inside IMAGES/stories")
