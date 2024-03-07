@@ -2,7 +2,7 @@ package imagestorage
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
-	"fmt"
+	imagestoragehelpers "StoryTellerAppBackend/image_storage_helpers"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,7 +16,7 @@ type ImageInfo struct {
 	Identifier string `form:"identifier"`
 }
 
-func uploadImage(ctx *gin.Context) {
+func UploadImage(ctx *gin.Context) {
 	var imageInfo ImageInfo
 
 	newStoryPic, err := ctx.FormFile("newStoryPic")
@@ -41,7 +41,7 @@ func uploadImage(ctx *gin.Context) {
 		ctx.String(http.StatusInternalServerError, "Could not get current directory")
 	}
 
-	result := CheckThatDirectoryExists(folderWithSameUsername)
+	result := imagestoragehelpers.CheckThatDirectoryExists(folderWithSameUsername)
 
 	if !result {
 		err := os.Chdir("../IMAGES/")
@@ -60,7 +60,7 @@ func uploadImage(ctx *gin.Context) {
 
 	// IMAGES/storyWithSameUsername exists
 	folderWithSameStoryId := filepath.Join(folderWithSameUsername, strconv.FormatUint(uint64(imageInfo.StoryId), 10))
-	result = CheckThatDirectoryExists(folderWithSameStoryId)
+	result = imagestoragehelpers.CheckThatDirectoryExists(folderWithSameStoryId)
 
 	if !result {
 		err := os.Chdir("../IMAGES/")
@@ -74,7 +74,7 @@ func uploadImage(ctx *gin.Context) {
 
 		if secErr != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
-				"error": fmt.Sprintf("Could not get to IMAGES folder with chdir"),
+				"error": "Could not get to IMAGES folder with chdir",
 			})
 		}
 		ctx.JSON(http.StatusOK, gin.H{})
@@ -83,17 +83,9 @@ func uploadImage(ctx *gin.Context) {
 	ctx.SaveUploadedFile(newStoryPic, dest)
 	ctx.JSON(http.StatusOK, gin.H{})
 
-	// !!! check that directory exists,
-	// if not create, then check if directory with same story id exists,
-	// if not create, then check if file with same name exists,
-	// if exists update, if not create
-
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Could not get current directory",
 		})
 	}
-
-	// 3) In the folder with same username as the one that sent the request save
-	// 		   the image as a file with the same name a in first part of instructions
 }

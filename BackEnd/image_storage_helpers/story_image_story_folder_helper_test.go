@@ -1,4 +1,4 @@
-package imagestorage
+package imagestoragehelpers
 
 import (
 	"fmt"

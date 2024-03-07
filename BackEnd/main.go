@@ -4,7 +4,6 @@ import (
 	"StoryTellerAppBackend/comments"
 	"StoryTellerAppBackend/configuration"
 	"StoryTellerAppBackend/helpers"
-	imagestorage "StoryTellerAppBackend/image_storage"
 	"StoryTellerAppBackend/login_and_register"
 	auth "StoryTellerAppBackend/login_and_register"
 	"StoryTellerAppBackend/middleware"
@@ -40,6 +39,7 @@ func main() {
 	imageGroup := r.Group("/images")
 	imageGroup.Use(middleware.UserInfoExtractionMiddleware())
 	imageGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	//TODO: fix imports
 	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
 	imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
 
