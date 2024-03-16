@@ -2,6 +2,8 @@ services:
     tellastory_db:
         container_name: tellastory_db
         image: postgres:latest
+        volumes:
+            - postgres-db:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=tellastory_db
             - POSTGRES_USER=admin
@@ -9,6 +11,8 @@ services:
     tellastory_test_db:
         container_name: tellastory_test_db
         image: postgres:latest
+        volumes:
+            - postgres-test-db:/var/lib/postgresql/data
         environment:
             - POSTGRES_DB=tellastory_test_db
             - POSTGRES_USER=test_admin
@@ -73,4 +77,6 @@ services:
            - 8080:80
 volumes:
     postgres-db:
+        driver: local
+    postgres-test-db:
         driver: local

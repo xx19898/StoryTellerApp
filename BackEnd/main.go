@@ -40,8 +40,11 @@ func main() {
 	imageGroup.Use(middleware.UserInfoExtractionMiddleware())
 	imageGroup.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
 	//TODO: fix imports
-	imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
-	imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
+
+	/*
+		imageGroup.POST("/avatar", imagestorage.UploadUserAvatar)
+		imageGroup.GET("/avatar", imagestorage.DownloadUserAvatar)
+	*/
 
 	if !portIsFound {
 		panic("could not retrieve env variable with port")

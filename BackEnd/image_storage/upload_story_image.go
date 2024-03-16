@@ -16,7 +16,7 @@ type ImageInfo struct {
 	Identifier string `form:"identifier"`
 }
 
-func UploadImage(ctx *gin.Context) {
+func UploadStoryImage(ctx *gin.Context) {
 	var imageInfo ImageInfo
 
 	newStoryPic, err := ctx.FormFile("newStoryPic")
@@ -24,6 +24,7 @@ func UploadImage(ctx *gin.Context) {
 
 	parent := filepath.Dir(currPath)
 	folderWithSameUsername := filepath.Join(parent, "IMAGES", ctx.GetString("LOGGED_USER_NAME"))
+
 	story, err := databaselayer.FindStoryById(imageInfo.StoryId)
 	storyIdString := strconv.FormatUint(uint64(imageInfo.StoryId), 10)
 
@@ -77,6 +78,7 @@ func UploadImage(ctx *gin.Context) {
 				"error": "Could not get to IMAGES folder with chdir",
 			})
 		}
+
 		ctx.JSON(http.StatusOK, gin.H{})
 	}
 
