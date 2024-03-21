@@ -6,6 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/*
+func ExtractStoryIdFromStoryImageUploadRequest(ctx *gin.Context) ([]byte,error){
+	var req = ctx.Request
+}
+*/
+
 func ExtractImageFileFromStoryImageUploadRequest(ctx *gin.Context) ([]byte, error) {
 	var data []byte
 	var err error

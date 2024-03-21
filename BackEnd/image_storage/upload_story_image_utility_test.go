@@ -62,7 +62,13 @@ func TestFileExtractionUtility(t *testing.T) {
 	part, err := mw.CreatePart(hdr)
 
 	if err != nil {
-		t.Error(fmt.Sprintf("Error when creating new form part : %s", err.Error()))
+		t.Errorf("Error when creating new form part : %s", err.Error())
+	}
+
+	n, err := io.Copy(part, file)
+
+	if err != nil {
+		t.Errorf("Error with io.Copy: %s", err.Error())
 	}
 
 	jsonPart, err := mw.CreatePart(secondHeader)
@@ -83,12 +89,6 @@ func TestFileExtractionUtility(t *testing.T) {
 
 	jsonPart.Write(picInfoBytes)
 
-	n, err := io.Copy(part, file)
-
-	if err != nil {
-		t.Errorf(fmt.Sprintf("Error with io.Copy: %s", err.Error()))
-	}
-
 	mw.Close()
 
 	if int64(n) != stat.Size() {
@@ -104,6 +104,11 @@ func TestFileExtractionUtility(t *testing.T) {
 
 	r.POST("/test", func(c *gin.Context) {
 		data, err := ExtractImageFileFromStoryImageUploadRequest(c)
+		//storyId, err := ExtractStoryIdFromStoryImageUploadRequest(c)
+
+		fmt.Println("-----")
+		fmt.Println(c.Request)
+		fmt.Println("-----")
 
 		fmt.Println("-----")
 		fmt.Println(err)
