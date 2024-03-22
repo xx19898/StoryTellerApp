@@ -3,7 +3,6 @@ package imagestorage
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"mime"
 	"mime/multipart"
@@ -17,9 +16,6 @@ import (
 )
 
 func TestFileExtractionUtility(t *testing.T) {
-	type UploadedImageStoryId struct {
-		ID uint
-	}
 
 	var b bytes.Buffer
 
@@ -47,10 +43,8 @@ func TestFileExtractionUtility(t *testing.T) {
 	hdr.Set("Content-Disposition", cd)
 	hdr.Set("Content-Type", "image/jpeg")
 
-	secondHeader.Set("Content-Disposition", contentDispositionJsonPart)
-	secondHeader.Set("Content-Type", "application/json")
-
 	file, err := os.Open("/backend/IMAGES/test_image_sun.jpg")
+
 	if err != nil {
 		t.Errorf("Could not find the test image in the filesystem")
 	}
@@ -70,6 +64,9 @@ func TestFileExtractionUtility(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error with io.Copy: %s", err.Error())
 	}
+
+	secondHeader.Set("Content-Disposition", contentDispositionJsonPart)
+	secondHeader.Set("Content-Type", "application/json")
 
 	jsonPart, err := mw.CreatePart(secondHeader)
 
@@ -103,21 +100,24 @@ func TestFileExtractionUtility(t *testing.T) {
 	reqRecorder := httptest.NewRecorder()
 
 	r.POST("/test", func(c *gin.Context) {
-		data, err := ExtractImageFileFromStoryImageUploadRequest(c)
-		//storyId, err := ExtractStoryIdFromStoryImageUploadRequest(c)
-
-		fmt.Println("-----")
-		fmt.Println(c.Request)
-		fmt.Println("-----")
-
-		fmt.Println("-----")
-		fmt.Println(err)
-		fmt.Println("-----")
-
-		if err != nil {
+		data, _, imageFileExtractionError := ExtractImageFileFromStoryImageUploadRequest(c)
+		storyId, storyIdExtractionError := ExtractStoryIdFromStoryImageUploadRequest(c)
+		if imageFileExtractionError != nil {
 			c.JSON(
 				http.StatusInternalServerError,
-				gin.H{},
+				gin.H{
+					"error": imageFileExtractionError,
+				},
+			)
+			return
+		}
+
+		if storyIdExtractionError != nil {
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{
+					"error": storyIdExtractionError,
+				},
 			)
 			return
 		}
@@ -125,14 +125,13 @@ func TestFileExtractionUtility(t *testing.T) {
 		c.JSON(
 			http.StatusAccepted,
 			gin.H{
-				"data": string(data),
+				"data":    data,
+				"storyId": storyId,
 			},
 		)
 	})
 
 	r.ServeHTTP(reqRecorder, picUploadRequest)
-
-	fmt.Println(reqRecorder.Result().Status)
 
 	if reqRecorder.Result().StatusCode != 202 {
 		t.Fatal("Extracting image file from image upload request failed")
