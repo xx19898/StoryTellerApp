@@ -52,6 +52,7 @@ func AuthorizationMiddleware(compareRoles func([]string, []string) bool, neededR
 			c.JSON(403, gin.H{
 				"message": "You are not authorized to access this resource",
 			})
+			return
 		}
 		c.Next()
 	}

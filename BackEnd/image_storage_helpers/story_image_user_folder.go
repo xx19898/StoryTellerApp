@@ -42,8 +42,7 @@ func DeleteUserDirInStoriesFolder(username string) error {
 	if err != nil {
 		return err
 	}
-
-	err = os.Remove(username)
+	err = os.RemoveAll(username)
 
 	if err != nil {
 		return err
