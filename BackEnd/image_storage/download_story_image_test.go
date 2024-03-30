@@ -2,7 +2,6 @@ package imagestorage
 
 import (
 	"StoryTellerAppBackend/helpers"
-	imagestoragehelpers "StoryTellerAppBackend/image_storage_helpers"
 	"StoryTellerAppBackend/middleware"
 	"bytes"
 	"encoding/json"
@@ -115,46 +114,17 @@ func WriteMultipartImageRequestForTest() (error, *http.Request) {
 }
 
 func TestDownloadingStoryImage(t *testing.T) {
-	err, picUploadRequest := WriteMultipartImageRequestForTest()
-	if err != nil {
-		t.Fatal("Could not create image upload request")
-	}
-
-	mockRouter := gin.Default()
-
-	uploadReqRecorder := httptest.NewRecorder()
-
-	authorized := mockRouter.Group("images/stories")
-
-	authorized.Use(middleware.UserInfoExtractionMiddleware())
-	authorized.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
-
-	{
-		authorized.POST("", UploadStoryImage)
-	}
-
-	mockRouter.GET("/getStoriesImage", DownloadStoryImage)
-
-	mockRouter.ServeHTTP(uploadReqRecorder, picUploadRequest)
-
-	if uploadReqRecorder.Result().StatusCode != 202 {
-		fmt.Println(uploadReqRecorder.Result().StatusCode)
-		t.Fatal("story image upload request failed")
-	}
 	var emptyBuffer bytes.Buffer
 	downloadReqRecorder := httptest.NewRecorder()
-	//&user=testuser&id=1&filename=test_image_sun.jpg
-	downloadRequest, _ := http.NewRequest("GET", "/getStoriesImage", &emptyBuffer)
+
+	mockRouter := gin.Default()
+	downloadRequest, _ := http.NewRequest("GET", "/static/stories/testUser/1/test_image_13.jpg", &emptyBuffer)
+
+	mockRouter.Static("/static", "../IMAGES")
 
 	mockRouter.ServeHTTP(downloadReqRecorder, downloadRequest)
 
-	testImageUserFolderDeletionErr := imagestoragehelpers.DeleteUserDirInStoriesFolder("testuser_upload")
-
-	if testImageUserFolderDeletionErr != nil {
-		t.Errorf("Error when deleting user folder where image upload test image was placed: %s", testImageUserFolderDeletionErr.Error())
-	}
-
 	if downloadReqRecorder.Result().StatusCode != 200 {
-		t.Fatal(downloadReqRecorder.Body)
+		t.Fatal("Wrong status code")
 	}
 }
