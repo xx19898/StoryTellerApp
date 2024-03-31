@@ -15,6 +15,8 @@ const EditingBlock = ({type,content,identifier}:IEditingBlock) => {
     const { selectElement,currentlyEditedElement } = UseSelectElement()
     const {deleteBlock} = useDeleteElement()
 
+    //console.log({currentlyEditedElement,identifier,content})
+
     if(currentlyEditedElement === identifier) return <EditingInput origValue={content} identifier={identifier} />
 
     return(

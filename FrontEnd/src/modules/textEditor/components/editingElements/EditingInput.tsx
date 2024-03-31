@@ -8,7 +8,7 @@ import useEditBlock from "../../hooks/useEditBlock";
 
 interface IEditingInput{
     origValue: string,
-    identifier: string, 
+    identifier: string,
 }
 
 const EditingInput = ({identifier,origValue}:IEditingInput) => {
@@ -27,7 +27,7 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
         updateTextAreaHeight()
     },[])
 
-    
+
 
     function updateTextAreaHeight(){
         if(textAreaRef.current?.scrollHeight && textAreaRef.current?.style.height){
@@ -47,21 +47,21 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
     async function onChange(newVal:string){
         await debouncedMessage(newVal)
     }
-    
+
     return(
         <div className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
             {
-                storyUpdating 
-                ? 
+                storyUpdating
+                ?
                 <LoadingSpinner />
                 :
                 null
             }
-            <textarea 
+            <textarea
             spellCheck={false}
-            className="indent-4 p-2 h-auto w-full text-white bg-secondary focus:outline-none rounded-md resize-none" 
+            className="indent-4 p-2 h-auto w-full text-white bg-secondary focus:outline-none rounded-md resize-none"
             defaultValue={inputValue}
-            style={{height: textAreaHeight === 'auto' ? 'auto' : `${textAreaHeight}px`}} 
+            style={{height: textAreaHeight === 'auto' ? 'auto' : `${textAreaHeight}px`}}
             onChange={async (e) => await onChange(e.target.value)}
             ref={textAreaRef}
             >
