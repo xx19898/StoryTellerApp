@@ -22,7 +22,7 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
 
     useEffect(() => {
         textAreaRef.current?.focus()
-        let len = origValue.length
+        const len = origValue.length
         textAreaRef.current?.setSelectionRange(len,len)
         updateTextAreaHeight()
     },[])

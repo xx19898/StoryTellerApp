@@ -1,13 +1,13 @@
 import { tagToType } from "./HtmlElementTagUtlities"
 
-export function isElementType(elementType: string): elementType is ('title' | 'paragraph'){
-    return (elementType === 'paragraph' || elementType === 'title')
+export function isElementType(elementType: string): elementType is ('title' | 'paragraph' | 'image'){
+    return (elementType === 'paragraph' || elementType === 'title' || elementType === 'image')
 }
 
 export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     element: string,
     elementType: 'title' | 'paragraph' | 'image',
-    contents: string
+    contents: string,
 }{
     let i = 0
     while(htmlString[i] != '<') i++
@@ -16,12 +16,12 @@ export function extractTypeAndContentOfHtmlElement(htmlString:string): {
     j++
 
     let elementType = ''
-    
-    while(htmlString[j] != '>'){
+
+    while(htmlString[j] != '>' && htmlString[j] != ' '){
         elementType = elementType + htmlString[j]
         j++
     }
-    
+
     elementType = tagToType(elementType)
 
     if(!isElementType(elementType)){

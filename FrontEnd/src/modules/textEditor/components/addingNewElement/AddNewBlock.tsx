@@ -7,8 +7,7 @@ interface IAddNewBlock{
     addNewBlock:() => void,
     addNewImage: () => void,
 }
-
-export default ({addNewBlock,addNewImage}:IAddNewBlock) => {
+const AddNewBlock = ({addNewBlock,addNewImage}:IAddNewBlock) => {
     const [hovered,setHovered] = useState(false)
 
     return(
@@ -17,15 +16,17 @@ export default ({addNewBlock,addNewImage}:IAddNewBlock) => {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}>
             {
-                hovered ? <TextOrImage 
+                hovered ? <TextOrImage
                 addNewBlock={addNewBlock}
                 addNewImage={addNewImage}
                  /> : <CgAdd
-                className="cursor-pointer" 
-                size={'3rem'} 
+                className="cursor-pointer"
+                size={'3rem'}
                 onClick={() => addNewBlock()}
                 />
             }
         </div>
     )
 }
+
+export default AddNewBlock

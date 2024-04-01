@@ -1,5 +1,5 @@
 import useTextEditor from "../hooks/useTextEditor";
-import CurrentStory from "./storyVisualisation/CurrentStory";
+import StoryEditor from "./storyVisualisation/StoryEditor";
 
 
 
@@ -12,7 +12,7 @@ import CurrentStory from "./storyVisualisation/CurrentStory";
             flex flex-col gap-[3.5em] justify-start items-center
             text-white">
                 <h1>Text editorz</h1>
-                <CurrentStory />
+                <StoryEditor />
             </div>
             );
     }

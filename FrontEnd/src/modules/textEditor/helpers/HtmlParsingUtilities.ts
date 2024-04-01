@@ -46,7 +46,7 @@ export function processHtmlString(htmlString:string){
     return {htmlOrderArray:arr,htmlElementMap:map}
 }
 
-export function addHtmlElementIdentifier( elType:'h2' | 'p', content: string){
+export function addHtmlElementIdentifier( elType:'h2' | 'p' | 'img', content: string){
     return `<${elType}>${content}</${elType}>`
 }
 
@@ -54,8 +54,15 @@ export function getNewIdentifierForElement(){
     return uuidv4()
 }
 
-export function addNewParagraph(newParagraphContent:string,map:Map<string,string>,arr:Array<string>){
+export function addNewParagraph(newParagraphContent:string,map:Map<string,string>, arr:Array<string>){
     const newElement = addHtmlElementIdentifier('p',newParagraphContent)
+    const newIdentifier = getNewIdentifierForElement()
+    arr.push(newIdentifier)
+    map.set(newIdentifier,newElement)
+}
+
+export function addNewImage(imageContent:string,map:Map<string,string>, arr:Array<string>){
+    const newElement = addHtmlElementIdentifier('img',imageContent)
     const newIdentifier = getNewIdentifierForElement()
     arr.push(newIdentifier)
     map.set(newIdentifier,newElement)

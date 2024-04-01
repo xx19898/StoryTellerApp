@@ -14,8 +14,9 @@ const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextA
 
     const {selectElement} = UseSelectElement()
 
-    //TO USE ONLY WHILE DEVELOPING WITH STORYBOOK, LATER IS REPLACED BY REACT QUERY
-
+    //TODO: Write function in htmlparsingutility for deleting all the html elements whose contents are empty
+    //TODO write custom hook for using that function on state and passing that function around connect that function to the onClickOutsideSectionElement
+    //TODO connect that function to the onClickOutsideSectionElement
     useEffect(() => {
         document.addEventListener("mousedown", onClickOutsideEditSection)
         return () => {

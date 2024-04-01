@@ -1,11 +1,12 @@
-import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, extractTypeAndContentOfHtmlElement, processHtmlString, setNewTitle} from './HtmlParsingUtilities'
+import { extractTypeAndContentOfHtmlElement } from './HtmlParsingElementUtilities'
+import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, processHtmlString, setNewTitle} from './HtmlParsingUtilities'
 
 import { expect, test, describe } from 'vitest'
 
 
 describe('Testing html string parsing utility', () => {
   test('Element, type and contents get correctly extracted from html element string', () => {
-    const testHtmlString = '<h1>Test Title</h1>'
+    const testHtmlString = '<h2>Test Title</h2>'
     const  {
       contents,
       element,
@@ -13,12 +14,12 @@ describe('Testing html string parsing utility', () => {
     } = extractTypeAndContentOfHtmlElement(testHtmlString)
 
     expect(contents).toBe('Test Title')
-    expect(element).toBe('<h1>Test Title</h1>')
-    expect(elementType).toBe('h1')
+    expect(element).toBe('<h2>Test Title</h2>')
+    expect(elementType).toBe('title')
   })
 
   test('Html string gets partitioned into individual strings correctly',() => {
-    const testString = '<h1>Test Title</h1><p>Test Paragraph</p><img src="image_1"></img>'
+    const testString = '<h2>Test Title</h2><p>Test Paragraph</p><img src="image_1"></img>'
 
     const {htmlElementMap,htmlOrderArray} = processHtmlString(testString)
 
@@ -28,7 +29,7 @@ describe('Testing html string parsing utility', () => {
 
     const image = htmlElementMap.get(htmlOrderArray[2])
 
-    expect(title).toBe('<h1>Test Title</h1>')
+    expect(title).toBe('<h2>Test Title</h2>')
     expect(paragraph).toBe('<p>Test Paragraph</p>')
     expect(image).toBe('<img src="image_1"></img>')
 
@@ -92,5 +93,20 @@ describe('Testing html string parsing utility', () => {
     const resultingString = buildHtmlString(map,arr)
 
     expect(resultingString).toBe(properString)
+  })
+
+  test('Function for deleting empty html elements(paragraphs,titles,images with zero content)', () => {
+    const testTitle = 'Test Title'
+    const testParagraph = 'Test Paragraph'
+    const emptyParagraph = ''
+
+    const map = new Map()
+    const arr = ['']
+
+    addNewParagraph(testParagraph,map,arr)
+    addNewParagraph(emptyParagraph,map,arr)
+    setNewTitle(testTitle,map,arr)
+
+    deleteEmptyElements(map,arr)
   })
 })

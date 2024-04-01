@@ -1,17 +1,17 @@
 import { extractTypeAndContentOfHtmlElement } from "../../helpers/HtmlParsingElementUtilities"
 import useGetState from "../../hooks/useGetElementState"
+import AddNewBlock from "../addingNewElement/AddNewBlock"
 import EditingBlock from "./TextBlock"
 
 
-const CurrentStory = () => {
+const StoryEditor = () => {
     const {elementMap,elementOrderArray} = useGetState()
 
-    console.log({elementOrderArray})
+    const {addNewImageBlock,addNewTextBlock} = useAddNewBlock()
 
     return(
         <ul>
             {
-                //TODO: wrap the p and h2 elements in <TextBlock/>
                 elementOrderArray.map(identifier => {
                     const element = elementMap.get(identifier)
                     if(element === undefined) return null
@@ -25,8 +25,10 @@ const CurrentStory = () => {
                     return null
                 })
             }
+            <AddNewBlock />
+            </li>
         </ul>
     )
 }
 
-export default CurrentStory
+export default StoryEditor
