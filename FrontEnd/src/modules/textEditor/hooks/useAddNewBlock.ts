@@ -2,11 +2,11 @@ import { addNewImage, addNewParagraph } from "../helpers/HtmlParsingUtilities"
 import useGetState from "./useGetElementState"
 import UseSelectElement from "./useSelectElement"
 
-const UseAddNewBlock = () => {
+const useAddNewBlock = () => {
     const {elementMap,elementOrderArray,setElementMap,setElementOrderArray} = useGetState()
     const {currentlyEditedElement,selectElement} = UseSelectElement()
 
-    function AddNewTextBlock(){
+    function addNewTextBlock(){
         const newElMap = new Map(elementMap)
         const newElArray = [...elementOrderArray]
 
@@ -18,7 +18,7 @@ const UseAddNewBlock = () => {
         selectElement(lastIdentifier)
     }
 
-    function AddNewImageBlock(){
+    function addNewImageBlock(){
         const newElMap = new Map(elementMap)
         const newElArray = [...elementOrderArray]
 
@@ -26,4 +26,8 @@ const UseAddNewBlock = () => {
         setElementMap(newElMap)
         setElementOrderArray(newElArray)
     }
+
+    return {addNewTextBlock,addNewImageBlock}
 }
+
+export default useAddNewBlock

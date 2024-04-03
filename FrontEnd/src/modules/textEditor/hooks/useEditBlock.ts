@@ -5,6 +5,7 @@ import useGetState from "./useGetElementState"
 import UseSelectElement from "./useSelectElement"
 import { extractTypeAndContentOfHtmlElement } from "../helpers/HtmlParsingElementUtilities"
 import { typeToTag } from "../helpers/HtmlElementTagUtlities"
+import useRemoveEmptyElements from "./useRemoveEmptyElements"
 
 
 const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextAreaElement>) => {
@@ -12,7 +13,10 @@ const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextA
         elementMap,setElementMap
     } = useGetState()
 
+    console.log({elementMap})
+
     const {selectElement} = UseSelectElement()
+    const {removeEmptyElements} = useRemoveEmptyElements()
 
     //TODO: Write function in htmlparsingutility for deleting all the html elements whose contents are empty
     //TODO write custom hook for using that function on state and passing that function around connect that function to the onClickOutsideSectionElement
@@ -28,6 +32,7 @@ const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextA
         if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
             stopEditing()
         }
+        removeEmptyElements()
     }
 
     function stopEditing(){

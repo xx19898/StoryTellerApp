@@ -86,4 +86,21 @@ export function buildHtmlString(map:Map<string,string>,arr: Array<string>){
     return htmlString
 }
 
+export function deleteEmptyElements(map:Map<string,string>,arr:Array<string>){
+    const changedArr = arr.filter(identifier => {
+        if(!map.get(identifier)) return false
+        
+        const {contents} = extractTypeAndContentOfHtmlElement(map.get(identifier)!)
+
+        if(contents === '' || contents.length === 0){
+            map.delete(identifier)
+            return false  
+        }
+        
+        return true
+    })
+
+    return changedArr
+}
+
 
