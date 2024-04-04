@@ -55,7 +55,7 @@ export async function sendChangedStoryToServer(){
             //const newStoryString = buildHtmlString(elementMap,elementOrderArray)
             //SWAP FOR REAL MUTATION LATER
             await new Promise(resolve => {
-                setTimeout(() => resolve("xd"),500)
+                setTimeout(() => resolve("xd"),5)
             })
         }
 

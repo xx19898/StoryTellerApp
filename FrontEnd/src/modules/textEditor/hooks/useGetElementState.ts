@@ -8,7 +8,7 @@ const useGetState = () => {
 
     return{
         elementOrderArray,setElementOrderArray,
-        elementMap,setElementMap
+        elementMap,setElementMap,
     }
 }
 

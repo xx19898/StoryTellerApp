@@ -39,11 +39,11 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
 
     const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
+        console.log({newVal,identifier})
         await editBlock(newVal,identifier)
-        console.log('got here')
         setStoryUpdating(false)
         updateTextAreaHeight()
-    },2000),[])
+    },1000),[editBlock])
 
     async function onChange(newVal:string){
         await debouncedMessage(newVal)

@@ -1,6 +1,6 @@
 import { sendChangedStoryToServer } from "./useTextEditor"
 import { useEffect } from "react"
-import { addHtmlElementIdentifier, processHtmlString} from "../helpers/HtmlParsingUtilities"
+import { addHtmlElementIdentifier, deleteEmptyElements, processHtmlString} from "../helpers/HtmlParsingUtilities"
 import useGetState from "./useGetElementState"
 import UseSelectElement from "./useSelectElement"
 import { extractTypeAndContentOfHtmlElement } from "../helpers/HtmlParsingElementUtilities"
@@ -10,10 +10,8 @@ import useRemoveEmptyElements from "./useRemoveEmptyElements"
 
 const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextAreaElement>) => {
     const {
-        elementMap,setElementMap
+        elementMap,setElementMap,elementOrderArray,setElementOrderArray
     } = useGetState()
-
-    console.log({elementMap})
 
     const {selectElement} = UseSelectElement()
     const {removeEmptyElements} = useRemoveEmptyElements()
@@ -24,23 +22,27 @@ const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextA
     useEffect(() => {
         document.addEventListener("mousedown", onClickOutsideEditSection)
         return () => {
-            document.addEventListener("mousedown", onClickOutsideEditSection)
+            document.removeEventListener("mousedown", onClickOutsideEditSection)
         }
-    },[])
+    },[elementMap,elementOrderArray])
 
     function onClickOutsideEditSection(e:MouseEvent){
+        
         if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
+            console.log('%c CLICKED outside','color: red;')
             stopEditing()
+            console.log({elementMapInOnClickOutside:elementMap})
+            removeEmptyElements()
         }
-        removeEmptyElements()
     }
 
     function stopEditing(){
         selectElement(undefined)
     }
 
-
     async function editBlock(newContent:string,blockIdentifier:string){
+        console.log('%c In the edit block','color: green;')
+        console.log({elementMap})
         const newElementMap = new Map(elementMap)
         const element = elementMap.get(blockIdentifier)
         if(element != undefined){
