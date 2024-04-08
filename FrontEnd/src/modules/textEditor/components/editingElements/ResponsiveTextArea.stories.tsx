@@ -7,7 +7,6 @@ const meta = {
   component: ResponsiveTextArea,
   tags: ['autodocs'],
   argTypes: {
-    backgroundColor: { control: 'color' },
   },
 } satisfies Meta<typeof ResponsiveTextArea>;
 

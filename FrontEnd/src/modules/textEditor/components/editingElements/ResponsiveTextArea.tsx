@@ -8,7 +8,9 @@ interface IResponsiveTextArea{
     updating: boolean
 }
 
+//TODO: connect editing input functionality to responsive text area (onchange,updating)
 const ResponsiveTextArea = ({onChange,defaultContent,updating}:IResponsiveTextArea) => {
+    console.log({defaultContent})
     const [content, setContent] = useState(defaultContent)
     const [prevContent, setPrevContent] = useState(content)
     const [textAreaHeight, setTextAreaHeight] = useState<string | number>('auto')
@@ -24,9 +26,7 @@ const ResponsiveTextArea = ({onChange,defaultContent,updating}:IResponsiveTextAr
     function updateTextAreaHeight(){
         if(content.length >= prevContent.length){
             if(textAreaRef.current?.scrollHeight && textAreaRef.current?.style.height){
-                console.log({currHeight:textAreaRef.current?.scrollHeight})
                 setTextAreaHeight('auto')
-                console.log({scrollHeight:textAreaRef.current?.scrollHeight,textAreaHeight})
                 setTextAreaHeight(textAreaRef.current?.scrollHeight + 'px')
             }
             return
@@ -46,10 +46,11 @@ const ResponsiveTextArea = ({onChange,defaultContent,updating}:IResponsiveTextAr
         defaultValue={content}
         ref={textAreaRef}
         className="indent-6 p-2 px-5 h-auto w-full text-white bg-secondary focus:outline-none rounded-md resize-none"
-        onChange={(e) => {
+        onChange={async (e) => {
             setPrevContent(content)
             setContent(e.target.value)
             updateTextAreaHeight()
+            await onChange(e.target.value)
         }}
         style={{height: textAreaHeight}}
         />

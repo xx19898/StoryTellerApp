@@ -10,7 +10,7 @@ const StoryEditor = () => {
     //const {addNewImageBlock,addNewTextBlock} = useAddNewBlock()
 
     return(
-        <ul>
+        <ul className="w-full flex flex-col justify-center items-center gap-[0.5em]">
             {
                 elementOrderArray.map(identifier => {
                     const element = elementMap.get(identifier)

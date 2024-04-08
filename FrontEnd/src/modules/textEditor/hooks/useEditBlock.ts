@@ -7,7 +7,7 @@ import { extractTypeAndContentOfHtmlElement } from "../helpers/HtmlParsingElemen
 import { typeToTag } from "../helpers/HtmlElementTagUtlities"
 
 
-const useEditBlock = (identifier:string,editSectionRef:React.RefObject<HTMLTextAreaElement>) => {
+const useEditBlock = (editSectionRef:React.RefObject<HTMLDivElement>) => {
     const {
         elementMap,setElementMap
     } = useGetState()

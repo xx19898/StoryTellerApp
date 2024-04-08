@@ -14,22 +14,16 @@ interface IEditingInput{
 
 const EditingInput = ({identifier,origValue}:IEditingInput) => {
     const [inputValue,setInputValue] = useState<string>(origValue)
-    const origValueRef = useRef(origValue)
-    const [textAreaHeight, setTextAreaHeight] = useState<string | number>('auto')
-    const textAreaRef = useRef<HTMLTextAreaElement>(null)
+    const editingInputRef = useRef<HTMLDivElement>(null)
     const [storyUpdating,setStoryUpdating] = useState<boolean>(false)
 
-    const {editBlock} = useEditBlock(identifier,textAreaRef)
+    const {editBlock} = useEditBlock(editingInputRef)
 
     const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
         await editBlock(newVal,identifier)
-        console.log('got here')
         setInputValue(newVal)
         setStoryUpdating(false)
-        textAreaRef.current?.focus()
-        const len = inputValue.length
-        textAreaRef.current?.setSelectionRange(len, len)
     },2000),[])
 
     async function onChange(newVal:string){
@@ -37,7 +31,7 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
     }
 
     return(
-        <div className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
+        <div ref={editingInputRef} className="w-full h-auto flex flex-col justify-center items-center rounded-md outline outline-1 outline-white">
             {
                 storyUpdating
                 ?
