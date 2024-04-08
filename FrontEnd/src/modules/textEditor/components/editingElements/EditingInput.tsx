@@ -21,6 +21,7 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
 
     const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
+        console.log({newVal,identifier})
         await editBlock(newVal,identifier)
         setInputValue(newVal)
         setStoryUpdating(false)

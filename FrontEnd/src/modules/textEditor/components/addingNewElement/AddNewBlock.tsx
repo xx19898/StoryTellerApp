@@ -7,6 +7,7 @@ interface IAddNewBlock{
     addNewBlock:() => void,
     addNewImage: () => void,
 }
+//TODO: implement and test adding new textblock and adding new image block
 const AddNewBlock = ({addNewBlock,addNewImage}:IAddNewBlock) => {
     const [hovered,setHovered] = useState(false)
 

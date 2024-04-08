@@ -1,5 +1,5 @@
 import { extractTypeAndContentOfHtmlElement } from './HtmlParsingElementUtilities'
-import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, processHtmlString, setNewTitle} from './HtmlParsingUtilities'
+import {addHtmlElementIdentifier, addNewParagraph, buildHtmlString, deleteEmptyElements, processHtmlString, setNewTitle} from './HtmlParsingUtilities'
 
 import { expect, test, describe } from 'vitest'
 
@@ -106,7 +106,8 @@ describe('Testing html string parsing utility', () => {
     addNewParagraph(testParagraph,map,arr)
     addNewParagraph(emptyParagraph,map,arr)
     setNewTitle(testTitle,map,arr)
-
-    deleteEmptyElements(map,arr)
+    
+    const arrWithNoEmptyElements = deleteEmptyElements(map,arr)
+    expect(arrWithNoEmptyElements.length).toEqual(2)
   })
 })

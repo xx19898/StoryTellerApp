@@ -1,4 +1,5 @@
 import { extractTypeAndContentOfHtmlElement } from "../../helpers/HtmlParsingElementUtilities"
+import useAddNewBlock from "../../hooks/useAddNewBlock"
 import useGetState from "../../hooks/useGetElementState"
 import AddNewBlock from "../addingNewElement/AddNewBlock"
 import EditingBlock from "./TextBlock"
