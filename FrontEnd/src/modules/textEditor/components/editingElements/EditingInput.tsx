@@ -5,6 +5,7 @@ import _debounce from 'lodash.debounce'
 import LoadingSpinner from "../LoadingSpinner";
 import UseEditBlock from "../../hooks/useEditBlock";
 import useEditBlock from "../../hooks/useEditBlock";
+import ResponsiveTextArea from "./ResponsiveTextArea";
 
 interface IEditingInput{
     origValue: string,
@@ -14,34 +15,21 @@ interface IEditingInput{
 const EditingInput = ({identifier,origValue}:IEditingInput) => {
     const [inputValue,setInputValue] = useState<string>(origValue)
     const origValueRef = useRef(origValue)
-    const [textAreaHeight,setTextAreaHeight] = useState<string | number>('auto')
+    const [textAreaHeight, setTextAreaHeight] = useState<string | number>('auto')
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [storyUpdating,setStoryUpdating] = useState<boolean>(false)
 
     const {editBlock} = useEditBlock(identifier,textAreaRef)
 
-    useEffect(() => {
-        textAreaRef.current?.focus()
-        const len = origValue.length
-        textAreaRef.current?.setSelectionRange(len,len)
-        updateTextAreaHeight()
-    },[])
-
-
-
-    function updateTextAreaHeight(){
-        if(textAreaRef.current?.scrollHeight && textAreaRef.current?.style.height){
-            console.log({currHeight:textAreaRef.current?.scrollHeight})
-            setTextAreaHeight(textAreaRef.current?.scrollHeight)
-        }
-    }
-
     const debouncedMessage = useCallback(_debounce(async (newVal:string) => {
         setStoryUpdating(true)
         await editBlock(newVal,identifier)
         console.log('got here')
+        setInputValue(newVal)
         setStoryUpdating(false)
-        updateTextAreaHeight()
+        textAreaRef.current?.focus()
+        const len = inputValue.length
+        textAreaRef.current?.setSelectionRange(len, len)
     },2000),[])
 
     async function onChange(newVal:string){
@@ -57,15 +45,7 @@ const EditingInput = ({identifier,origValue}:IEditingInput) => {
                 :
                 null
             }
-            <textarea
-            spellCheck={false}
-            className="indent-4 p-2 h-auto w-full text-white bg-secondary focus:outline-none rounded-md resize-none"
-            defaultValue={inputValue}
-            style={{height: textAreaHeight === 'auto' ? 'auto' : `${textAreaHeight}px`}}
-            onChange={async (e) => await onChange(e.target.value)}
-            ref={textAreaRef}
-            >
-            </textarea>
+            <ResponsiveTextArea defaultContent={origValue} onChange={onChange} updating={storyUpdating} />
         </div>
     )
 }

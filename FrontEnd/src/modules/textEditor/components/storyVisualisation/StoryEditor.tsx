@@ -7,7 +7,7 @@ import EditingBlock from "./TextBlock"
 const StoryEditor = () => {
     const {elementMap,elementOrderArray} = useGetState()
 
-    const {addNewImageBlock,addNewTextBlock} = useAddNewBlock()
+    //const {addNewImageBlock,addNewTextBlock} = useAddNewBlock()
 
     return(
         <ul>
@@ -25,8 +25,6 @@ const StoryEditor = () => {
                     return null
                 })
             }
-            <AddNewBlock />
-            </li>
         </ul>
     )
 }
