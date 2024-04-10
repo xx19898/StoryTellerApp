@@ -3,9 +3,8 @@ import StoryEditor from "./storyVisualisation/StoryEditor";
 
 
 
-//TODO: start implementing images
      export const TextEditor = () => {
-        //useTextEditor()
+        useTextEditor()
 
         return(
             <div className="w-[40%] py-2 px-4 min-h-screen h-auto

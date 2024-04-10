@@ -18,7 +18,7 @@ const ResponsiveTextArea = ({onChange,defaultContent,updating}:IResponsiveTextAr
 
     useEffect(() => {
         textAreaRef.current?.focus()
-        const len = content.length
+        const len = defaultContent.length
         textAreaRef.current?.setSelectionRange(len,len)
         updateTextAreaHeight()
     },[])

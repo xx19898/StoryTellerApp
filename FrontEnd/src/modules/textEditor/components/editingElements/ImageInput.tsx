@@ -1,20 +1,20 @@
 import { useState } from "react"
 
 interface IAddNewImage{
-    setNewImage: (newImage:string) => Promise<void>,    
+    setNewImage: (newImage:string) => Promise<void>,
 }
 
 function arrayBufferToBase64(buffer:ArrayBuffer){
     let binary = ''
-    let bytes = new Uint8Array(buffer)
-    let len = bytes.byteLength
+    const bytes = new Uint8Array(buffer)
+    const len = bytes.byteLength
     for(let i = 0; i < len; i++){
         binary += String.fromCharCode( bytes[i] )
     }
     return window.btoa(binary)
 }
 
-export default ({setNewImage}:IAddNewImage) => {
+ const ImageInput = ({setNewImage}:IAddNewImage) => {
     const [image,setImage] = useState<string | undefined>(undefined)
 
     return(
@@ -23,18 +23,19 @@ export default ({setNewImage}:IAddNewImage) => {
         if(e.target.files){
             const buffer = await e.target.files[0].arrayBuffer()
             const data = arrayBufferToBase64(buffer)
-            console.log({data})
             setImage(data)
         }
-    }} 
+    }}
     type="file"
     className="bg-white p-3 rounded-md shadow-md"
     />
     <div>
     {
-        image === undefined ? <p>No image yet</p> : <img src={'data:image/png;base64, ' + image}></img> 
+        image === undefined ? <p>No image yet</p> : <img src={'data:image/png;base64, ' + image}></img>
     }
     </div>
     </div>
     )
 }
+
+export default ImageInput

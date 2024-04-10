@@ -14,5 +14,11 @@ export default meta;
 type Story = StoryObj<typeof ResponsiveTextArea>;
 
 export const Default: Story = {
-  args: {}
+  args: {
+    defaultContent: 'Default content of a block',
+    onChange: (newContent:string) => new Promise((res,rej) => {
+      console.log('true')
+    }),
+    updating: false
+  }
 };

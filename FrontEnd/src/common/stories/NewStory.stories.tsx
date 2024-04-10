@@ -2,21 +2,25 @@ import {StoryObj} from "@storybook/react";
 import NewStory, { INewStory } from "./NewStory";
 import { Provider } from "jotai";
 import { myStore } from "../../atomStore";
+import StoryEditor from "../../modules/textEditor/components/storyVisualisation/StoryEditor";
+import { TextEditor } from "../../modules/textEditor/components/TextEditor";
 
 export default{
-    component: NewStory,
-    title: 'NewStory',
+    component: StoryEditor,
+    title: 'Story Editor',
     decorators: [
-        (NewStory) => (
-            <div className="min-h-screen h-auto w-full flex flex-col justify-center items-center bg-special">
+        (StoryEditor) => (
+
+            <div className="min-h-screen h-auto w-full flex flex-col justify-center items-center bg-secondary">
                 <Provider store={myStore}>
-                <NewStory />
+                    <TextEditor />
                 </Provider>
+
             </div>)
     ]
 }
 
-type TypeNewStory = StoryObj<typeof NewStory>
+type TypeNewStory = StoryObj<typeof StoryEditor>
 
 const defaultArgs: INewStory = {
     username: 'test user',

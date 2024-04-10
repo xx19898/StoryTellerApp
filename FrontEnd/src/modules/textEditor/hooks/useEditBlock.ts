@@ -27,7 +27,7 @@ const useEditBlock = (editSectionRef:React.RefObject<HTMLDivElement>) => {
     },[elementMap,elementOrderArray])
 
     function onClickOutsideEditSection(e:MouseEvent){
-        
+
         if (editSectionRef.current && !editSectionRef.current.contains(e.target as Node)) {
             console.log('%c CLICKED outside','color: red;')
             stopEditing()
