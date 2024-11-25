@@ -1,15 +1,15 @@
-import { TextEditor } from "../../modules/textEditor/components/TextEditor"
+import { TextEditor } from '../../modules/textEditor'
 
-export interface INewStory{
-    username: string,
+export interface INewStory {
+	username: string
 }
 
-const NewStory = ({username}:INewStory) => {
-    return(
-        <div className="w-full min-h-screen bg-secondary h-auto text-white flex flex-col items-center justify-center">
-            <TextEditor />
-        </div>
-    )
+const NewStory = ({ username }: INewStory) => {
+	return (
+		<div className='w-full min-h-screen bg-secondary h-auto text-white flex flex-col items-center justify-center'>
+			<TextEditor />
+		</div>
+	)
 }
 
 export default NewStory

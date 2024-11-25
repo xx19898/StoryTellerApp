@@ -13,7 +13,7 @@ const AddNewBlock = ({addNewBlock,addNewImage}:IAddNewBlock) => {
 
     return(
         <div
-        className="bg-secondPrimary"
+        className="bg-darkestSecondary p-4 rounded-md"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}>
             {
