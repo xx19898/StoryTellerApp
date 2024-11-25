@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { SlActionUndo } from 'react-icons/sl'
-import { SlCheck } from 'react-icons/sl'
+
 import _debounce from 'lodash.debounce'
 import LoadingSpinner from '../LoadingSpinner'
 import UseEditBlock from '../../hooks/useEditBlock'

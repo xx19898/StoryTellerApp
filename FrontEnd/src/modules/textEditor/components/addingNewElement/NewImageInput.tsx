@@ -9,16 +9,16 @@ interface IAddNewBlock{
 }
 
 const TextOrImage = ({addNewBlock,addNewImage}:IAddNewBlock) => {
-    
+
     return(
         <div className="flex flex-row justify-center items-center gap-2">
             <CiTextAlignRight
             onClick={() => addNewBlock()}
-            className="cursor-pointer" 
+            className="cursor-pointer"
             size={'3rem'}  />
-            <FaRegFileImage 
-            className="cursor-pointer" 
-            size={'3rem'} 
+            <FaRegFileImage
+            className="cursor-pointer"
+            size={'3rem'}
             onClick={() => addNewImage()}
             />
         </div>
