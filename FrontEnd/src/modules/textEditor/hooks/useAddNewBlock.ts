@@ -9,6 +9,7 @@ const useAddNewBlock = () => {
 		setElementMap,
 		setElementOrderArray,
 	} = useGetState()
+
 	const { currentlyEditedElement, selectElement } = UseSelectElement()
 
 	function addNewTextBlock() {

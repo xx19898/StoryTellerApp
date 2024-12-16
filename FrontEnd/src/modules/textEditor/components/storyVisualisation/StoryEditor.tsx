@@ -1,19 +1,22 @@
+import { useRef } from 'react'
 import { extractTypeAndContentOfHtmlElement } from '../../helpers/HtmlParsingElementUtilities'
 import useAddNewBlock from '../../hooks/useAddNewBlock'
 import useGetState from '../../hooks/useGetElementState'
 import AddNewBlock from '../addingNewElement/AddNewBlock'
 import EditingBlock from './EditingBlock'
+import ImageBlock from './ImageBlock'
 
 const StoryEditor = () => {
 	const { elementMap, elementOrderArray } = useGetState()
 
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
-	console.log({ elementMap, elementOrderArray })
+
+	const imageInputRef = useRef<HTMLInputElement>(null)
+
 	return (
 		<ul className='flex flex-col justify-center items-center gap-4 w-[80%]'>
 			{elementOrderArray.map((identifier) => {
 				const element = elementMap.get(identifier)
-				console.log({ element })
 				if (element === undefined) return null
 
 				const { contents, elementType } =
@@ -37,8 +40,11 @@ const StoryEditor = () => {
 						/>
 					)
 
+				if (elementType === 'image') return <ImageBlock />
+
 				return null
 			})}
+
 			<AddNewBlock
 				addNewBlock={addNewTextBlock}
 				addNewImage={addNewImageBlock}
