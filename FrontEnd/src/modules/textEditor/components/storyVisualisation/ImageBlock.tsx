@@ -15,25 +15,42 @@ const ImageBlock = ({
 	identifier,
 }: IImageBlock) => {
 	const { selectElement, currentlyEditedElement } = UseSelectElement()
-	const [currImage, setCurrImage] = useState(undefined)
+	const [currImage, setCurrImage] = useState<string | undefined>(undefined)
 
 	const imageInputRef = useRef<HTMLInputElement>(null)
-	let prop = useRef<boolean>(false)
+	let imageInputAlreadyOpenedOnce = useRef<boolean>(false)
 
 	useEffect(() => {
-		if (!currImage && imageInputRef) {
+		if (
+			!currImage &&
+			imageInputRef &&
+			!imageInputAlreadyOpenedOnce.current
+		) {
 			console.log('clicked')
 			imageInputRef.current!.click()
+			imageInputAlreadyOpenedOnce.current = true
 		}
 	}, [])
-	//create input element which opens itself on render, otherwise show chosen image
 
+	// visualize the data which is feeded through the input
+	// implement image deletion, image replacement
 	return (
 		<li>
 			{currImage ? (
-				<p>{currImage}</p>
+				<img src={currImage}></img>
 			) : (
-				<input type='file' ref={imageInputRef}></input>
+				<input
+					type='file'
+					onInput={(e) => {
+						const file = e.target.files[0]
+						const fr = new FileReader()
+						fr.readAsDataURL(file)
+						fr.onload = function () {
+							if (fr.result) setCurrImage(fr.result as string)
+						}
+					}}
+					ref={imageInputRef}
+				></input>
 			)}
 		</li>
 	)

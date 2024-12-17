@@ -6,6 +6,7 @@ import AddNewBlock from '../addingNewElement/AddNewBlock'
 import EditingBlock from './EditingBlock'
 import ImageBlock from './ImageBlock'
 
+// implement drag and drop to change placement of blocks
 const StoryEditor = () => {
 	const { elementMap, elementOrderArray } = useGetState()
 
