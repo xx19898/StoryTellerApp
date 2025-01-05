@@ -9,7 +9,7 @@ import ImageBlock from './ImageBlock'
 // implement drag and drop to change placement of blocks
 const StoryEditor = () => {
 	const { elementMap, elementOrderArray } = useGetState()
-
+	console.log({ elementOrderArray })
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
 
 	const imageInputRef = useRef<HTMLInputElement>(null)
@@ -41,7 +41,15 @@ const StoryEditor = () => {
 						/>
 					)
 
-				if (elementType === 'image') return <ImageBlock />
+				if (elementType === 'image')
+					return (
+						<ImageBlock
+							content={contents}
+							deleteBlock={() => console.log('delete')}
+							editBlock={() => console.log('edit block')}
+							identifier='xdd'
+						/>
+					)
 
 				return null
 			})}
