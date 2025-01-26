@@ -1,17 +1,17 @@
-import useTextEditor from "../hooks/useTextEditor";
-import StoryEditor from "./storyVisualisation/StoryEditor";
+import useTextEditor from '../hooks/useTextEditor'
+import StoryEditor from './storyVisualisation/StoryEditor'
 
-
-
-     export const TextEditor = () => {
+export const TextEditor = () => {
+	/*
         useTextEditor()
-
-        return(
-            <div className="w-[40%] py-2 px-4 min-h-screen h-auto
+    */
+	return (
+		<div
+			className='w-[40%] py-2 px-4 min-h-screen h-auto
             flex flex-col gap-[3.5em] justify-start items-center
-            text-white">
-                <StoryEditor />
-            </div>
-            );
-    }
-
+            text-white'
+		>
+			<StoryEditor />
+		</div>
+	)
+}

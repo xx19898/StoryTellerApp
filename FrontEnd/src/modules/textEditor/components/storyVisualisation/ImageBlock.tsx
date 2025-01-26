@@ -35,7 +35,7 @@ const ImageBlock = ({
 	// visualize the data which is feeded through the input
 	// implement image deletion, image replacement
 	return (
-		<li>
+		<li key={identifier}>
 			{currImage ? (
 				<img src={currImage}></img>
 			) : (

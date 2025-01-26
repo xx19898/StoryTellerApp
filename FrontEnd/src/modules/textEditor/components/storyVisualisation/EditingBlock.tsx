@@ -23,6 +23,7 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 			className='relative p-8 h-auto flex flex-wrap justify-center items-center'
 			onMouseEnter={() => setToolbarVisible(true)}
 			onMouseLeave={() => setToolbarVisible(false)}
+			key={identifier}
 		>
 			{toolbarVisible && (
 				<EditingBlockManipulationToolbar

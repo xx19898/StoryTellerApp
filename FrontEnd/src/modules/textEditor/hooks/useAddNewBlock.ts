@@ -1,8 +1,4 @@
-import {
-	addNewImage,
-	addNewParagraph,
-	addNewTitle,
-} from '../helpers/HtmlParsingUtilities'
+import { addNewImage, addNewParagraph } from '../helpers/HtmlParsingUtilities'
 import useGetState from './useGetElementState'
 import UseSelectElement from './useSelectElement'
 
@@ -24,18 +20,8 @@ const useAddNewBlock = () => {
 		console.log({ arrPostAdding: newElArray })
 		setElementMap(newElMap)
 		setElementOrderArray(newElArray)
-
 		const lastIdentifier = newElArray.slice(-1)[0]
 		selectElement(lastIdentifier)
-	}
-
-	function addMainTitle(title: string) {
-		const newElMap = new Map(elementMap)
-		const newElArray = [...elementOrderArray]
-
-		addNewTitle(title, newElMap, newElArray)
-		setElementMap(newElMap)
-		setElementOrderArray(newElArray)
 	}
 
 	function addNewImageBlock() {
