@@ -11,8 +11,11 @@ export const generalInfo = atom<IEditedArticle>({
 	rawData: '',
 	created: new Date('2027/12/02'),
 })
-export const elementOrderArrayAtom = atom<string[]>([])
+export const elementOrderArrayAtom = atom<string[]>(['first', 'second'])
 export const elementMapAtom = atom<Map<string, string>>(
-	new Map([['maiasdadsdas', 'titles']])
+	new Map([
+		['first', '<p>first<p>'],
+		['second', '<p>second</p>'],
+	])
 )
 export const testMap = atom<Map<string, string>>(new Map())

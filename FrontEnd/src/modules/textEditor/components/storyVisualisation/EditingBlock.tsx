@@ -9,7 +9,7 @@ interface IEditingBlock {
 	content: string
 	identifier: string
 }
-
+//TODO: add the drag and drop functionality to be able to drag and drop text blocks to be able to change the order of the paragraphs (first only paragraphs)
 const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 	const [toolbarVisible, setToolbarVisible] = useState(false)
 	const { selectElement, currentlyEditedElement } = UseSelectElement()
@@ -24,6 +24,8 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 			onMouseEnter={() => setToolbarVisible(true)}
 			onMouseLeave={() => setToolbarVisible(false)}
 			key={identifier}
+			onDragStart={(e) => console.log(`started dragging ${identifier}`)}
+			onMouseOver={(e) => console.log(`hovered ${identifier}`)}
 		>
 			{toolbarVisible && (
 				<EditingBlockManipulationToolbar

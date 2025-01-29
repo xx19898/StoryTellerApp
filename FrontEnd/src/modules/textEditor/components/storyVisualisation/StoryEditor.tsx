@@ -8,37 +8,42 @@ import ImageBlock from './ImageBlock'
 import { testMap } from '../../textEditorState'
 import { useAtom } from 'jotai'
 import GeneralInformation from './GeneralInformation'
+import TitleEditField from '../editingElements/TitleEditField'
 
 // implement drag and drop to change placement of blocks
 const StoryEditor = () => {
 	const { elementMap, elementOrderArray, setElementMap } = useGetState()
-	console.log({ elementOrderArray, elementMap })
 	const [map, setTestMap] = useAtom(testMap)
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
 	const [authorIcon, setAuthorIcon] = useState(null)
 
 	useEffect(() => {
-		console.log('xd')
-		console.log({ map })
 		const newMapx = new Map(map)
 		newMapx.set('xdd', 'xddd')
 		setTestMap(newMapx)
-		console.log({ map })
 		const newMap = new Map(elementMap)
 		newMap.set('title', 'New story')
-
-		//setElementMap(newMap)
 	}, [])
 
 	return (
 		<>
 			<GeneralInformation
 				author={'Driver'}
-				children={<h2 className='font-belanosima'>Test title</h2>}
 				creationDate={new Date()}
 				lastChangedDate={new Date()}
 				key={'Driver'}
-			/>
+			>
+				<TitleEditField
+					initialTitle='Default title'
+					setNewTitle={async (newTitle: string) => {
+						return new Promise((resolve) => {
+							setTimeout(() => {
+								resolve({ status: 'ok' })
+							}, 1000)
+						})
+					}}
+				/>
+			</GeneralInformation>
 			<ul className='flex flex-col justify-center items-center gap-4 w-[80%]'>
 				{elementOrderArray.map((identifier) => {
 					const element = elementMap.get(identifier)
