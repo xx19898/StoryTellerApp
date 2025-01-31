@@ -9,21 +9,23 @@ import { testMap } from '../../textEditorState'
 import { useAtom } from 'jotai'
 import GeneralInformation from './GeneralInformation'
 import TitleEditField from '../editingElements/TitleEditField'
+import useDragAndDrop from '../editingElements/DragAndDrop/useDragAndDrop'
+import useShadowElementOrderArray from '../editingElements/DragAndDrop/useShadowElementOrderArray'
+import DragAndDropContainer from '../editingElements/DragAndDrop/dragAndDropContainer'
 
 // implement drag and drop to change placement of blocks
 const StoryEditor = () => {
-	const { elementMap, elementOrderArray, setElementMap } = useGetState()
-	const [map, setTestMap] = useAtom(testMap)
+	const { elementMap, elementOrderArray } = useGetState()
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
+
 	const [authorIcon, setAuthorIcon] = useState(null)
 
-	useEffect(() => {
-		const newMapx = new Map(map)
-		newMapx.set('xdd', 'xddd')
-		setTestMap(newMapx)
-		const newMap = new Map(elementMap)
-		newMap.set('title', 'New story')
-	}, [])
+	const { draggedElement, onDrag, onStopDrag } = useDragAndDrop()
+	const { shadowElements } = useShadowElementOrderArray()
+
+	const elementOrderArrayToVisualise = draggedElement
+		? shadowElements
+		: elementOrderArray
 
 	return (
 		<>
@@ -44,8 +46,8 @@ const StoryEditor = () => {
 					}}
 				/>
 			</GeneralInformation>
-			<ul className='flex flex-col justify-center items-center gap-4 w-[80%]'>
-				{elementOrderArray.map((identifier) => {
+			<ul className='flex flex-col justify-center items-center gap-6 w-[80%]'>
+				{elementOrderArrayToVisualise.map((identifier) => {
 					const element = elementMap.get(identifier)
 
 					if (!element) return null
@@ -55,30 +57,36 @@ const StoryEditor = () => {
 
 					if (elementType === 'paragraph')
 						return (
-							<EditingBlock
-								content={contents}
-								identifier={identifier}
-								type='paragraph'
-							/>
+							<DragAndDropContainer identifier={identifier}>
+								<EditingBlock
+									content={contents}
+									identifier={identifier}
+									type='paragraph'
+								/>
+							</DragAndDropContainer>
 						)
 
 					if (elementType === 'title')
 						return (
-							<EditingBlock
-								content={contents}
-								identifier={identifier}
-								type='title'
-							/>
+							<DragAndDropContainer identifier={identifier}>
+								<EditingBlock
+									content={contents}
+									identifier={identifier}
+									type='title'
+								/>
+							</DragAndDropContainer>
 						)
 
 					if (elementType === 'image')
 						return (
-							<ImageBlock
-								content={contents}
-								deleteBlock={() => console.log('delete')}
-								editBlock={() => console.log('edit block')}
-								identifier='xdd'
-							/>
+							<DragAndDropContainer identifier={identifier}>
+								<ImageBlock
+									content={contents}
+									deleteBlock={() => console.log('delete')}
+									editBlock={() => console.log('edit block')}
+									identifier='xdd'
+								/>
+							</DragAndDropContainer>
 						)
 
 					return null

@@ -20,7 +20,7 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 
 	return (
 		<li
-			className='relative p-8 h-auto flex flex-wrap justify-center items-center'
+			className='w-full bg-secondPrimary relative h-auto flex flex-wrap justify-center items-center'
 			onMouseEnter={() => setToolbarVisible(true)}
 			onMouseLeave={() => setToolbarVisible(false)}
 			key={identifier}
@@ -34,11 +34,11 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 				/>
 			)}
 			{type === 'paragraph' ? (
-				<p className='p-4 rounded-md bg-darkerSecondary indent-4 break-all'>
+				<p className='w-full p-8 rounded-sm bg-darkerSecondary indent-4 break-all'>
 					{content} {type}
 				</p>
 			) : (
-				<h2 className='font-semibold text-xl py-2 text-center'>
+				<h2 className='font-semibold w-auto text-xl py-2 text-center'>
 					{content} {type}
 				</h2>
 			)}
