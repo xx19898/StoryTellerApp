@@ -12,6 +12,7 @@ import TitleEditField from '../editingElements/TitleEditField'
 import useDragAndDrop from '../editingElements/DragAndDrop/useDragAndDrop'
 import useShadowElementOrderArray from '../editingElements/DragAndDrop/useShadowElementOrderArray'
 import DragAndDropContainer from '../editingElements/DragAndDrop/dragAndDropContainer'
+import { shadowElementArray } from '../editingElements/DragAndDrop/dragAndDropAtoms'
 
 // implement drag and drop to change placement of blocks
 const StoryEditor = () => {
@@ -21,11 +22,13 @@ const StoryEditor = () => {
 	const [authorIcon, setAuthorIcon] = useState(null)
 
 	const { draggedElement, onDrag, onStopDrag } = useDragAndDrop()
-	const { shadowElements } = useShadowElementOrderArray()
+	const [shadowElements, setShadowElements] = useAtom(shadowElementArray)
 
 	const elementOrderArrayToVisualise = draggedElement
 		? shadowElements
 		: elementOrderArray
+
+	console.log({ elementOrderArrayToVisualise, shadowElements })
 
 	return (
 		<>

@@ -24,8 +24,6 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 			onMouseEnter={() => setToolbarVisible(true)}
 			onMouseLeave={() => setToolbarVisible(false)}
 			key={identifier}
-			onDragStart={(e) => console.log(`started dragging ${identifier}`)}
-			onMouseOver={(e) => console.log(`hovered ${identifier}`)}
 		>
 			{toolbarVisible && (
 				<EditingBlockManipulationToolbar

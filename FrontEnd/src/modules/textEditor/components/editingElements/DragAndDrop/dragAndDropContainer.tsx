@@ -17,10 +17,20 @@ export default ({
 
 	return (
 		<div
+			key={identifier}
+			draggable={true}
 			onDragEnd={() => onStopDrag()}
-			onDrag={(e) => onDrag(identifier)}
-			className='w-[80%] p-2 bg-secSpecial flex flex-wrap justify-center items-center'
-			onMouseOver={(e) => {
+			onDragStart={(e) => {
+				setTimeout(() => {
+					onDrag(identifier)
+				}, 0)
+			}}
+			className='w-[80%] flex flex-wrap justify-center items-center'
+			style={{
+				background: '#2A1E5C',
+				padding: draggedElement ? '2em' : 0,
+			}}
+			onDragOver={(e) => {
 				if (draggedElement && draggedElement != identifier)
 					swapElementsInShadowOrderArray(draggedElement, identifier)
 			}}
@@ -28,4 +38,6 @@ export default ({
 			{children}
 		</div>
 	)
+
+	//TODO: make styling depend on whether some element is dragged or not
 }

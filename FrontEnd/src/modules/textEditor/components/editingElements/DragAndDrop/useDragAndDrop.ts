@@ -20,7 +20,7 @@ export default () => {
 	function hoverOver(draggedElement: string) {}
 
 	function onDrag(draggedElement: string) {
-		syncShadowElementArrayWithTheRealElementArray
+		syncShadowElementArrayWithTheRealElementArray()
 		setDraggedElement(draggedElement)
 	}
 
@@ -30,10 +30,12 @@ export default () => {
 
 	function swapElementsInShadowOrderArray(firstEl: string, secEl: string) {
 		const newArr = swapBlocks(firstEl, secEl, shadowArray)
-		setShadowArray(elementOrderArray)
+		console.log({ newArr })
+		setShadowArray(newArr)
 	}
 
 	function onStopDrag() {
+		console.log('drag stops')
 		setDraggedElement(undefined)
 	}
 
