@@ -3,7 +3,7 @@ import {
 	draggedElementIdentifier,
 	hoveredElementIdentifier,
 	shadowElementArray,
-} from './dragAndDropAtoms'
+} from './dragAndDropState'
 import { useAtom } from 'jotai'
 import { swapBlocks } from './dragAndDropHelpers'
 
@@ -14,10 +14,9 @@ export default () => {
 	const [hoveredElement, setHoveredElement] = useAtom(
 		hoveredElementIdentifier
 	)
+
 	const { elementOrderArray } = useGetState()
 	const [shadowArray, setShadowArray] = useAtom(shadowElementArray)
-
-	function hoverOver(draggedElement: string) {}
 
 	function onDrag(draggedElement: string) {
 		syncShadowElementArrayWithTheRealElementArray()

@@ -12,10 +12,18 @@ import TitleEditField from '../editingElements/TitleEditField'
 import useDragAndDrop from '../editingElements/DragAndDrop/useDragAndDrop'
 import useShadowElementOrderArray from '../editingElements/DragAndDrop/useShadowElementOrderArray'
 import DragAndDropContainer from '../editingElements/DragAndDrop/dragAndDropContainer'
-import { shadowElementArray } from '../editingElements/DragAndDrop/dragAndDropAtoms'
+import { shadowElementArray } from '../editingElements/DragAndDrop/dragAndDropState'
+
+interface IStoryEditor {
+	updateStory: (
+		elementMap: Map<string, string>,
+		elemendOrderArray: string[]
+	) => Promise<void>
+	updateMainTitle: (newTitle: string) => Promise<void>
+}
 
 // implement drag and drop to change placement of blocks
-const StoryEditor = () => {
+const StoryEditor = ({ updateStory, updateMainTitle }: IStoryEditor) => {
 	const { elementMap, elementOrderArray } = useGetState()
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
 
@@ -28,7 +36,11 @@ const StoryEditor = () => {
 		? shadowElements
 		: elementOrderArray
 
-	console.log({ elementOrderArrayToVisualise, shadowElements })
+	console.log({
+		elementOrderArrayToVisualise,
+		shadowElements,
+		draggedElement,
+	})
 
 	return (
 		<>
@@ -60,7 +72,10 @@ const StoryEditor = () => {
 
 					if (elementType === 'paragraph')
 						return (
-							<DragAndDropContainer identifier={identifier}>
+							<DragAndDropContainer
+								identifier={identifier}
+								key={identifier}
+							>
 								<EditingBlock
 									content={contents}
 									identifier={identifier}

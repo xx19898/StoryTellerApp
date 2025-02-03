@@ -30,3 +30,37 @@ export const elementMapAtom = atom<Map<string, string>>(
 	])
 )
 export const testMap = atom<Map<string, string>>(new Map())
+
+export const currentlyEditedElementAtom = atom<undefined | string>('')
+
+/*
+	status: 'SUCCESS' | 'FAILURE' | 'PENDING' | 'NO_CURRENT_UPDATE',
+	errorMessage: undefined | string,
+	successMessage: undefined | string
+*/
+
+interface IUpdateSuccessful {
+	status: 'SUCCESS'
+	successMessage: string
+}
+
+interface IUpdateFailed {
+	status: 'FAILURE'
+	errorMessage: string
+}
+
+interface IUpdatePending {
+	status: 'PENDING'
+}
+
+interface INoUpdate {
+	status: 'NO_UPDATE'
+}
+
+type IUpdateStatus =
+	| IUpdateSuccessful
+	| IUpdateFailed
+	| IUpdatePending
+	| INoUpdate
+
+export const updateStatusAtom = atom<IUpdateStatus>({ status: 'NO_UPDATE' })
