@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { extractTypeAndContentOfHtmlElement } from '../../helpers/HtmlParsingElementUtilities'
 import useAddNewBlock from '../../hooks/useAddNewBlock'
 import useGetState from '../../hooks/useGetElementState'
 import AddNewBlock from '../addingNewElement/AddNewBlock'
 import EditingBlock from './EditingBlock'
 import ImageBlock from './ImageBlock'
-import { testMap } from '../../textEditorState'
 import { useAtom } from 'jotai'
 import GeneralInformation from './GeneralInformation'
 import TitleEditField from '../editingElements/TitleEditField'
 import useDragAndDrop from '../editingElements/DragAndDrop/useDragAndDrop'
-import useShadowElementOrderArray from '../editingElements/DragAndDrop/useShadowElementOrderArray'
 import DragAndDropContainer from '../editingElements/DragAndDrop/dragAndDropContainer'
 import { shadowElementArray } from '../editingElements/DragAndDrop/dragAndDropState'
 
@@ -21,9 +19,8 @@ interface IStoryEditor {
 	) => Promise<void>
 	updateMainTitle: (newTitle: string) => Promise<void>
 }
-
-// implement drag and drop to change placement of blocks
-const StoryEditor = ({ updateStory, updateMainTitle }: IStoryEditor) => {
+//{ updateStory, updateMainTitle }: IStoryEditor
+const StoryEditor = () => {
 	const { elementMap, elementOrderArray } = useGetState()
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()
 
@@ -36,11 +33,13 @@ const StoryEditor = ({ updateStory, updateMainTitle }: IStoryEditor) => {
 		? shadowElements
 		: elementOrderArray
 
+	/*
 	console.log({
 		elementOrderArrayToVisualise,
 		shadowElements,
 		draggedElement,
 	})
+		*/
 
 	return (
 		<>
@@ -86,7 +85,10 @@ const StoryEditor = ({ updateStory, updateMainTitle }: IStoryEditor) => {
 
 					if (elementType === 'title')
 						return (
-							<DragAndDropContainer identifier={identifier}>
+							<DragAndDropContainer
+								identifier={identifier}
+								key={identifier}
+							>
 								<EditingBlock
 									content={contents}
 									identifier={identifier}
@@ -97,12 +99,15 @@ const StoryEditor = ({ updateStory, updateMainTitle }: IStoryEditor) => {
 
 					if (elementType === 'image')
 						return (
-							<DragAndDropContainer identifier={identifier}>
+							<DragAndDropContainer
+								identifier={identifier}
+								key={identifier}
+							>
 								<ImageBlock
 									content={contents}
 									deleteBlock={() => console.log('delete')}
 									editBlock={() => console.log('edit block')}
-									identifier='xdd'
+									identifier={identifier}
 								/>
 							</DragAndDropContainer>
 						)

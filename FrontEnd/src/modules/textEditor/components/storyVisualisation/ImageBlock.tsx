@@ -34,8 +34,9 @@ const ImageBlock = ({
 
 	// visualize the data which is feeded through the input
 	// implement image deletion, image replacement
+	console.log({ currImage, identifier })
 	return (
-		<li key={identifier}>
+		<div>
 			{currImage ? (
 				<img src={currImage}></img>
 			) : (
@@ -52,7 +53,7 @@ const ImageBlock = ({
 					ref={imageInputRef}
 				></input>
 			)}
-		</li>
+		</div>
 	)
 }
 

@@ -19,11 +19,10 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 		return <EditingInput origValue={content} identifier={identifier} />
 
 	return (
-		<li
+		<div
 			className='w-full bg-secondPrimary relative h-auto flex flex-wrap justify-center items-center'
 			onMouseEnter={() => setToolbarVisible(true)}
 			onMouseLeave={() => setToolbarVisible(false)}
-			key={identifier}
 		>
 			{toolbarVisible && (
 				<EditingBlockManipulationToolbar
@@ -40,7 +39,7 @@ const EditingBlock = ({ type, content, identifier }: IEditingBlock) => {
 					{content} {type}
 				</h2>
 			)}
-		</li>
+		</div>
 	)
 }
 

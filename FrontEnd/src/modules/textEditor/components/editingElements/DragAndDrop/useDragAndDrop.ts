@@ -15,7 +15,7 @@ export default () => {
 		hoveredElementIdentifier
 	)
 
-	const { elementOrderArray } = useGetState()
+	const { elementOrderArray, setElementOrderArray } = useGetState()
 	const [shadowArray, setShadowArray] = useAtom(shadowElementArray)
 
 	function onDrag(draggedElement: string) {
@@ -35,7 +35,9 @@ export default () => {
 
 	function onStopDrag() {
 		console.log('drag stops')
+		setElementOrderArray(shadowArray)
 		setDraggedElement(undefined)
+		console.log({ draggedElement })
 	}
 
 	return {

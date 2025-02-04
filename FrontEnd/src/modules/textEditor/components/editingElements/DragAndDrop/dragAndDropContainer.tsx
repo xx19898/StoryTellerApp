@@ -16,12 +16,13 @@ export default ({
 	} = useDragAndDrop()
 
 	return (
-		<div
+		<li
 			key={identifier}
 			draggable={true}
 			onDragEnd={(e) => {
 				e.preventDefault()
 				console.log('drag stop')
+				onStopDrag()
 			}}
 			onMouseUp={(e) => 'mouse released'}
 			onDragStart={(e) => {
@@ -43,7 +44,7 @@ export default ({
 			}}
 		>
 			{children}
-		</div>
+		</li>
 	)
 
 	//TODO: make styling depend on whether some element is dragged or not
