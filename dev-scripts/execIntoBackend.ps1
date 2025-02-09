@@ -1,0 +1,1 @@
+docker exec -it 4aea8cf565a0 sh
