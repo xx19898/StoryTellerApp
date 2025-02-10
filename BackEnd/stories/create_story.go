@@ -37,8 +37,7 @@ func CreateStory(c *gin.Context) {
 	})
 	return
 }
-
-/*
+//TODO: implement and test
 func UpdateStory(c *gin.Context) {
 
 	var newStory models.Story

@@ -131,6 +131,7 @@ func TestFileExtractionUtility(t *testing.T) {
 		)
 	})
 
+	
 	r.ServeHTTP(reqRecorder, picUploadRequest)
 
 	if reqRecorder.Result().StatusCode != 202 {

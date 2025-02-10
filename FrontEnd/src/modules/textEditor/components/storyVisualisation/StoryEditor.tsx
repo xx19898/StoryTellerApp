@@ -19,7 +19,7 @@ interface IStoryEditor {
 	) => Promise<void>
 	updateMainTitle: (newTitle: string) => Promise<void>
 }
-//{ updateStory, updateMainTitle }: IStoryEditor
+//TODO: create badges that reflect state of update: 'updating', 'update successful', 'update failed'
 const StoryEditor = () => {
 	const { elementMap, elementOrderArray } = useGetState()
 	const { addNewImageBlock, addNewTextBlock } = useAddNewBlock()

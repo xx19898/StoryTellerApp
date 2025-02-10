@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//TODO: check that downloading + uploading images work properly
 func DownloadStoryImage(ctx *gin.Context) {
 	fmt.Println("Hi guys")
 

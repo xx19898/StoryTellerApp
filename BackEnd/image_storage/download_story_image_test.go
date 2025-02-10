@@ -14,6 +14,7 @@ import (
 	"net/http/httptest"
 	"net/textproto"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -118,7 +119,7 @@ func TestDownloadingStoryImage(t *testing.T) {
 	downloadReqRecorder := httptest.NewRecorder()
 
 	mockRouter := gin.Default()
-	downloadRequest, _ := http.NewRequest("GET", "/static/stories/testUser/1/test_image_13.jpg", &emptyBuffer)
+	downloadRequest, _ := http.NewRequest("GET", "/static/stories/testUser/1/test_image_1.jpg", &emptyBuffer)
 
 	mockRouter.Static("/static", "../IMAGES")
 
@@ -127,4 +128,8 @@ func TestDownloadingStoryImage(t *testing.T) {
 	if downloadReqRecorder.Result().StatusCode != 200 {
 		t.Fatal("Wrong status code")
 	}
+
+	picData,_ := downloadRequest.Body.Read()
+
+	fmt.Printf(strconv.Itoa(picData))
 }
