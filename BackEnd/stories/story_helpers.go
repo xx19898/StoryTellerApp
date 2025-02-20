@@ -44,11 +44,38 @@ func getTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 		return "",  errors.New("Element is empty")
 	}
 	
+	/*
 	allowedElementsAndPropertiesMap,err := getElementsPropertiesMap()
 	if(err != nil){
 		return "",errors.New("Could not get allowedElementsAndPropertiesMap")
 	}
-	//HERE
+	*/
+
+	//TODO: check that <> </> are ok, what of escaped <'s and >'s?
+	
+	firstChar := string(trimmedElement[0])
+	if(firstChar != "<") {
+		return "",errors.New("First char is not \"<\"")
+	}
+
+	lastChar := string(trimmedElement[len(trimmedElement) - 1])
+	if(lastChar != ">"){
+		return "",errors.New("Last char is not \">\"")
+	}
+
+	// check that html element is semantically proper: <> </>
+
+	var elementType string
+
+	for _, char := range trimmedElement{
+		isPartOfElType := true
+		for _, elementTypeEndingSymbol := range []byte{'>',' '}{
+			if char == elementTypeEndingSymbol{
+				isPartOfElType = false
+				break
+			}
+		}
+	}
 }
 
 /*

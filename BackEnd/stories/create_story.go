@@ -2,6 +2,7 @@ package stories
 
 import (
 	databaselayer "StoryTellerAppBackend/databaseLayer"
+	"StoryTellerAppBackend/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -64,4 +65,3 @@ func UpdateStory(c *gin.Context) {
 	})
 	return
 }
-*/
