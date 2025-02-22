@@ -65,7 +65,7 @@ func getTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 
 	// check that html element is semantically proper: <> </>
 
-	var elementType string
+	var elementType strings.Builder
 
 	for _, char := range trimmedElement{
 		isPartOfElType := true
@@ -75,7 +75,13 @@ func getTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 				break
 			}
 		}
+		if !isPartOfElType{
+			break
+		}
+		elementType.WriteRune(char)
 	}
+
+	return elementType.String(),nil
 }
 
 /*
