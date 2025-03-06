@@ -50,7 +50,7 @@ func UpdateStory(c *gin.Context) {
 		return
 	}
 
-	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory)
+	res, errWhenCreatingStory := databaselayer.CreateNewStory(newStory.Username,newStory.Content,newStory.Title)
 
 	if errWhenCreatingStory != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

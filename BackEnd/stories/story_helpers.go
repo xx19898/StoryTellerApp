@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func getAllowedElementsAndPropertiesMap()(map[string][]string,error){
+func GetAllowedElementsAndPropertiesMap()(map[string][]string,error){
 	allowedElementTagsWithProperties := map[string] []string{
 		"h":[]string{},
 		"p":[]string{},
@@ -37,7 +37,7 @@ func prelimCheckStory(story string) (bool, error) {
 	return true, nil
 }
 
-func getTypeOfElement(element string,getElementsPropertiesMap elementsPropertiesFunctionType) (string, error){
+func GetTypeOfElement(element string,getElementsPropertiesMap elementsPropertiesFunctionType) (string, error){
 	trimmedElement := strings.TrimSpace(element)
 	  
 	if(len(trimmedElement) == 0){
@@ -63,13 +63,31 @@ func getTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 		return "",errors.New("Last char is not \">\"")
 	}
 
+	// loop through characters, not bytes
+	secondLastChar := string(trimmedElement[len(trimmedElement) - 2])
+	if(secondLastChar != "/"){
+		return "",errors.New("Last char is not \">\"")
+	}
+
 	// check that html element is semantically proper: <> </>
+	var checkString strings.Builder
+	for _,char := range trimmedElement{
+		for _,keyElement := range []rune{'>','<','/'}{
+			if(char == keyElement){
+				checkString.WriteRune(char)
+			}
+		}
+	}
+	if checkString.String() != "<></>"{
+		return "",errors.New("the html element is not semantically proper: <></>")		
+	}
+
 
 	var elementType strings.Builder
 
 	for _, char := range trimmedElement{
 		isPartOfElType := true
-		for _, elementTypeEndingSymbol := range []byte{'>',' '}{
+		for _, elementTypeEndingSymbol := range []rune {'>',' '}{
 			if char == elementTypeEndingSymbol{
 				isPartOfElType = false
 				break
