@@ -2,6 +2,7 @@ package stories
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -38,7 +39,8 @@ func prelimCheckStory(story string) (bool, error) {
 }
 
 func GetTypeOfElement(element string,getElementsPropertiesMap elementsPropertiesFunctionType) (string, error){
-	trimmedElement := strings.TrimSpace(element)
+	
+	trimmedElement := []rune(strings.TrimSpace(element))
 	  
 	if(len(trimmedElement) == 0){
 		return "",  errors.New("Element is empty")
@@ -55,18 +57,19 @@ func GetTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 	
 	firstChar := string(trimmedElement[0])
 	if(firstChar != "<") {
-		return "",errors.New("First char is not \"<\"")
+		fmt.Println("first char is  " + firstChar)
+		return "",errors.New("First char is not \"<\" " + "but " + firstChar)
 	}
 
 	lastChar := string(trimmedElement[len(trimmedElement) - 1])
 	if(lastChar != ">"){
-		return "",errors.New("Last char is not \">\"")
+		return "",errors.New("Last char " + "(" + lastChar + ")" + "is not \">\"")
 	}
 
 	// loop through characters, not bytes
 	secondLastChar := string(trimmedElement[len(trimmedElement) - 2])
 	if(secondLastChar != "/"){
-		return "",errors.New("Last char is not \">\"")
+		return "",errors.New("Second last char is not \"\\\"")
 	}
 
 	// check that html element is semantically proper: <> </>
@@ -81,7 +84,6 @@ func GetTypeOfElement(element string,getElementsPropertiesMap elementsProperties
 	if checkString.String() != "<></>"{
 		return "",errors.New("the html element is not semantically proper: <></>")		
 	}
-
 
 	var elementType strings.Builder
 
