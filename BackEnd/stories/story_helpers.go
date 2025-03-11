@@ -38,21 +38,35 @@ func prelimCheckStory(story []rune) error {
 	return nil
 }
 
-func CheckStorySynthaxis(story string) (error){
+func CheckStoryHtmlSynthaxis(story string) (error){
 	trimmedElement := []rune(strings.TrimSpace(story))
 
+	err := prelimCheckStory(trimmedElement)
+	if err != nil{
+		return err
+	}
 
-	
 	if(len(trimmedElement) == 0){
 		return errors.New("Element is empty")
 	}
 	
-	/*
-	allowedElementsAndPropertiesMap,err := getElementsPropertiesMap()
-	if(err != nil){
-		return "",errors.New("Could not get allowedElementsAndPropertiesMap")
-	}
-	*/
+
+	//	get opener tag <div>, <p> etc if no opener => err
+	//	GetOpenerTag func
+
+	//	get properties
+
+	//	check if properties are ok for the chosen opener
+
+	//	what to do if there is closing tag inside the comments? 
+	// 	ex: <div>and the closing tag for div should look like: </div> </div>
+
+	//	get closer tag </div>, </p> etc if no closer => err
+
+	//	move on to the next html element if there are any
+
+
+
 
 	//TODO: check that <> </> are ok, what of escaped <'s and >'s?
 	
