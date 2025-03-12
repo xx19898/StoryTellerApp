@@ -2,8 +2,72 @@ package stories
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 )
+
+func TestGetOpenerTag(t *testing.T){
+	testElement := []rune("<d")
+	_,err,_ := GetOpenerTag(testElement,0)
+	if err == nil{
+		t.Fatalf(fmt.Sprintf("Function did not catch story being too short(<3)"))
+	}
+
+	testElement = []rune("x<div/>")
+	_,err,_ = GetOpenerTag(testElement,0)
+	if err == nil{
+		t.Fatalf(fmt.Sprintf("Function did not catch story being too short(<3)"))
+	}
+
+	testElement = []rune("<div>")
+	res ,err,_ := GetOpenerTag(testElement,0)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Unexpected error, %s",err.Error()))
+	}
+	if res != "div"{
+		t.Fatalf("Incorrect opener tag extracted")
+	}
+
+	testElement = []rune("<p>")
+	res ,err,_ = GetOpenerTag(testElement,0)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Unexpected error, %s",err.Error()))
+	}
+	if res != "p"{
+		t.Fatalf("Incorrect opener tag extracted")
+	}
+
+
+	testElement = []rune("<div >")
+	res ,err,_ = GetOpenerTag(testElement,0)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Unexpected error, %s",err.Error()))
+	}
+	if res != "div"{
+		t.Fatalf("Incorrect opener tag extracted")
+	}
+
+	testElement = []rune("<div>")
+	res ,err,_ = GetOpenerTag(testElement,0)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Unexpected error, %s",err.Error()))
+	}
+	if res != "div"{
+		t.Fatalf("Incorrect opener tag extracted")
+	}
+
+	testElement = []rune("<img src=\"xdfdsjfjsd\">")
+	res ,err, pointersLastPosition := GetOpenerTag(testElement,0)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Unexpected error, %s",err.Error()))
+	}
+	if res != "img"{
+		t.Fatalf("Incorrect opener tag extracted")
+	}
+	if pointersLastPosition != 4{
+		t.Fatal(fmt.Sprintf("Incorrect pointerlastposition, should be 3 but is %s",strconv.Itoa(pointersLastPosition)))
+	} 
+}
 func TestStoryHtmlSynthaxisIsCorrect(t *testing.T){
 	testElement := "<wrong>"
 	_,err := GetTypeOfElement(testElement,GetAllowedElementsAndPropertiesMap)
@@ -18,7 +82,7 @@ func TestStoryHtmlSynthaxisIsCorrect(t *testing.T){
 	_,err = GetTypeOfElement(testElement,GetAllowedElementsAndPropertiesMap)
 	fmt.Println(err.Error())
 	if err == nil{
-		t.Fatalf(fmt.Sprintf("Function did not see the error in %s , missing / before the last >",testElement))
+		t.Fatalf(fmt.Sprintf("Function did not see the error in %s ,missing / before the last >",testElement))
 	}
 
 	testElement = "<<div><div/>"

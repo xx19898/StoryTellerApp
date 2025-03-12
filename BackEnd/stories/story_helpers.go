@@ -38,6 +38,29 @@ func prelimCheckStory(story []rune) error {
 	return nil
 }
 
+func GetOpenerTag(story []rune,pointer int)(string,error,int){
+	if string(story[pointer]) != "<"{
+		return "",errors.New("First character is not \"<\""),0
+	}
+	if len(story[pointer:]) < 3{
+		return "",errors.New("Cannot extract opener tag as the bit of story passed in is too short(smaller then 3 elements)"),0
+	}
+	var openingTag strings.Builder
+	pointerLastPosition := pointer
+	
+	//pointer should be at '<'
+	for i := pointer + 1; i < len(story);i++{
+		pointerLastPosition++
+		charAtHand := story[i]
+		if string(charAtHand) == " " || string(charAtHand) == ">"{break}
+
+		openingTag.WriteRune(charAtHand)
+	}
+
+	return openingTag.String(),nil,pointerLastPosition
+}
+
+// note: no children expected to be in any html node
 func CheckStoryHtmlSynthaxis(story string) (error){
 	trimmedElement := []rune(strings.TrimSpace(story))
 
