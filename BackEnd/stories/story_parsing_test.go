@@ -91,6 +91,34 @@ func TestStoryHtmlSynthaxisIsCorrect(t *testing.T){
 		t.Fatalf(fmt.Sprintf("Function did not see the error in %s ,there is no such html elements as wrong",testElement))
 	}
 }
+
+func TestThatHtmlPropertiesAreCorrect(t *testing.T){
+	testElement := "<div incorrectProperty=\"xddd\"></div>"
+	err := CheckStoryHtmlSynthaxis(testElement)
+	if err == nil{
+		t.Fatalf(fmt.Sprintf("Function did not see error inside %s",testElement))
+	}
+
+	testElement = "<div></div>"
+	err = CheckStoryHtmlSynthaxis(testElement)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Function saw error inside %s",testElement))
+	}
+
+	testElement = "<img src=\"www.storyteller.com/story_images/3999\"></img>"
+	err = CheckStoryHtmlSynthaxis(testElement)
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Function did not see error inside %s",testElement))
+	}	
+}
+
+func TestOriginForSrcTagInsideImages(t *testing.T){
+	testElement := "<img src=\"www.scam.com/imgs/2q30_\"/>"
+	err := CheckOriginForImageSource(testElement)
+	if err == nil{
+		t.Fatalf(fmt.Sprintf("Function did not see error inside %s",testElement))
+	}
+}
 func TestHtmlElementTypeExtraction(t *testing.T) {
 	testElement := "<div><div/>"
 	elementType,err := GetTypeOfElement(testElement, GetAllowedElementsAndPropertiesMap)

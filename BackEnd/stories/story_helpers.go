@@ -5,7 +5,14 @@ import (
 	"fmt"
 	"strings"
 )
+func TestOriginForScrTagInsideImages(source string){
+	//check for length > 7 and < 50
+	var source strings.Builder
+	sourceAsRunes := []rune(source
+	)
+	for 
 
+}
 func GetAllowedElementsAndPropertiesMap()(map[string][]string,error){
 	allowedElementTagsWithProperties := map[string] []string{
 		"h":[]string{},
