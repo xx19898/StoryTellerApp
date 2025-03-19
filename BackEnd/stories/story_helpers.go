@@ -230,5 +230,5 @@ func CheckStory(story string)(error){
 	
 	return nil
 
-	//left pointer to beginning of a html element, right pointer to end of a html element
+	//left pointer to beginning of a html element, right pointer to end of a html elementxx
 }
