@@ -5,13 +5,18 @@ import (
 	"fmt"
 	"strings"
 )
-func TestOriginForScrTagInsideImages(source string){
+func CheckOriginForImageSource(url string,correctSource string)(error){
 	//check for length > 7 and < 50
-	var source strings.Builder
-	sourceAsRunes := []rune(source
-	)
-	for 
+	correctSourceLength := len([]rune(correctSource))
 
+	urlOriginAsRuneSlice := []rune(url)[:correctSourceLength]
+	urlOriginAsString := string(urlOriginAsRuneSlice)
+	if( urlOriginAsString != correctSource) {
+		fmt.Println(urlOriginAsString)
+		return errors.New("Incorrect origin: " + urlOriginAsString)
+	}
+
+	return nil
 }
 func GetAllowedElementsAndPropertiesMap()(map[string][]string,error){
 	allowedElementTagsWithProperties := map[string] []string{
@@ -214,3 +219,16 @@ func SanitizeStoryHtmlString(unsntzd string) (string,error) {
 	}
 }
 */
+
+func CheckStory(story string)(error){
+	storyAsRuneArr := []rune(story)
+	err := prelimCheckStory([]rune(story))
+	leftPointer,rightPointer := 0,0
+	if(err != nil){
+		return err
+	}
+	
+	return nil
+
+	//left pointer to beginning of a html element, right pointer to end of a html element
+}

@@ -113,10 +113,16 @@ func TestThatHtmlPropertiesAreCorrect(t *testing.T){
 }
 
 func TestOriginForSrcTagInsideImages(t *testing.T){
-	testElement := "<img src=\"www.scam.com/imgs/2q30_\"/>"
-	err := CheckOriginForImageSource(testElement)
+	testElement := "www.scam.com/imgs/2q30_\""
+	err := CheckOriginForImageSource(testElement,"www.storyteller.com")
 	if err == nil{
 		t.Fatalf(fmt.Sprintf("Function did not see error inside %s",testElement))
+	}
+
+	testElement = "www.storyteller.com/imgs/2q30_\""
+	err = CheckOriginForImageSource(testElement,"www.storyteller.com")
+	if err != nil{
+		t.Fatalf(fmt.Sprintf("Function saw inside %s ,should be ok and no error",testElement))
 	}
 }
 func TestHtmlElementTypeExtraction(t *testing.T) {
