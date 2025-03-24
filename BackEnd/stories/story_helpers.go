@@ -73,7 +73,7 @@ func GetOpenerTag(story []rune,pointer int)(string,error,int){
 }
 
 // note: no children expected to be in any html node
-func CheckStoryHtmlSynthaxis(story string) (error){
+func CheckStoryHtmlSynthaxis(story string) (error){ 
 	trimmedElement := []rune(strings.TrimSpace(story))
 
 	err := prelimCheckStory(trimmedElement)
@@ -137,6 +137,7 @@ func CheckStoryHtmlSynthaxis(story string) (error){
 	
 	return nil
 }
+
 
 func GetTypeOfElement(element string,getElementsPropertiesMap elementsPropertiesFunctionType) (string, error){
 	
@@ -223,12 +224,54 @@ func SanitizeStoryHtmlString(unsntzd string) (string,error) {
 func CheckStory(story string)(error){
 	storyAsRuneArr := []rune(story)
 	err := prelimCheckStory([]rune(story))
-	leftPointer,rightPointer := 0,0
 	if(err != nil){
 		return err
 	}
-	
-	return nil
 
-	//left pointer to beginning of a html element, right pointer to end of a html elementxx
+
+	leftPointer,rightPointer := 0,0
+	//first in last out
+	var openedTags []string
+
+	var tagTypeBuilder strings.Builder 
+
+	/*
+	STATES: CONTENT, OPENING_TAG, CLOSING_TAG
+	if(OPENING_TAG + 1) CONTENT
+	if(parsed closing tag) => !CONTENT, CLOSING_TAG
+	*/
+	
+	for rightPointer;rightPointer < len(storyAsRuneArr); rightPointer++{
+		if(leftPointer == "<"){
+			rightPointer++
+			for _,char := range storyAsRuneArr[rightPointer:]{
+				tagTypeBuilder.WriteRune(char)
+				// tag identifier(opening)
+				if(rightPointer == ">" || rightPointer == " "){
+					//CHECK if tag type builder is some kind of tag, parse all the way through to until the ">", check if properties are ok
+					// NO EMBEDDING RULE!!!
+					if(len(openedTags) != 0){
+						return Error(fmt.Sprintf("Embedded html detected(%s)",&tagTypeBuilder.String()))
+					}
+
+					openedTags = append(openedTags,tagTypeBuilder.String())
+					tagTypeBuilder.Reset()
+				}
+				//tag identifier(closing)
+				else if(rightPointer == "/"){
+					if len(openedTags) == 0{
+						return Error(fmt.Sprintf("Closing"))
+					}
+					if tagTypeBuilder.String() == openedTags[len(openedTags) - 1]{
+
+					}
+				}else{
+
+				}
+			}
+		}
+	}
+	
+	// how to deal with <div></div></div>
+	return nil
 }
