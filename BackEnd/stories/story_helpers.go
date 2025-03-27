@@ -3,6 +3,7 @@ package stories
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 func CheckOriginForImageSource(url string,correctSource string)(error){
@@ -18,26 +19,26 @@ func CheckOriginForImageSource(url string,correctSource string)(error){
 
 	return nil
 }
-func GetAllowedElementsAndPropertiesMap()(map[string][]string,error){
+func GetAllowedElementsAndPropertiesMap()([]string,map[string][]string){
 	allowedElementTagsWithProperties := map[string] []string{
 		"h":[]string{},
 		"p":[]string{},
-		"img":[]string{"src"},}
-	return allowedElementTagsWithProperties,nil
+		"img":[]string{"src"},}	
+	allowedElements := []string{"h","p","img"}
+
+	return allowedElements,allowedElementTagsWithProperties
 }
-type elementsPropertiesFunctionType func() (map[string][]string,error)
-/*
+func htmlTagIsAllowed(element string)(bool, error){
+	allowedElements,_ := GetAllowedElementsAndPropertiesMap()
+	
+	for _,allowedElement := range allowedElements{
+		if allowedElement == element{
+			return true,nil
+		}
+	}
 
-make(
-	map[string][]string{
-		"h":[]string{},
-		"p":[]string{},
-		"img":[]string{"src"},
+	return false,nil
 }
-)
-*/
-
-
 
 //checks that story is not empty nor too long
 func prelimCheckStory(story []rune) error {
@@ -50,228 +51,175 @@ func prelimCheckStory(story []rune) error {
 	return nil
 }
 
-func GetOpenerTag(story []rune,pointer int)(string,error,int){
-	if string(story[pointer]) != "<"{
-		return "",errors.New("First character is not \"<\""),0
+func scrollToFirstNonSpaceChar(curr *int  ,story []rune){
+	for _,char := range story[*curr:]{
+		if(char == ' '){	
+			*curr = *curr + 1
+		}
 	}
-	if len(story[pointer:]) < 3{
-		return "",errors.New("Cannot extract opener tag as the bit of story passed in is too short(smaller then 3 elements)"),0
-	}
-	var openingTag strings.Builder
-	pointerLastPosition := pointer
-	
-	//pointer should be at '<'
-	for i := pointer + 1; i < len(story);i++{
-		pointerLastPosition++
-		charAtHand := story[i]
-		if string(charAtHand) == " " || string(charAtHand) == ">"{break}
-
-		openingTag.WriteRune(charAtHand)
-	}
-
-	return openingTag.String(),nil,pointerLastPosition
 }
 
-// note: no children expected to be in any html node
-func CheckStoryHtmlSynthaxis(story string) (error){ 
-	trimmedElement := []rune(strings.TrimSpace(story))
+func ParseHtmlAttribute(htmlAttributeString string)(string,string,error){
+	splitByEqSign := strings.Split(htmlAttributeString,"=")
 
-	err := prelimCheckStory(trimmedElement)
-	if err != nil{
-		return err
+	if len(splitByEqSign) != 2{
+		return "","",errors.New(fmt.Sprintf("Malformed Html Attribute: %s",htmlAttributeString))
 	}
 
-	if(len(trimmedElement) == 0){
-		return errors.New("Element is empty")
-	}
-	
-
-	//	get opener tag <div>, <p> etc if no opener => err
-	//	GetOpenerTag func
-
-	//	get properties
-
-	//	check if properties are ok for the chosen opener
-
-	//	what to do if there is closing tag inside the comments? 
-	// 	ex: <div>and the closing tag for div should look like: </div> </div>
-
-	//	get closer tag </div>, </p> etc if no closer => err
-
-	//	move on to the next html element if there are any
-
-
-
-
-	//TODO: check that <> </> are ok, what of escaped <'s and >'s?
-	
-	firstChar := string(trimmedElement[0])
-	if(firstChar != "<") {
-		fmt.Println("first char is  " + firstChar)
-		return errors.New("First char is not \"<\" " + "but " + firstChar)
-	}
-
-	lastChar := string(trimmedElement[len(trimmedElement) - 1])
-	if(lastChar != ">"){
-		return errors.New("Last char " + "(" + lastChar + ")" + "is not \">\"")
-	}
-
-	// loop through characters, not bytes
-	secondLastChar := string(trimmedElement[len(trimmedElement) - 2])
-	if(secondLastChar != "/"){
-		return errors.New("Second last char is not \"\\\"")
-	}
-
-	// check that html element is semantically proper: <> </>
-	var checkString strings.Builder
-	for _,char := range trimmedElement{
-		for _,keyElement := range []rune{'>','<','/'}{
-			if(char == keyElement){
-				checkString.WriteRune(char)
-			}
-		}
-	}
-	if checkString.String() != "<></>"{
-		return errors.New("the html element is not semantically proper: <></>")		
-	}
-	
-	return nil
+	return splitByEqSign[0],strings.ReplaceAll(splitByEqSign[1],"\"",""),nil
 }
 
-
-func GetTypeOfElement(element string,getElementsPropertiesMap elementsPropertiesFunctionType) (string, error){
+func CheckIfIsTag(currIndex *int, story []rune,openedTag string)(bool,error){
 	
-	trimmedElement := []rune(strings.TrimSpace(element))
-	  
-	if(len(trimmedElement) == 0){
-		return "",  errors.New("Element is empty")
+	var tagNameBuilder strings.Builder
+	var propertyBuilder strings.Builder
+	closingTag := false 
+
+	scrollToFirstNonSpaceChar(currIndex,story)
+
+	if(story[*currIndex] == '/'){
+		closingTag = true
 	}
 	
-	/*
-	allowedElementsAndPropertiesMap,err := getElementsPropertiesMap()
-	if(err != nil){
-		return "",errors.New("Could not get allowedElementsAndPropertiesMap")
-	}
-	*/
-
-	//TODO: check that <> </> are ok, what of escaped <'s and >'s?
-	
-	firstChar := string(trimmedElement[0])
-	if(firstChar != "<") {
-		fmt.Println("first char is  " + firstChar)
-		return "",errors.New("First char is not \"<\" " + "but " + firstChar)
-	}
-
-	lastChar := string(trimmedElement[len(trimmedElement) - 1])
-	if(lastChar != ">"){
-		return "",errors.New("Last char " + "(" + lastChar + ")" + "is not \">\"")
-	}
-
-	// loop through characters, not bytes
-	secondLastChar := string(trimmedElement[len(trimmedElement) - 2])
-	if(secondLastChar != "/"){
-		return "",errors.New("Second last char is not \"\\\"")
-	}
-
-	// check that html element is semantically proper: <> </>
-	var checkString strings.Builder
-	for _,char := range trimmedElement{
-		for _,keyElement := range []rune{'>','<','/'}{
-			if(char == keyElement){
-				checkString.WriteRune(char)
-			}
-		}
-	}
-	if checkString.String() != "<></>"{
-		return "",errors.New("the html element is not semantically proper: <></>")		
-	}
-
-	var elementType strings.Builder
-
-	for _, char := range trimmedElement{
-		isPartOfElType := true
-		for _, elementTypeEndingSymbol := range []rune {'>',' '}{
-			if char == elementTypeEndingSymbol{
-				isPartOfElType = false
-				break
-			}
-		}
-		if !isPartOfElType{
+	for j := *currIndex;j < len(story);j++{
+		*currIndex++
+		char := story[j]
+		if char == ' '{
 			break
+		}else{
+			tagNameBuilder.WriteRune(char)
 		}
-		elementType.WriteRune(char)
 	}
 
-	return elementType.String(),nil
+	tagNameIsOK,_ := htmlTagIsAllowed(tagNameBuilder.String())
+	
+	if !tagNameIsOK{
+		return false, errors.New("this is no tag")
+	}
+
+	scrollToFirstNonSpaceChar(currIndex,story)
+
+	if(closingTag && story[*currIndex] != '>'){
+		return false, errors.New("malformed closing tag index " + strconv.Itoa(*currIndex) + " into the story")
+	}
+
+	//parsing html attribute value
+	for j := *currIndex;j < len(story);j++{
+		*currIndex++
+		char := story[j]
+		if char == ' '{
+			
+		}else{
+			propertyBuilder.WriteRune(char)
+		}
+	}
+
+	return true,nil
 }
 
 /*
-func SanitizeStoryHtmlString(unsntzd string) (string,error) {
-	storyIsOk,err := prelimCheckStory(unsntzd)
-	if(!storyIsOk || err != nil){
-		return "",err
-	} 
-	
-	var currElementType = ""
-	
-	//element type can only be h1,2,3..., p, img
-	for index, char := range unsntzd {
-
-	}
-}
-*/
-
 func CheckStory(story string)(error){
 	storyAsRuneArr := []rune(story)
 	err := prelimCheckStory([]rune(story))
 	if(err != nil){
 		return err
-	}
+	} 
 
+	//Means opening tag already exists
+	openedTag := "NONE"
+	// status is NONE, OPENING_TAG, CLOSING_TAG, CONTENT
+	STATUS := "NONE"
 
-	leftPointer,rightPointer := 0,0
-	//first in last out
-	var openedTags []string
-
-	var tagTypeBuilder strings.Builder 
-
-	/*
-	STATES: CONTENT, OPENING_TAG, CLOSING_TAG
-	if(OPENING_TAG + 1) CONTENT
-	if(parsed closing tag) => !CONTENT, CLOSING_TAG
-	*/
+	_,allowedHtmlAttributesMap,err := GetAllowedElementsAndPropertiesMap()
 	
-	for rightPointer;rightPointer < len(storyAsRuneArr); rightPointer++{
-		if(leftPointer == "<"){
-			rightPointer++
-			for _,char := range storyAsRuneArr[rightPointer:]{
-				tagTypeBuilder.WriteRune(char)
-				// tag identifier(opening)
-				if(rightPointer == ">" || rightPointer == " "){
-					//CHECK if tag type builder is some kind of tag, parse all the way through to until the ">", check if properties are ok
-					// NO EMBEDDING RULE!!!
-					if(len(openedTags) != 0){
-						return Error(fmt.Sprintf("Embedded html detected(%s)",&tagTypeBuilder.String()))
-					}
 
-					openedTags = append(openedTags,tagTypeBuilder.String())
-					tagTypeBuilder.Reset()
-				}
-				//tag identifier(closing)
-				else if(rightPointer == "/"){
-					if len(openedTags) == 0{
-						return Error(fmt.Sprintf("Closing"))
-					}
-					if tagTypeBuilder.String() == openedTags[len(openedTags) - 1]{
+	var tagTypeBuilder strings.Builder
+	tagBuilt := false
+	
+	var htmlAttributeBuilder strings.Builder
+	attributeBuilt := false
 
+	// STATES: CLOSED, OPENED,(also need to know which tag is opened): 
+	// if closed: next should be opening tag, 
+	// if opened: scroll until <, 
+	
+	// MAKE THIS A FUNC:
+	// extract tag type, extract all the properties
+	// look if it is tag:
+	// take in <, next one should be tag name!, check if tag is proper, 
+	// check if tag has none attributes, 
+	// check for attributes if needed, 
+	// check that attribute is correct, 
+	// if there are any chars after that attribute => error, 
+	// scroll until >, 
+	
+	// set status to opened, 
+	// set type of tag too close tag, 
+	// scroll until next < => check that it is correct closing tag => 
+	// if not scroll again until next < => so on... 
+	
+	
+	for i := 0;i < len(storyAsRuneArr); i++{
+		//
+		if(storyAsRuneArr[i] == '<'){
+			STATUS = "TAG"
+			// checking if there is "/" after "<", then it is closing tag
+			scrollToFirstNonSpaceChar(&i,storyAsRuneArr)
+			if(i >= len(storyAsRuneArr)){
+				break
+			}
+			if(storyAsRuneArr[i] == '/'){
+				var closingTagBuilder strings.Builder
+
+				for _,char := range storyAsRuneArr[i:]{
+						if(char == ' '){
+							i++
+						}
 					}
-				}else{
+				
+				if(openedTag == "NONE"){					
 
 				}
 			}
+			for _,char := range storyAsRuneArr[i:]{
+				charAsString := string(char)
+				if(charAsString == " "){
+
+				}else{
+
+				}
+				tagTypeBuilder.WriteRune(char)
+
+
+				// tag identifier(opening)
+				if char == '>' || (storyAsRuneArr[rightPointer] == ' ' && len(strings.TrimSpace(tagTypeBuilder.String())) != 0 ) {
+					//CHECK if tag type builder is some kind of tag, parse all the way through to until the ">", check if properties are ok
+					// NO EMBEDDING RULE!!!
+					if(len(openedTags) != 0){
+						return errors.New(fmt.Sprintf("Embedded html detected(%s)",tagTypeBuilder.String()))
+					}
+
+					openedTags = append(openedTags,strings.Trim(tagTypeBuilder.String()))
+					tagTypeBuilder.Reset()
+				//tag identifier(closing)
+				}else if storyAsRuneArr[rightPointer] == '/'{
+					if len(openedTags) == 0{
+						return errors.New(fmt.Sprintf("Incorrect closing tag at character %s",rightPointer))
+					}
+				}else{
+					fmt.Println("xd")
+				}
+			}
+		}else{
+			i++
 		}
+	}
+
+	if(openedTag != "NONE"){
+		return errors.New(fmt.Sprintf("ERROR! Story is malformed: last opened tag is unclosed: %s",openedTag))
 	}
 	
 	// how to deal with <div></div></div>
 	return nil
 }
+*/
