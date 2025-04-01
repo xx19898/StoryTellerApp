@@ -47,4 +47,6 @@ func TestHtmlStringScrollingToFirstNonEmptyChar(t *testing.T){
 	}
 }
 
-func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T)
+func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
+	
+}

@@ -69,8 +69,17 @@ func ParseHtmlAttribute(htmlAttributeString string)(string,string,error){
 	return splitByEqSign[0],strings.ReplaceAll(splitByEqSign[1],"\"",""),nil
 }
 
-func CheckIfIsTag(currIndex *int, story []rune,openedTag string)(bool,error){
+func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)(bool,error){
+	//currIndex at whatever comes next after <
+	*currIndex++
 	
+	// openedTag == NONE => has to be legit opening tag (if not img tag)
+	// tag name has to be after opening bracket
+	// if img => src property HAS to be in place if not => > should follow the opening tag
+	
+	// openedTag != NONE => does not have to be legit opening/closing tag => 
+	// in case of error IF tag is not enclosed with > just return the last position
+	// => scroll until legit closing tag is found
 	var tagNameBuilder strings.Builder
 	var propertyBuilder strings.Builder
 	closingTag := false 
@@ -78,28 +87,95 @@ func CheckIfIsTag(currIndex *int, story []rune,openedTag string)(bool,error){
 	scrollToFirstNonSpaceChar(currIndex,story)
 
 	if(story[*currIndex] == '/'){
-		closingTag = true
+		// tag is a closing tag
+		if *openedTag == "NONE"{
+			return false,errors.New(fmt.Sprintf("Improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex)))
+		}
+		//reading closing tag name
+		for j := *currIndex;j < len(story);j++{
+		*currIndex++
+		char := story[j]
+		if char == ' '{
+			break
+		}
+		if char == '>'{
+			break
+		}else{
+			tagNameBuilder.WriteRune(char)
+		}
+		}
+
+		scrollToFirstNonSpaceChar(currIndex,story)
+
+		if story[*currIndex] != '>'{
+			if *openedTag != tagNameBuilder.String(){
+				return false,errors.New(fmt.Sprint("Error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag))
+			}
+			return false,nil
+		}
+		
 	}
-	
+
+	// TAG IS NOT A CLOSING TAG
+
+	// reads tag 
 	for j := *currIndex;j < len(story);j++{
 		*currIndex++
 		char := story[j]
 		if char == ' '{
+			break
+		}
+		if char == '>'{
 			break
 		}else{
 			tagNameBuilder.WriteRune(char)
 		}
 	}
 
-	tagNameIsOK,_ := htmlTagIsAllowed(tagNameBuilder.String())
-	
-	if !tagNameIsOK{
-		return false, errors.New("this is no tag")
-	}
+	//TODO: from here on divide program into different cases for different tags: img, and others
 
 	scrollToFirstNonSpaceChar(currIndex,story)
 
+	tagClosed := story[*currIndex] == '>'
+/*	
+	TODO AFTER THE CLOSING > IS FOUND
+	tagNameIsOK,_ := htmlTagIsAllowed(tagNameBuilder.String())
+	
+	if !tagNameIsOK && tagClosed{
+		return false, errors.New(fmt.Sprintf("this is no tag at index %s",strconv.Itoa(*currIndex)))
+	}
+*/ 
+	//??
+	if tagNameBuilder.String() != "img" && tagClosed{
+		return true,nil
+	}
+
+	//tag is img and tag opened == NONE
+
+
+	//if no attribute, opening tag is already parsed
+	if(closingTag){
+		if *openedTag == "NONE"{
+			return false,errors.New(fmt.Sprintf("malformed story, found closing tag %s at index %s while there is no opening tag",tagNameBuilder.String(),strconv.Itoa(*currIndex)))
+		}
+		//if closing tag, close openedtag, if opened none => return error
+		if tagClosed && closingTag{
+			if *openedTag == tagNameBuilder.String(){
+				*openedTag = "NONE"
+				return true,nil
+			}
+			return false, errors.New(fmt.Sprintf("malformed story, wrong closing tag %s at index %s",&tagNameBuilder.String(),strconv.Itoa(*currIndex)))
+
+		}
+		return tagNameIsOK,nil
+	}
+
+	scrollToFirstNonSpaceChar(&currIndex,story)
+
 	if(closingTag && story[*currIndex] != '>'){
+		if(openedTag == "NONE"){
+			return false, errors.New(fmt.Sprintf("malformed story - no tag is opened, but there is none tag opening text at index %s",strconv.Itoa(*currIndex)))
+		}
 		return false, errors.New("malformed closing tag index " + strconv.Itoa(*currIndex) + " into the story")
 	}
 
@@ -107,15 +183,13 @@ func CheckIfIsTag(currIndex *int, story []rune,openedTag string)(bool,error){
 	for j := *currIndex;j < len(story);j++{
 		*currIndex++
 		char := story[j]
-		if char == ' '{
-			
-		}else{
+		if char != ' '{
 			propertyBuilder.WriteRune(char)
 		}
 	}
-
 	return true,nil
 }
+
 
 /*
 func CheckStory(story string)(error){
