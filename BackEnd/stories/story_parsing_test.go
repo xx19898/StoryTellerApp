@@ -48,5 +48,20 @@ func TestHtmlStringScrollingToFirstNonEmptyChar(t *testing.T){
 }
 
 func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
+	testStory := []rune("<div> xddd</div>")
 	
+	index := 0
+	openedTag := "NONE"
+
+	bool,err := OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if index != len(testStory) - 1{
+		t.Fatal(fmt.Sprintf("Index should be %s but it is %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index)))
+	}
+	if !bool{
+		t.Fatal("Should be true")
+	}
+	if err != nil{
+		t.Fatal("Error should be null")
+	}
 }

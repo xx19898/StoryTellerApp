@@ -69,10 +69,12 @@ func ParseHtmlAttribute(htmlAttributeString string)(string,string,error){
 	return splitByEqSign[0],strings.ReplaceAll(splitByEqSign[1],"\"",""),nil
 }
 
-func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)(bool,error){
+func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)(bool,error){
 	//currIndex at whatever comes next after <
 	*currIndex++
-	
+	if *currIndex >= len(story){
+		return false,errors.New(fmt.Sprintf("Unclosed < at index %s(end of the story)",strconv.Itoa(*currIndex)))
+	}
 	// openedTag == NONE => has to be legit opening tag (if not img tag)
 	// tag name has to be after opening bracket
 	// if img => src property HAS to be in place if not => > should follow the opening tag
@@ -81,8 +83,6 @@ func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	// in case of error IF tag is not enclosed with > just return the last position
 	// => scroll until legit closing tag is found
 	var tagNameBuilder strings.Builder
-	var propertyBuilder strings.Builder
-	closingTag := false 
 
 	scrollToFirstNonSpaceChar(currIndex,story)
 
@@ -91,39 +91,48 @@ func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		if *openedTag == "NONE"{
 			return false,errors.New(fmt.Sprintf("Improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex)))
 		}
+
 		//reading closing tag name
 		for j := *currIndex;j < len(story);j++{
+			*currIndex++
+			char := story[j]
+			if char == ' '{
+				break
+			}
+			if char == '>'{
+				break
+			}else{
+				tagNameBuilder.WriteRune(char)
+			}
+		}
+
 		*currIndex++
-		char := story[j]
-		if char == ' '{
-			break
-		}
-		if char == '>'{
-			break
-		}else{
-			tagNameBuilder.WriteRune(char)
-		}
-		}
 
 		scrollToFirstNonSpaceChar(currIndex,story)
 
 		if story[*currIndex] != '>'{
 			if *openedTag != tagNameBuilder.String(){
-				return false,errors.New(fmt.Sprint("Error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag))
+				return false,errors.New(fmt.Sprintf("Error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag))
 			}
 			return false,nil
 		}
 		
 	}
 
+	if *openedTag != "NONE"{
+		return false,errors.New(fmt.Sprintf("Error at index %s, there are two embedded tags. new tag opens after the last  one (%s) was not closed",strconv.Itoa(*currIndex),*openedTag))
+	}
 	// TAG IS NOT A CLOSING TAG
 
-	// reads tag 
+	// reads tag
 	for j := *currIndex;j < len(story);j++{
 		*currIndex++
-		char := story[j]
+		char := story[*currIndex]
 		if char == ' '{
 			break
+		}
+		if char == '<'{
+			return false,errors.New("")
 		}
 		if char == '>'{
 			break
@@ -132,19 +141,39 @@ func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		}
 	}
 
-	//TODO: from here on divide program into different cases for different tags: img, and others
 
-	scrollToFirstNonSpaceChar(currIndex,story)
+	//TODO: from here on divide program into different cases for different tags: img, and others
+	switch tagType := tagNameBuilder.String(); tagType{
+		case "img":
+			if story[*currIndex] != '/'{
+				return false,errors.New(fmt.Sprintf("Error at char %s, img element missing slash",strconv.Itoa(*currIndex)))
+			}
+			scrollToFirstNonSpaceChar(currIndex,story)
+			if story[*currIndex] != '>'{
+				return false,errors.New(fmt.Sprintf("Error at char %s, img element in incorrect form, should encounter> next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
+			}
+			return true,nil 
+		default:
+			scrollToFirstNonSpaceChar(currIndex,story)
+			if story[*currIndex] != '>'{
+				return false,errors.New(fmt.Sprintf("Error at char %s, img element in incorrect form, should encounter> next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
+			}
+			*openedTag = tagType 
+			return true,nil		
+	}
+
+	/*
+	scrollToFirstNonSpaceChar(currIndex,story) 
 
 	tagClosed := story[*currIndex] == '>'
-/*	
+
 	TODO AFTER THE CLOSING > IS FOUND
 	tagNameIsOK,_ := htmlTagIsAllowed(tagNameBuilder.String())
 	
 	if !tagNameIsOK && tagClosed{
 		return false, errors.New(fmt.Sprintf("this is no tag at index %s",strconv.Itoa(*currIndex)))
 	}
-*/ 
+
 	//??
 	if tagNameBuilder.String() != "img" && tagClosed{
 		return true,nil
@@ -173,7 +202,7 @@ func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	scrollToFirstNonSpaceChar(&currIndex,story)
 
 	if(closingTag && story[*currIndex] != '>'){
-		if(openedTag == "NONE"){
+		if(*openedTag == "NONE"){
 			return false, errors.New(fmt.Sprintf("malformed story - no tag is opened, but there is none tag opening text at index %s",strconv.Itoa(*currIndex)))
 		}
 		return false, errors.New("malformed closing tag index " + strconv.Itoa(*currIndex) + " into the story")
@@ -188,112 +217,24 @@ func onOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		}
 	}
 	return true,nil
+	*/ 
 }
 
 
 /*
 func CheckStory(story string)(error){
 	storyAsRuneArr := []rune(story)
+	
 	err := prelimCheckStory([]rune(story))
 	if(err != nil){
 		return err
 	} 
 
-	//Means opening tag already exists
-	openedTag := "NONE"
-	// status is NONE, OPENING_TAG, CLOSING_TAG, CONTENT
-	STATUS := "NONE"
-
-	_,allowedHtmlAttributesMap,err := GetAllowedElementsAndPropertiesMap()
-	
-
-	var tagTypeBuilder strings.Builder
-	tagBuilt := false
-	
-	var htmlAttributeBuilder strings.Builder
-	attributeBuilt := false
-
-	// STATES: CLOSED, OPENED,(also need to know which tag is opened): 
-	// if closed: next should be opening tag, 
-	// if opened: scroll until <, 
-	
-	// MAKE THIS A FUNC:
-	// extract tag type, extract all the properties
-	// look if it is tag:
-	// take in <, next one should be tag name!, check if tag is proper, 
-	// check if tag has none attributes, 
-	// check for attributes if needed, 
-	// check that attribute is correct, 
-	// if there are any chars after that attribute => error, 
-	// scroll until >, 
-	
-	// set status to opened, 
-	// set type of tag too close tag, 
-	// scroll until next < => check that it is correct closing tag => 
-	// if not scroll again until next < => so on... 
-	
-	
-	for i := 0;i < len(storyAsRuneArr); i++{
-		//
-		if(storyAsRuneArr[i] == '<'){
-			STATUS = "TAG"
-			// checking if there is "/" after "<", then it is closing tag
-			scrollToFirstNonSpaceChar(&i,storyAsRuneArr)
-			if(i >= len(storyAsRuneArr)){
-				break
-			}
-			if(storyAsRuneArr[i] == '/'){
-				var closingTagBuilder strings.Builder
-
-				for _,char := range storyAsRuneArr[i:]{
-						if(char == ' '){
-							i++
-						}
-					}
-				
-				if(openedTag == "NONE"){					
-
-				}
-			}
-			for _,char := range storyAsRuneArr[i:]{
-				charAsString := string(char)
-				if(charAsString == " "){
-
-				}else{
-
-				}
-				tagTypeBuilder.WriteRune(char)
-
-
-				// tag identifier(opening)
-				if char == '>' || (storyAsRuneArr[rightPointer] == ' ' && len(strings.TrimSpace(tagTypeBuilder.String())) != 0 ) {
-					//CHECK if tag type builder is some kind of tag, parse all the way through to until the ">", check if properties are ok
-					// NO EMBEDDING RULE!!!
-					if(len(openedTags) != 0){
-						return errors.New(fmt.Sprintf("Embedded html detected(%s)",tagTypeBuilder.String()))
-					}
-
-					openedTags = append(openedTags,strings.Trim(tagTypeBuilder.String()))
-					tagTypeBuilder.Reset()
-				//tag identifier(closing)
-				}else if storyAsRuneArr[rightPointer] == '/'{
-					if len(openedTags) == 0{
-						return errors.New(fmt.Sprintf("Incorrect closing tag at character %s",rightPointer))
-					}
-				}else{
-					fmt.Println("xd")
-				}
-			}
-		}else{
-			i++
-		}
+	for{
+		
 	}
 
-	if(openedTag != "NONE"){
-		return errors.New(fmt.Sprintf("ERROR! Story is malformed: last opened tag is unclosed: %s",openedTag))
-	}
-	
-	// how to deal with <div></div></div>
+
 	return nil
 }
-*/
+	*/
