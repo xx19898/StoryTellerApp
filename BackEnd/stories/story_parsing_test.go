@@ -45,6 +45,13 @@ func TestHtmlStringScrollingToFirstNonEmptyChar(t *testing.T){
 	if i != 2{
 		t.Fatal(fmt.Sprintf("did not scroll through the empty space correctly: i is %s and not 2",strconv.Itoa(i) ))
 	}
+
+	htmlElement := "<div>xddd</div>"
+	i = 4
+	scrollToFirstNonSpaceChar(&i,[]rune(htmlElement))
+	if i != 4{
+		t.Fatal(fmt.Sprintf("did not scroll through the empty space correctly: i is %s and not 4",strconv.Itoa(i) ))
+	}
 }
 
 func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
@@ -53,15 +60,18 @@ func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
 	index := 0
 	openedTag := "NONE"
 
-	bool,err := OnOpeningBracketEncountered(&index,testStory,&openedTag)
+	bracketEncounter,err := OnOpeningBracketEncountered(&index,testStory,&openedTag)
 
-	if index != len(testStory) - 1{
-		t.Fatal(fmt.Sprintf("Index should be %s but it is %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index)))
-	}
-	if !bool{
-		t.Fatal("Should be true")
+	if index != 4{
+		t.Fatal(fmt.Sprintf("Index should be %s but it is %s",strconv.Itoa(5),strconv.Itoa(index)))
 	}
 	if err != nil{
 		t.Fatal("Error should be null")
+	}
+	if !bracketEncounter{
+		t.Fatal("Should be true")
+	}
+	if openedTag != "div"{
+		t.Fatal(fmt.Sprintf("opened tag should be div but got %s",openedTag))
 	}
 }

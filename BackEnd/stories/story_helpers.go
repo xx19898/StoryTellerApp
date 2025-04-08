@@ -52,9 +52,15 @@ func prelimCheckStory(story []rune) error {
 }
 
 func scrollToFirstNonSpaceChar(curr *int  ,story []rune){
+	fmt.Println("******")
+	fmt.Println(string(story[*curr:]))
+	fmt.Println("******")
 	for _,char := range story[*curr:]{
-		if(char == ' '){	
+		if(char == ' '){
+			fmt.Println(fmt.Sprintf("curr char: %s",string(char)))	
 			*curr = *curr + 1
+		}else{
+			break
 		}
 	}
 }
@@ -86,8 +92,9 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 
 	scrollToFirstNonSpaceChar(currIndex,story)
 
+
+	// Checks whether tag is a closing one
 	if(story[*currIndex] == '/'){
-		// tag is a closing tag
 		if *openedTag == "NONE"{
 			return false,errors.New(fmt.Sprintf("Improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex)))
 		}
@@ -109,6 +116,12 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		*currIndex++
 
 		scrollToFirstNonSpaceChar(currIndex,story)
+		if *currIndex >= len(story){
+			return false,errors.New("")
+		}
+		if story[*currIndex] != '>'{
+			return false,nil
+		}
 
 		if story[*currIndex] != '>'{
 			if *openedTag != tagNameBuilder.String(){
@@ -125,24 +138,26 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	// TAG IS NOT A CLOSING TAG
 
 	// reads tag
-	for j := *currIndex;j < len(story);j++{
-		*currIndex++
+	for{
+		//checks that boundary is kept before grabbing the char to evade error
+		if(*currIndex >= len(story)){
+			return false, errors.New("Reached end of the story and did not encounter closing tag")
+		}
 		char := story[*currIndex]
-		if char == ' '{
+		if(*currIndex == len(story) - 1){
+			if(char) != '>'{
+				return false,errors.New("Reached the end of the story and last char is not >")
+			}
+			return true,nil
+		}
+		if(char == ' ' || char == '>'){
 			break
 		}
-		if char == '<'{
-			return false,errors.New("")
-		}
-		if char == '>'{
-			break
-		}else{
-			tagNameBuilder.WriteRune(char)
-		}
-	}
+		tagNameBuilder.WriteRune(char)
+		*currIndex++
+	} 
 
 
-	//TODO: from here on divide program into different cases for different tags: img, and others
 	switch tagType := tagNameBuilder.String(); tagType{
 		case "img":
 			if story[*currIndex] != '/'{
@@ -154,70 +169,16 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 			}
 			return true,nil 
 		default:
+			fmt.Println("****")
+			fmt.Println("Currently at char " + string(story[*currIndex]))
+			fmt.Println("****")
 			scrollToFirstNonSpaceChar(currIndex,story)
 			if story[*currIndex] != '>'{
-				return false,errors.New(fmt.Sprintf("Error at char %s, img element in incorrect form, should encounter> next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
+				return false,errors.New(fmt.Sprintf("Error at char %s, html element is in incorrect form, should encounter > next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
 			}
 			*openedTag = tagType 
 			return true,nil		
 	}
-
-	/*
-	scrollToFirstNonSpaceChar(currIndex,story) 
-
-	tagClosed := story[*currIndex] == '>'
-
-	TODO AFTER THE CLOSING > IS FOUND
-	tagNameIsOK,_ := htmlTagIsAllowed(tagNameBuilder.String())
-	
-	if !tagNameIsOK && tagClosed{
-		return false, errors.New(fmt.Sprintf("this is no tag at index %s",strconv.Itoa(*currIndex)))
-	}
-
-	//??
-	if tagNameBuilder.String() != "img" && tagClosed{
-		return true,nil
-	}
-
-	//tag is img and tag opened == NONE
-
-
-	//if no attribute, opening tag is already parsed
-	if(closingTag){
-		if *openedTag == "NONE"{
-			return false,errors.New(fmt.Sprintf("malformed story, found closing tag %s at index %s while there is no opening tag",tagNameBuilder.String(),strconv.Itoa(*currIndex)))
-		}
-		//if closing tag, close openedtag, if opened none => return error
-		if tagClosed && closingTag{
-			if *openedTag == tagNameBuilder.String(){
-				*openedTag = "NONE"
-				return true,nil
-			}
-			return false, errors.New(fmt.Sprintf("malformed story, wrong closing tag %s at index %s",&tagNameBuilder.String(),strconv.Itoa(*currIndex)))
-
-		}
-		return tagNameIsOK,nil
-	}
-
-	scrollToFirstNonSpaceChar(&currIndex,story)
-
-	if(closingTag && story[*currIndex] != '>'){
-		if(*openedTag == "NONE"){
-			return false, errors.New(fmt.Sprintf("malformed story - no tag is opened, but there is none tag opening text at index %s",strconv.Itoa(*currIndex)))
-		}
-		return false, errors.New("malformed closing tag index " + strconv.Itoa(*currIndex) + " into the story")
-	}
-
-	//parsing html attribute value
-	for j := *currIndex;j < len(story);j++{
-		*currIndex++
-		char := story[j]
-		if char != ' '{
-			propertyBuilder.WriteRune(char)
-		}
-	}
-	return true,nil
-	*/ 
 }
 
 
