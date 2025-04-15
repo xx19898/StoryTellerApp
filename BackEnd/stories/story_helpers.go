@@ -23,8 +23,15 @@ func GetAllowedElementsAndPropertiesMap()([]string,map[string][]string){
 	allowedElementTagsWithProperties := map[string] []string{
 		"h":[]string{},
 		"p":[]string{},
+		"div":[]string{},
 		"img":[]string{"src"},}	
-	allowedElements := []string{"h","p","img"}
+	allowedElements := make([]string,len(allowedElementTagsWithProperties))
+
+	i := 0
+	for k := range allowedElementTagsWithProperties{
+		allowedElements[i] = k
+		i++
+	}
 
 	return allowedElements,allowedElementTagsWithProperties
 }
@@ -32,6 +39,7 @@ func htmlTagIsAllowed(element string)(bool, error){
 	allowedElements,_ := GetAllowedElementsAndPropertiesMap()
 	
 	for _,allowedElement := range allowedElements{
+		fmt.Println(allowedElement)
 		if allowedElement == element{
 			return true,nil
 		}
@@ -142,6 +150,14 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 			if(char) != '>'{
 				return false,fmt.Errorf("reached the end of the story and last char is not >")
 			}
+			if len(tagNameBuilder.String()) == 0{
+				return false, fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
+			}
+			htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
+			fmt.Printf("html tag: %s, result: %s",tagNameBuilder.String(),strconv.FormatBool(htmlTagIsCorrect))
+			if !htmlTagIsCorrect || err != nil{
+				return false, fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
+			}
 			*openedTag = tagNameBuilder.String()
 			return true,nil
 		}
@@ -150,6 +166,16 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		}
 		tagNameBuilder.WriteRune(char)
 		*currIndex++
+	}
+
+	if len(tagNameBuilder.String()) == 0{
+		return false,fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
+	}
+
+	htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
+	fmt.Printf("html tag: %s, result: %s",tagNameBuilder.String(),strconv.FormatBool(htmlTagIsCorrect))
+	if !htmlTagIsCorrect || err != nil{
+		return false, fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
 	}
 
 	switch tagType := tagNameBuilder.String(); tagType{

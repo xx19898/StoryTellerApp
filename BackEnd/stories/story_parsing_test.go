@@ -75,7 +75,6 @@ func TestCheckingHtmlTag(t *testing.T){
 		t.Fatalf("opened tag should be div but got %s",openedTag)
 	}
 
-	//Testing the img tag
 	testStory = []rune("<div")
 	openedTag = "NONE"
 	index = 0
@@ -85,5 +84,23 @@ func TestCheckingHtmlTag(t *testing.T){
 		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
 	}
 
+	//Testing the img tag
+	testStory = []rune("<>")
+	openedTag = "NONE"
+	index = 0
+	bracketEncounter,err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
 
+	if err == nil{
+		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
+	}
+
+	//Testing the img tag
+	testStory = []rune("<xddd>")
+	openedTag = "NONE"
+	index = 0
+	bracketEncounter,err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if err == nil{
+		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
+	}
 }
