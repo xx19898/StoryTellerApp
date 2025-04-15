@@ -52,9 +52,6 @@ func prelimCheckStory(story []rune) error {
 }
 
 func scrollToFirstNonSpaceChar(curr *int  ,story []rune){
-	fmt.Println("******")
-	fmt.Println(string(story[*curr:]))
-	fmt.Println("******")
 	for _,char := range story[*curr:]{
 		if(char == ' '){
 			fmt.Println(fmt.Sprintf("curr char: %s",string(char)))	
@@ -79,7 +76,7 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	//currIndex at whatever comes next after <
 	*currIndex++
 	if *currIndex >= len(story){
-		return false,errors.New(fmt.Sprintf("Unclosed < at index %s(end of the story)",strconv.Itoa(*currIndex)))
+		return false,fmt.Errorf("unclosed < at index %s(end of the story)",strconv.Itoa(*currIndex))
 	}
 	// openedTag == NONE => has to be legit opening tag (if not img tag)
 	// tag name has to be after opening bracket
@@ -89,14 +86,12 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	// in case of error IF tag is not enclosed with > just return the last position
 	// => scroll until legit closing tag is found
 	var tagNameBuilder strings.Builder
-
 	scrollToFirstNonSpaceChar(currIndex,story)
-
 
 	// Checks whether tag is a closing one
 	if(story[*currIndex] == '/'){
 		if *openedTag == "NONE"{
-			return false,errors.New(fmt.Sprintf("Improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex)))
+			return false,fmt.Errorf("improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex))
 		}
 
 		//reading closing tag name
@@ -125,15 +120,14 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 
 		if story[*currIndex] != '>'{
 			if *openedTag != tagNameBuilder.String(){
-				return false,errors.New(fmt.Sprintf("Error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag))
+				return false,fmt.Errorf("error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag)
 			}
 			return false,nil
 		}
-		
 	}
 
 	if *openedTag != "NONE"{
-		return false,errors.New(fmt.Sprintf("Error at index %s, there are two embedded tags. new tag opens after the last  one (%s) was not closed",strconv.Itoa(*currIndex),*openedTag))
+		return false,fmt.Errorf("error at index %s, there are two embedded tags. new tag opens after the last  one (%s) was not closed",strconv.Itoa(*currIndex),*openedTag)
 	}
 	// TAG IS NOT A CLOSING TAG
 
@@ -141,13 +135,14 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	for{
 		//checks that boundary is kept before grabbing the char to evade error
 		if(*currIndex >= len(story)){
-			return false, errors.New("Reached end of the story and did not encounter closing tag")
+			return false, fmt.Errorf("reached end of the story and did not encounter closing tag")
 		}
 		char := story[*currIndex]
 		if(*currIndex == len(story) - 1){
 			if(char) != '>'{
-				return false,errors.New("Reached the end of the story and last char is not >")
+				return false,fmt.Errorf("reached the end of the story and last char is not >")
 			}
+			*openedTag = tagNameBuilder.String()
 			return true,nil
 		}
 		if(char == ' ' || char == '>'){
@@ -155,26 +150,24 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		}
 		tagNameBuilder.WriteRune(char)
 		*currIndex++
-	} 
-
+	}
 
 	switch tagType := tagNameBuilder.String(); tagType{
 		case "img":
 			if story[*currIndex] != '/'{
-				return false,errors.New(fmt.Sprintf("Error at char %s, img element missing slash",strconv.Itoa(*currIndex)))
+				return false,fmt.Errorf("error at char %s, img element missing slash",strconv.Itoa(*currIndex))
 			}
 			scrollToFirstNonSpaceChar(currIndex,story)
 			if story[*currIndex] != '>'{
-				return false,errors.New(fmt.Sprintf("Error at char %s, img element in incorrect form, should encounter> next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
+				return false,fmt.Errorf("error at char %s, img element in incorrect form, should encounter> next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex]))
 			}
 			return true,nil 
 		default:
-			fmt.Println("****")
-			fmt.Println("Currently at char " + string(story[*currIndex]))
-			fmt.Println("****")
+			fmt.Println(strconv.Itoa(*currIndex))
 			scrollToFirstNonSpaceChar(currIndex,story)
+			
 			if story[*currIndex] != '>'{
-				return false,errors.New(fmt.Sprintf("Error at char %s, html element is in incorrect form, should encounter > next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex])))
+				return false,fmt.Errorf("error at char %s, html element is in incorrect form, should encounter > next, but got %s instead",strconv.Itoa(*currIndex),string(story[*currIndex]))
 			}
 			*openedTag = tagType 
 			return true,nil		

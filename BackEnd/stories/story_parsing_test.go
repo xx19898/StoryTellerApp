@@ -54,8 +54,8 @@ func TestHtmlStringScrollingToFirstNonEmptyChar(t *testing.T){
 	}
 }
 
-func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
-	testStory := []rune("<div> xddd</div>")
+func TestCheckingHtmlTag(t *testing.T){
+	testStory := []rune("<div>")
 	
 	index := 0
 	openedTag := "NONE"
@@ -63,8 +63,8 @@ func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
 	bracketEncounter,err := OnOpeningBracketEncountered(&index,testStory,&openedTag)
 
 	if index != 4{
-		t.Fatal(fmt.Sprintf("Index should be %s but it is %s",strconv.Itoa(5),strconv.Itoa(index)))
-	}
+		t.Fatalf("Index should be %s but it is %s",strconv.Itoa(4),strconv.Itoa(index))
+	} 
 	if err != nil{
 		t.Fatal("Error should be null")
 	}
@@ -72,6 +72,18 @@ func TestCheckingIfThereIsHtmlTagInSpecificPlace(t *testing.T){
 		t.Fatal("Should be true")
 	}
 	if openedTag != "div"{
-		t.Fatal(fmt.Sprintf("opened tag should be div but got %s",openedTag))
+		t.Fatalf("opened tag should be div but got %s",openedTag)
 	}
+
+	//Testing the img tag
+	testStory = []rune("<div")
+	openedTag = "NONE"
+	index = 0
+	bracketEncounter,err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if err == nil{
+		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
+	}
+
+
 }
