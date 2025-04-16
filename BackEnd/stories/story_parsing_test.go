@@ -25,7 +25,10 @@ func TestOriginForSrcTagInsideImages(t *testing.T){
 func TestHtmlAttributeParsing(t *testing.T){
 	htmlAttribute := "src=\"www.google.com\""
 
-	attributeName,attributeValue,_ := ParseHtmlAttribute(htmlAttribute)
+	attributeName,attributeValue,err := ParseHtmlAttribute(htmlAttribute)
+	if err != nil{
+		t.Fatalf("should be no error here, but there is one: %s",err.Error())
+	}
 	if attributeName != "src"{
 		t.Fatalf(fmt.Sprintf("Incorrectly parsed html attribute. Should ve gotten \"src\" but got %s instead",htmlAttribute))
 	}
@@ -53,6 +56,27 @@ func TestHtmlStringScrollingToFirstNonEmptyChar(t *testing.T){
 		t.Fatal(fmt.Sprintf("did not scroll through the empty space correctly: i is %s and not 4",strconv.Itoa(i) ))
 	}
 }
+
+func TestGrabbingNextCharSeq(t* testing.T){
+	testString := "<img src=\"wwww.storyteller.com\""
+	index := 5
+	
+
+	word,err := GrabNextCharSeq([]rune(testString),&index)
+
+	if index != len(testString) - 1{
+		t.Fatalf("Index should be at %s, but is %s",strconv.Itoa(len(testString) - 1),strconv.Itoa(index))
+	}
+
+	if err != nil{
+		t.Fatalf("Error should be nil, but it is %s",err.Error())
+	}
+
+	if word != "src=\"wwww.storyteller.com\""{
+		t.Fatalf("word should be %s but got %s","src=\"wwww.storyteller.com\"",word)
+	}
+}
+
 
 func TestCheckingHtmlTag(t *testing.T){
 	testStory := []rune("<div>")
@@ -83,8 +107,7 @@ func TestCheckingHtmlTag(t *testing.T){
 	if err == nil{
 		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
 	}
-
-	//Testing the img tag
+	
 	testStory = []rune("<>")
 	openedTag = "NONE"
 	index = 0
@@ -94,7 +117,6 @@ func TestCheckingHtmlTag(t *testing.T){
 		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
 	}
 
-	//Testing the img tag
 	testStory = []rune("<xddd>")
 	openedTag = "NONE"
 	index = 0
@@ -102,5 +124,33 @@ func TestCheckingHtmlTag(t *testing.T){
 
 	if err == nil{
 		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
+	}
+	if index != len(testStory) - 1{
+		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
+	}
+
+
+	testStory = []rune("<xddd>")
+	openedTag = "NONE"
+	index = 0
+	bracketEncounter,err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if err == nil{
+		t.Fatalf("Error should be cast,but it is null.%s is an incorrect html tag",string(testStory))
+	}
+	if index != len(testStory) - 1{
+		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
+	}
+
+	testStory = []rune("<img>")
+	openedTag = "NONE"
+	index = 0
+	bracketEncounter,err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if err == nil{
+		t.Fatalf("Error should be cast,but it is null.%s should have an src property and a closing slash",string(testStory))
+	}
+	if index != len(testStory) - 1{
+		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
 	}
 }

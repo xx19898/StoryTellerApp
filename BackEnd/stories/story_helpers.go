@@ -13,7 +13,6 @@ func CheckOriginForImageSource(url string,correctSource string)(error){
 	urlOriginAsRuneSlice := []rune(url)[:correctSourceLength]
 	urlOriginAsString := string(urlOriginAsRuneSlice)
 	if( urlOriginAsString != correctSource) {
-		fmt.Println(urlOriginAsString)
 		return errors.New("Incorrect origin: " + urlOriginAsString)
 	}
 
@@ -39,7 +38,6 @@ func htmlTagIsAllowed(element string)(bool, error){
 	allowedElements,_ := GetAllowedElementsAndPropertiesMap()
 	
 	for _,allowedElement := range allowedElements{
-		fmt.Println(allowedElement)
 		if allowedElement == element{
 			return true,nil
 		}
@@ -61,8 +59,7 @@ func prelimCheckStory(story []rune) error {
 
 func scrollToFirstNonSpaceChar(curr *int  ,story []rune){
 	for _,char := range story[*curr:]{
-		if(char == ' '){
-			fmt.Println(fmt.Sprintf("curr char: %s",string(char)))	
+		if(char == ' '){	
 			*curr = *curr + 1
 		}else{
 			break
@@ -74,10 +71,32 @@ func ParseHtmlAttribute(htmlAttributeString string)(string,string,error){
 	splitByEqSign := strings.Split(htmlAttributeString,"=")
 
 	if len(splitByEqSign) != 2{
-		return "","",errors.New(fmt.Sprintf("Malformed Html Attribute: %s",htmlAttributeString))
+		return "","",fmt.Errorf("Malformed Html Attribute: %s",htmlAttributeString)
 	}
 
 	return splitByEqSign[0],strings.ReplaceAll(splitByEqSign[1],"\"",""),nil
+}
+
+func GrabNextCharSeq(story []rune,index *int)(string,error){
+	if(*index >= len(story) || *index < 0){
+		return "",errors.New("Error. Index is out of boundaries")
+	}
+	var charSeq strings.Builder
+	for{
+		if *index >= len(story){
+			break
+		}
+		char := story[*index]
+		if char == '/' || char == '>' || char == ' ' {
+			break
+		}
+		charSeq.WriteRune(char)
+		if *index == len(story) - 1{
+			break
+		}
+		*index++
+	}
+	return charSeq.String(),nil
 }
 
 func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)(bool,error){
@@ -154,7 +173,6 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 				return false, fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
 			}
 			htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
-			fmt.Printf("html tag: %s, result: %s",tagNameBuilder.String(),strconv.FormatBool(htmlTagIsCorrect))
 			if !htmlTagIsCorrect || err != nil{
 				return false, fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
 			}
@@ -173,10 +191,22 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	}
 
 	htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
-	fmt.Printf("html tag: %s, result: %s",tagNameBuilder.String(),strconv.FormatBool(htmlTagIsCorrect))
 	if !htmlTagIsCorrect || err != nil{
 		return false, fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
 	}
+
+	// parse the properties
+	scrollToFirstNonSpaceChar(currIndex,story)
+
+	if story[*currIndex] != '/' && story[*currIndex] != '>'{
+		for{
+			
+			if story[*currIndex] != '/' && story[*currIndex] != '>'{
+				break
+			}
+		}
+	}
+
 
 	switch tagType := tagNameBuilder.String(); tagType{
 		case "img":
@@ -189,7 +219,6 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 			}
 			return true,nil 
 		default:
-			fmt.Println(strconv.Itoa(*currIndex))
 			scrollToFirstNonSpaceChar(currIndex,story)
 			
 			if story[*currIndex] != '>'{
