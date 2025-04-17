@@ -34,6 +34,30 @@ func GetAllowedElementsAndPropertiesMap()([]string,map[string][]string){
 
 	return allowedElements,allowedElementTagsWithProperties
 }
+func AttributeAllowedForElement(tag string, attribute string)(bool,error){
+	_,allowedElementTagsWithProperties := GetAllowedElementsAndPropertiesMap()
+	tagAllowed,err := htmlTagIsAllowed(tag)
+
+	if err != nil{
+		return false,err
+	}
+	if !tagAllowed{
+		return false,fmt.Errorf("tag %s is not allowed",tag)
+	}
+	
+	allowedAttributes := allowedElementTagsWithProperties[tag]
+	
+	if len(allowedAttributes) == 0{
+		return false,nil
+	}
+	for _,allowedAttribute := range allowedAttributes{
+		if attribute == allowedAttribute{
+			return true,nil
+		}
+	}
+
+	return false,nil
+}
 func htmlTagIsAllowed(element string)(bool, error){
 	allowedElements,_ := GetAllowedElementsAndPropertiesMap()
 	
@@ -81,6 +105,9 @@ func GrabNextCharSeq(story []rune,index *int)(string,error){
 	if(*index >= len(story) || *index < 0){
 		return "",errors.New("Error. Index is out of boundaries")
 	}
+	if(*index == len(story) - 1){
+		return "",nil
+	}
 	var charSeq strings.Builder
 	for{
 		if *index >= len(story){
@@ -97,6 +124,34 @@ func GrabNextCharSeq(story []rune,index *int)(string,error){
 		*index++
 	}
 	return charSeq.String(),nil
+}
+
+func ParseProperties(index *int,story []rune,tag string) (map[string]string,error){
+	propertiesMap := make(map[string]string)
+	fmt.Println(string(story))
+	for{
+		charSeq,err := GrabNextCharSeq(story,index)
+		fmt.Println("Last index " + string(story[*index]))
+		if len([]rune(charSeq)) == 0{
+			fmt.Println(propertiesMap)
+			break
+		}
+		if err != nil{
+			return propertiesMap,err
+		}
+		attribute,value,attributeParsingError := ParseHtmlAttribute(charSeq)
+		if attributeParsingError != nil{
+			return propertiesMap, attributeParsingError
+		}
+		attributeOk,err := AttributeAllowedForElement(tag,attribute)
+		if !attributeOk{
+			return propertiesMap, fmt.Errorf("%s is not a proper attribute for %s tag",attribute,tag)
+		}
+		//can there be multiple attributes with the same name?
+		propertiesMap[attribute] = value
+	}
+
+	return propertiesMap,nil
 }
 
 func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)(bool,error){
@@ -195,7 +250,10 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		return false, fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
 	}
 
+	//propertiesMap := make(map[string]string)
 	// parse the properties
+	
+	//TODO: parse all the properties until next char is > or /
 	scrollToFirstNonSpaceChar(currIndex,story)
 
 	if story[*currIndex] != '/' && story[*currIndex] != '>'{

@@ -77,6 +77,53 @@ func TestGrabbingNextCharSeq(t* testing.T){
 	}
 }
 
+func TestCheckingAttributeIsCorrectForTheTag(t *testing.T){
+	testAttribute := "src"
+	tag := "img"
+
+	attributeOk,error := AttributeAllowedForElement(tag,testAttribute)
+	if error != nil{
+		t.Fatalf("error when checking that attribute is okay for the chosen tag: %s",error.Error())
+	}
+	if !attributeOk{
+		t.Fatalf("Attribute %s should be allowed for tag %s",testAttribute,tag)
+	}
+
+
+	testAttribute = "xdd"
+	tag = "div"
+
+	attributeOk,error = AttributeAllowedForElement(tag,testAttribute)
+
+	if attributeOk{
+		t.Fatalf("error when checking that %s is okay for the tag %s, should be registered as an error",testAttribute,tag)
+	}
+
+	testAttribute = "xdd"
+	tag = "divxdd"
+
+	attributeOk,error = AttributeAllowedForElement(tag,testAttribute)
+
+	if error == nil{
+		t.Fatalf("error when checking that %s is okay for the tag %s, tag is incorrect",testAttribute,tag)
+	}
+}
+
+func TestParsingProperties(t * testing.T){
+	testString := "<img src=\"www.storyteller.com\""
+
+	index := 5
+	properties, err := ParseProperties(&index,[]rune(testString),"img")
+
+	if err != nil{
+		t.Fatalf("Error thrown: %s", err.Error())
+	}
+
+	if properties["src"] != "www.storyteller.com"{
+		t.Fatalf("Value respective of src should be www.storyteller.com but got %s instead",properties["src"])
+	} 
+}
+
 
 func TestCheckingHtmlTag(t *testing.T){
 	testStory := []rune("<div>")
@@ -154,3 +201,4 @@ func TestCheckingHtmlTag(t *testing.T){
 		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
 	}
 }
+
