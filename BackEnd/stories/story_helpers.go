@@ -233,38 +233,13 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	// TAG IS NOT A CLOSING TAG
 
 	// reads tag
-	//TODO: rework grabnextcharseq to stop right before ">" and use it here insted for purpose of simplifying the whole function
-	for{
-		//checks that boundary is kept before grabbing the char to evade error
-		if(*currIndex >= len(story)){
-			return fmt.Errorf("reached end of the story and did not encounter closing tag")
-		}
-		char := story[*currIndex]
-		if(*currIndex == len(story) - 1){
-			if(char) != '>'{
-				return fmt.Errorf("reached the end of the story and last char is not >")
-			}
-			if len(tagNameBuilder.String()) == 0{
-				return fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
-			}
-			htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
-			if !htmlTagIsCorrect || err != nil{
-				return fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
-			}
-			if tagNameBuilder.String() == "img"{}
-			
-			*openedTag = tagNameBuilder.String()
+	tagName,err := GrabNextCharSeq(story,currIndex)
 
-			return nil
-		}
-		if(char == ' ' || char == '>'){
-			break
-		}
-		tagNameBuilder.WriteRune(char)
-		*currIndex++
+	if err != nil{
+		return err
 	}
 
-	if len(tagNameBuilder.String()) == 0{
+	if len(tagName) == 0{
 		return fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
 	}
 
@@ -294,6 +269,9 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		}
 	}
 
+
+	//now index is behind the tag and all the properties
+
 	// handles end of the tag
 	switch tagType := tagNameBuilder.String(); tagType{
 		case "img":
@@ -316,21 +294,13 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	}
 }
 
-
-/*
 func CheckStory(story string)(error){
 	storyAsRuneArr := []rune(story)
-	
-	err := prelimCheckStory([]rune(story))
-	if(err != nil){
-		return err
-	} 
+	openedTag := "NONE"
+	index := 0
 
 	for{
-		
+		scrollToFirstNonSpaceChar(&index,storyAsRuneArr)
+		if(storyAsRuneArr)
 	}
-
-
-	return nil
 }
-	*/

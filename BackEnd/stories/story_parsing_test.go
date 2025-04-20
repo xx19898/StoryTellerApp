@@ -229,3 +229,12 @@ func TestCheckingHtmlTag(t *testing.T){
 	}
 }
 
+func TestCheckingStory(t *testing.T){
+	testStory := []rune("<h1>Hello World!</h1><p>Today we gather here to rejoy our existance</p>")
+	err := CheckStory(testStory)
+
+	if err != nil{
+		t.Fatalf("Error should be nil when testing whether \" %s \"is a legit story, but got %s error instead ",string(testStory))
+	}
+}
+
