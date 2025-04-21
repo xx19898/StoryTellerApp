@@ -126,6 +126,22 @@ func GrabNextCharSeq(story []rune,index *int)(string,error){
 	return charSeq.String(),nil
 }
 
+//untested for now
+func ScrollUntilNextOpeningBracket(story []rune, index *int)(error){
+	for{
+		if(*index >= len(story)){
+			return errors.New("Got out of storys boundaries")
+		}
+		if *index == len(story) - 1{
+			return errors.New("Reached story boundary")
+		}
+		if story[*index] == '<'{
+			return nil
+		}
+		*index++
+	}
+}
+
 func ParseProperties(index *int,story []rune,tag string) (map[string]string,error){
 	propertiesMap := make(map[string]string)
 	fmt.Println(string(story))
@@ -295,12 +311,22 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 }
 
 func CheckStory(story string)(error){
+	var err error
 	storyAsRuneArr := []rune(story)
 	openedTag := "NONE"
 	index := 0
 
 	for{
-		scrollToFirstNonSpaceChar(&index,storyAsRuneArr)
-		if(storyAsRuneArr)
+		if(index >= len(storyAsRuneArr)){
+			return errors.New("Reached the story boundary")
+		}
+		err = ScrollUntilNextOpeningBracket(storyAsRuneArr,&index)
+		if err != nil{
+			return err
+		}
+		err = OnOpeningBracketEncountered(&index,[]rune(story),&openedTag)
+		if err != nil{
+			return err
+		}
 	}
 }
