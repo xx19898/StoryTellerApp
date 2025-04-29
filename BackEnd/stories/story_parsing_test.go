@@ -159,14 +159,14 @@ func TestCheckingHtmlTag(t *testing.T){
 	index := 0
 	openedTag := "NONE"
 	var err error
-/*
+
 	err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
 
 	if index != 4{
-		t.Fatalf("Index should be %s but it is %s",strconv.Itoa(4),strconv.Itoa(index))
+		t.Fatalf("index should be %s but it is %s",strconv.Itoa(4),strconv.Itoa(index))
 	} 
 	if err != nil{
-		t.Fatal("Error should be null")
+		t.Fatalf("error should be null,but got %s instead",err.Error())
 	}
 	
 	if openedTag != "div"{
@@ -215,7 +215,7 @@ func TestCheckingHtmlTag(t *testing.T){
 	if index != len(testStory) - 1{
 		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
 	}
-*/
+
 	testStory = []rune("<img>")
 	openedTag = "NONE"
 	index = 0
@@ -227,6 +227,15 @@ func TestCheckingHtmlTag(t *testing.T){
 	if index != len(testStory) - 1{
 		t.Fatalf("Index should be %s, but it is at %s",strconv.Itoa(len(testStory) - 1),strconv.Itoa(index))
 	}
+
+	testStory = []rune("<h1>Hello World!</h1>")
+	openedTag = "NONE"
+	index = 0
+	err = OnOpeningBracketEncountered(&index,testStory,&openedTag)
+
+	if err != nil{
+		t.Fatal(err.Error())
+	}
 }
 
 func TestCheckingStory(t *testing.T){
@@ -237,6 +246,6 @@ func TestCheckingStory(t *testing.T){
 		t.Fatalf("error should be nil when testing whether \" %s \" is a legit story, but got %s error instead ",testStory,err.Error())
 	}
 
-
+	
 }
 

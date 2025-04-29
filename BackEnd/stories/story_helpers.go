@@ -20,7 +20,7 @@ func CheckOriginForImageSource(url string,correctSource string)(error){
 }
 func GetAllowedElementsAndPropertiesMap()([]string,map[string][]string){
 	allowedElementTagsWithProperties := map[string] []string{
-		"h":[]string{},
+		"h1":[]string{},
 		"p":[]string{},
 		"div":[]string{},
 		"img":[]string{"src"},}	
@@ -103,7 +103,7 @@ func ParseHtmlAttribute(htmlAttributeString string)(string,string,error){
 
 func GrabNextCharSeq(story []rune,index *int)(string,error){
 	if(*index >= len(story) || *index < 0){
-		return "",errors.New("Error. Index is out of boundaries")
+		return "",errors.New("error. Index is out of boundaries")
 	}
 	if(*index == len(story) - 1){
 		return "",nil
@@ -114,15 +114,17 @@ func GrabNextCharSeq(story []rune,index *int)(string,error){
 			break
 		}
 		char := story[*index]
-		if char == '/' || char == '>' || char == ' ' {
+		if char == '/' || char == '>' || char == ' ' || char == '<' {
 			break
 		}
+		fmt.Println(string(char))
 		charSeq.WriteRune(char)
 		if *index == len(story) - 1{
 			break
 		}
 		*index++
 	}
+	//leaves index at last char of the grabbed sequence + 1
 	return charSeq.String(),nil
 }
 
@@ -202,7 +204,6 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	// openedTag != NONE => does not have to be legit opening/closing tag => 
 	// in case of error IF tag is not enclosed with > just return the last position
 	// => scroll until legit closing tag is found
-	var tagNameBuilder strings.Builder
 	scrollToFirstNonSpaceChar(currIndex,story)
 
 	// Checks whether tag is a closing one
@@ -210,37 +211,28 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		if *openedTag == "NONE"{
 			return fmt.Errorf("improper opening tag synthaxis at index %s",strconv.Itoa(*currIndex))
 		}
-
-		//reading closing tag name
-		for j := *currIndex;j < len(story);j++{
-			*currIndex++
-			char := story[j]
-			if char == ' '{
-				break
-			}
-			if char == '>'{
-				break
-			}else{
-				tagNameBuilder.WriteRune(char)
-			}
-		}
-
 		*currIndex++
-
+		scrollToFirstNonSpaceChar(currIndex,story)
+		//reading closing tag name
+		closingTagName,err := GrabNextCharSeq(story,currIndex)
+		if err != nil{
+			return err
+		}
+		
 		scrollToFirstNonSpaceChar(currIndex,story)
 		if *currIndex >= len(story){
 			return nil
 		}
 		if story[*currIndex] != '>'{
-			return nil
+			return fmt.Errorf("error at index %s: encountered unexpected char, should be \">\" as the tag is marked to be a closing tag, but got %s instead (closing tag is: %s)", strconv.Itoa(*currIndex), string(story[*currIndex]), closingTagName)
 		}
 
-		if story[*currIndex] != '>'{
-			if *openedTag != tagNameBuilder.String(){
-				return fmt.Errorf("error at index %s: closing tag does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),*openedTag)
-			}
-			return nil
+		if *openedTag != closingTagName{
+			return fmt.Errorf("error at index %s: closing tag(%s) does not have same tag name as the opened one currently(%s)",strconv.Itoa(*currIndex),closingTagName,*openedTag)
 		}
+		//closing tag
+		*openedTag = "NONE"
+		return nil
 	}
 	
 	if *openedTag != "NONE"{
@@ -259,21 +251,21 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 		return fmt.Errorf("error at char %s, there is no tag name, but opening and closing brackets",strconv.Itoa(*currIndex))
 	}
 
-	htmlTagIsCorrect,err := htmlTagIsAllowed(tagNameBuilder.String())
+	htmlTagIsCorrect,err := htmlTagIsAllowed(tagName)
 	if !htmlTagIsCorrect || err != nil{
-		return fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagNameBuilder.String())
+		return fmt.Errorf("error at char %s, improper tag name:%s",strconv.Itoa(*currIndex),tagName)
 	}
 
 	
 	scrollToFirstNonSpaceChar(currIndex,story)
-	propertiesMap,err := ParseProperties(currIndex, story, tagNameBuilder.String())
+	propertiesMap,err := ParseProperties(currIndex, story, tagName)
 	
 	if err != nil{
 		return fmt.Errorf("error when trying to parse html attributes: %s",err.Error())
 	}
-	err = ControlProperties(propertiesMap,tagNameBuilder.String())
+	err = ControlProperties(propertiesMap,tagName)
 	if err != nil{
-		return fmt.Errorf("error when trying to control that html attributes are correct. Tag name is %s and error is %s ",tagNameBuilder.String(),err.Error())
+		return fmt.Errorf("error when trying to control that html attributes <are correct. Tag name is %s and error is %s ",tagName,err.Error())
 	}
 
 	if story[*currIndex] != '/' && story[*currIndex] != '>'{
@@ -289,7 +281,7 @@ func OnOpeningBracketEncountered(currIndex *int, story []rune,openedTag *string)
 	//now index is behind the tag and all the properties
 
 	// handles end of the tag
-	switch tagType := tagNameBuilder.String(); tagType{
+	switch tagType := tagName; tagType{
 		case "img":
 			if story[*currIndex] != '/'{
 				return fmt.Errorf("error at char %s, img element missing slash",strconv.Itoa(*currIndex))
@@ -318,7 +310,10 @@ func CheckStory(story string)(error){
 
 	for{
 		if(index >= len(storyAsRuneArr)){
-			return errors.New("Reached the story boundary")
+			return errors.New("reached the story boundary")
+		}
+		if(index == len(storyAsRuneArr) - 1){
+			return nil
 		}
 		err = ScrollUntilNextOpeningBracket(storyAsRuneArr,&index)
 		if err != nil{
