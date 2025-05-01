@@ -246,6 +246,40 @@ func TestCheckingStory(t *testing.T){
 		t.Fatalf("error should be nil when testing whether \" %s \" is a legit story, but got %s error instead ",testStory,err.Error())
 	}
 
+	testStory = "<div><div>Hello World!</div><div>Today we gather here to rejoy our existance</p>"
+	err = CheckStory(testStory)
 	
-}
+	if err == nil{
+		t.Fatalf("error should be thrown when testing whether \" %s \" is a legit story(embedded elements present), but got nothing instead ",testStory)
+	}
 
+	testStory = "<div>Hello World<div>"
+	err = CheckStory(testStory)
+	if err == nil{
+		t.Fatalf("error should be thrown when testing whether \" %s \" is a legit story(last div element is missing closing sign), but got nothing instead ",testStory)
+	}
+
+	testStory = "<div/>Hello World<div>"
+	err = CheckStory(testStory)
+	if err == nil{
+		t.Fatalf("error should be thrown as first div tag has closing mark inside it")
+	}
+
+	testStory = "<h1>Main Title</h1><p>Main Content</p>"
+	err = CheckStory(testStory)
+	if err != nil{
+		t.Fatalf("error should be nil but got %s instead (story is: %s)",err.Error(),testStory)
+	}
+
+	testStory = "<h1>Main Title</h1><p>Main Content"
+	err = CheckStory(testStory)
+	if err == nil{
+		t.Fatalf("error should be thrown as the last p tag is not closed before the end of the story but got nil instead (story:%s)",testStory)
+	}
+
+	testStory = "Main Title</h1><p>Main Content</p>"
+	err = CheckStory(testStory)
+	if err == nil{
+		t.Fatalf("error should be thrown as starting tag is not opened properly (%s) but got nil instead",testStory)
+	}
+}
