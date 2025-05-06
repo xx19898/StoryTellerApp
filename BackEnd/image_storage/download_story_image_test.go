@@ -40,11 +40,11 @@ func WriteMultipartImageRequestForTest() (error, *http.Request) {
 
 	hdr.Set("Content-Disposition", cd)
 	hdr.Set("Content-Type", "image/jpeg")
-
+/*
 	mockRouter := gin.Default()
 	mockRouter.Use(middleware.UserInfoExtractionMiddleware())
 	mockRouter.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
-
+*/
 	file, err := os.Open("/backend/IMAGES/test_image_sun.jpg")
 	if err != nil {
 		return fmt.Errorf("could not find the test image in the filesystem"), picUploadRequest

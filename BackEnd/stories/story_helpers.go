@@ -117,7 +117,7 @@ func GrabNextCharSeq(story []rune,index *int)(string,error){
 		if char == '/' || char == '>' || char == ' ' || char == '<' {
 			break
 		}
-		fmt.Println(string(char))
+		//fmt.Println(string(char))
 		charSeq.WriteRune(char)
 		if *index == len(story) - 1{
 			break
@@ -146,12 +146,12 @@ func ScrollUntilNextOpeningBracket(story []rune, index *int)(error){
 
 func ParseProperties(index *int,story []rune,tag string) (map[string]string,error){
 	propertiesMap := make(map[string]string)
-	fmt.Println(string(story))
+	//fmt.Println(string(story))
 	for{
 		charSeq,err := GrabNextCharSeq(story,index)
-		fmt.Println("Last index " + string(story[*index]))
+		//fmt.Println("Last index " + string(story[*index]))
 		if len([]rune(charSeq)) == 0{
-			fmt.Println(propertiesMap)
+			//fmt.Println(propertiesMap)
 			break
 		}
 		if err != nil{

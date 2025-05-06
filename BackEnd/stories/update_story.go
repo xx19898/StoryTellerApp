@@ -35,11 +35,19 @@ func UpdateStoryContent(c *gin.Context) {
 		return
 	}
 
+	if err = CheckStory(updatedStoryUserInput.Content); err != nil{
+		fmt.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":"Story update is not approved as the story is malformed",
+		})
+	}
+
 	updatedStory, err := databaselayer.UpdateStoryContentById(storyToUpdate.ID, updatedStoryUserInput.Content)
 
 	if err != nil {
+		fmt.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+			"error":"Error when trying to update story",
 		})
 		return
 	}
@@ -47,5 +55,6 @@ func UpdateStoryContent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"updatedStory": updatedStory,
 	})
+
 	return
 }
