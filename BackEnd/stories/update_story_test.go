@@ -8,6 +8,7 @@ import (
 	"StoryTellerAppBackend/models"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -66,9 +67,89 @@ func (suite *StoryUpdateTestSuite) TestUpdatingCorrectStory(){
 	assert.Equal(suite.T(),updatedStory.Content,"<h1>Updated Content</h1>")
 }
 
-//TODO: testing updating story with nonexistant story,
-// updating story which user is not author of 
-// updating story with wrong content
+func (suite *StoryUpdateTestSuite) TestUpdatingNonExistantStory(){
+	storyUpdate := StoryDTO{Content: "<h1>Updated Content</h1>",ID: 2} 
+	
+	router := gin.Default()
+	router.Use(middleware.UserInfoExtractionMiddleware())
+	router.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	router.PUT("/updateStory", UpdateStoryContent)
+
+	reqRecorder := httptest.NewRecorder()
+
+	jsonStoryUpdate, _ := json.Marshal(storyUpdate)
+
+	godotenv.Load("../.env")
+	secret, _ := helpers.GetEnv("JWT_SECRET")
+
+	accToken, _ := middleware.GenerateJWTToken("TestUser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
+
+	storyUpdateReq, _ := http.NewRequest("PUT","/updateStory",bytes.NewBuffer(jsonStoryUpdate))
+	storyUpdateReq.Header.Add("Authorization", accToken)
+
+	router.ServeHTTP(reqRecorder,storyUpdateReq)
+	
+	assert.Equal(suite.T(),400,reqRecorder.Code)
+}
+
+func (suite *StoryUpdateTestSuite) TestUpdatingStoryBelongingToAnotherUser(){
+	databaselayer.CreateNewUser("TestUser2","testPassword","testemail2@gmail.com",[]models.Role{{Name:"USER"}})
+	
+	story := databaselayer.FindStoryByTitle("Test Story")
+	storyUpdate := StoryDTO{Content: "<h1>Updated Content</h1>",ID: story.ID} 
+	
+	router := gin.Default()
+	router.Use(middleware.UserInfoExtractionMiddleware())
+	router.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	router.PUT("/updateStory", UpdateStoryContent)
+
+	reqRecorder := httptest.NewRecorder()
+
+	jsonStoryUpdate, _ := json.Marshal(storyUpdate)
+
+	godotenv.Load("../.env")
+	secret, _ := helpers.GetEnv("JWT_SECRET")
+
+	accToken, _ := middleware.GenerateJWTToken("TestUser2", 2, []string{"ROLE_USER"}, secret, middleware.AccessToken)
+
+	storyUpdateReq, _ := http.NewRequest("PUT","/updateStory",bytes.NewBuffer(jsonStoryUpdate))
+	storyUpdateReq.Header.Add("Authorization", accToken)
+
+	router.ServeHTTP(reqRecorder,storyUpdateReq)
+	
+	assert.Equal(suite.T(),403,reqRecorder.Code)
+}
+
+func (suite *StoryUpdateTestSuite) TestUpdatingCorrectStoryWithIncorrectPseudoHtml(){
+	story := databaselayer.FindStoryByTitle("Test Story")
+	storyUpdate := StoryDTO{Content: "<h1>Updated Content<h1>",ID: story.ID} 
+	
+	router := gin.Default()
+	router.Use(middleware.UserInfoExtractionMiddleware())
+	router.Use(middleware.AuthorizationMiddleware(middleware.CompareRoles, []string{"ROLE_USER"}))
+	router.PUT("/updateStory", UpdateStoryContent)
+
+	reqRecorder := httptest.NewRecorder()
+
+	jsonStoryUpdate, _ := json.Marshal(storyUpdate)
+
+	godotenv.Load("../.env")
+	secret, _ := helpers.GetEnv("JWT_SECRET")
+
+	accToken, _ := middleware.GenerateJWTToken("TestUser", 1, []string{"ROLE_USER"}, secret, middleware.AccessToken)
+
+	storyUpdateReq, _ := http.NewRequest("PUT","/updateStory",bytes.NewBuffer(jsonStoryUpdate))
+	storyUpdateReq.Header.Add("Authorization", accToken)
+
+	router.ServeHTTP(reqRecorder,storyUpdateReq)
+	fmt.Println(reqRecorder.Body)
+	assert.Equal(suite.T(),400,reqRecorder.Code)
+}
+
+
+// testing updating story with nonexistant story DONE
+// updating story which user is not author of DONE 
+// updating story with wrong content (incorrect html) DONE
 
 func TestUpdateStoryTestSuite(t *testing.T){
 	suite.Run(t, new(StoryUpdateTestSuite))

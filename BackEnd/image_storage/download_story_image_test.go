@@ -14,7 +14,6 @@ import (
 	"net/http/httptest"
 	"net/textproto"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -129,7 +128,8 @@ func TestDownloadingStoryImage(t *testing.T) {
 		t.Fatal("Wrong status code")
 	}
 
-	picData,_ := downloadRequest.Body.Read()
+	var body []byte
+	downloadRequest.Body.Read(body)
 
-	fmt.Printf(strconv.Itoa(picData))
+	fmt.Println(body)
 }

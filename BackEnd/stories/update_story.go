@@ -22,14 +22,14 @@ func UpdateStoryContent(c *gin.Context) {
 	storyToUpdate, err := databaselayer.FindStoryById(updatedStoryUserInput.ID)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Could not find story with that id",
-		})
+		}) 
 		return
 	}
 
 	if storyToUpdate.Username != c.GetString("LOGGED_USER_NAME") {
-		c.JSON(http.StatusMethodNotAllowed, gin.H{
+		c.JSON(http.StatusForbidden, gin.H{
 			"error": "Trying to update story belonging to another user",
 		})
 		return
